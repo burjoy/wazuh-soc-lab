@@ -60,3 +60,41 @@ scenario has to be re-shot if a tap/bridge is added later.
 
 **Note:** `sg` is not installed on this system; `newgrp docker -c '<command>'` is
 the working equivalent once group membership is in place.
+
+## 2026-10-30 — Day 0: stack verified
+
+Docker became reachable through a socket ACL (`user:luqman:rw-` on
+`/var/run/docker.sock`), so group membership was not needed after all.
+
+```
+$ docker compose ps
+single-node-wazuh.dashboard-1   running   Up 27 minutes
+single-node-wazuh.indexer-1     running   Up 27 minutes
+single-node-wazuh.manager-1     running   Up 27 minutes
+
+$ curl -ks -o /dev/null -w '%{http_code}' https://localhost
+302
+
+$ curl -ks -u 'wazuh-wui:…' -o /dev/null -w '%{http_code}' \
+    https://localhost:55000/security/user/authenticate
+200
+```
+
+The stack had already been started when the socket was fixed; existing
+`single-node_*` volumes from the September run were reused rather than wiped.
+Non-destructive choice: if indexer state interferes with the lab, rebuild the
+volumes then.
+
+Notes:
+
+- `config/wazuh_indexer_ssl_certs` is `root:root 400`. Certificate files inside are
+  owned by uid 1000/999 with mode 400, which is what the containers expect. A
+  `chmod` from a root container did not change the directory mode; left as-is
+  because the stack is healthy. Host-side `ls` of that directory fails.
+- Manager logs a vulnerability-scanner feed error:
+  `[json.exception.out_of_range.403] key 'other' not found`. Upstream feed schema
+  problem, not a stack failure. Vulnerability detection is out of scope for this
+  lab; noted, not fixed.
+- 3.2 GB RAM available, with two unrelated containers (`php2shell-*`) running.
+  They are not part of this lab and were left alone.
+

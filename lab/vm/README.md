@@ -56,3 +56,52 @@ Take the baseline *after* the agent is enrolled and before the first attack.
 
 1.5 GB RAM, 2 vCPU, 20 GB thin disk. Host has 12 cores and 7.5 GB total; the VM
 must not be started while the host is swapping.
+
+## Optional: routable bridge (scenario 5 upgrade)
+
+QEMU user networking forwards individual ports only, so nothing outside QEMU can
+reach the guest's full port range. To let an attacker container scan the VM, put
+the VM on a real segment:
+
+```bash
+sudo ip link add br-soc type bridge
+sudo ip link set br-soc up
+sudo ip addr add 192.168.122.1/24 dev br-soc
+sudo ip tuntap add dev tap-soc mode tap user "$USER"
+sudo ip link set tap-soc master br-soc up
+```
+
+Then change the QEMU network device to:
+
+```
+-netdev tap,id=net0,ifname=tap-soc,script=no,downscript=no
+```
+
+and give the guest a static `192.168.122.50` on `eth0`. Add a second user-mode
+NIC (`-netdev user`) for internet access, because the tap has no NAT.
+
+Attacker container options:
+
+```bash
+# simplest: shares the host network namespace
+docker run --rm -it --network host kalilinux/kali-rolling
+
+# distinct source IP: macvlan on the bridge
+docker network create -d macvlan \
+  --subnet=192.168.122.0/24 --gateway=192.168.122.1 \
+  -o parent=br-soc soc-attack
+```
+
+Caveats:
+
+- `--network host` makes the source address the host (`192.168.122.1`), which looks
+  odd in a ticket.
+- macvlan on a bridge parent is supported but has quirks; verify the container can
+  reach `192.168.122.50` before building a scenario around it.
+- The interfaces disappear on reboot. Wrap the block above in a script if this
+  becomes the permanent setup.
+- Change Suricata's `HOME_NET` to `192.168.122.0/24` afterwards.
+
+Do this only after the core build is finished. It re-shoots scenario 5; keep the
+outbound and inbound versions in separate tickets.
+
