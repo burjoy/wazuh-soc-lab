@@ -3,7 +3,8 @@
 A small, reproducible detection-and-triage lab built to demonstrate entry-level SOC
 Analyst work: alerts generated, investigated, ticketed, escalated, and documented.
 
-**Status:** build in progress. See `docs/build-log.md` for what actually runs.
+**Status:** Days 0–1 complete — see [`docs/build-report.md`](docs/build-report.md)
+for the readable summary, and `docs/build-log.md` for the raw command history.
 
 ---
 
