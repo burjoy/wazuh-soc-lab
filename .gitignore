@@ -1,0 +1,23 @@
+# VM images and runtime artefacts
+lab/vm/images/
+lab/vm/*.qcow2
+*.img
+*.iso
+console.log
+cloud-init.log
+
+# SSH keys used only for the lab
+lab/vm/keys/
+
+# Secrets
+.env
+*.pem
+*.key
+
+# Wazuh certs (generated, never committed)
+**/wazuh_indexer_ssl_certs/
+**/wazuh_indexer_ssl_certs.tgz
+
+# Editor / OS noise
+.DS_Store
+*.swp
