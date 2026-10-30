@@ -65,7 +65,8 @@ and escalation note, plus the runbook used.
 
 ## Write-ups and evidence
 
-- [INC-001 — SSH brute force, successful login, persistence](writeups/INC-001-ssh-brute-force.md)
+- [INC-001 document package](writeups/INC-001/README.md) — findings report, reproduction guide, detection/mitigation/triage guide, attack setup (Markdown + PDF)
+- [INC-001 narrative version](writeups/INC-001-ssh-brute-force.md)
 - [INC-001 ticket](tickets/INC-001-ssh-brute-force.md)
 - [Evidence](docs/evidence/) — alerts, auth log, audit records, decoded commands
 - [Detection tuning notes](rules/tuning-notes.md)

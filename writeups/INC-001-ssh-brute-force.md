@@ -11,11 +11,11 @@ systems, no client data, no real malware.
 
 At 15:21:47 UTC a password spray against a Debian endpoint began. Twenty guesses
 later, the `svc-backup` account was compromised. The attacker added an SSH key and
-ran discovery commands. Total time from first failure to persistence: **34 seconds**.
+ran discovery commands. Total time from first failure to persistence: **32 seconds**.
 
 The detection was not the hard part. The hard part was that the SIEM produced **400
 alerts in 150 seconds**, and the stock "failures followed by a success" rule fired
-on four legitimate analyst logins as well as the attacker. This is the story of
+on six alerts from routine analyst sessions as well as the attacker. This is the story of
 separating the two.
 
 | | |

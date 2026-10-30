@@ -17,7 +17,8 @@
 1. **20 × 5760** — `sshd: authentication failed` for `svc-backup`, 15:21:51–15:22:19.
 2. **5763** — `sshd: brute force trying to get access to the system`, 15:22:01.
 3. **40112** — `Multiple authentication failures followed by a success`, 15:22:21.
-   The same rule also fired on four legitimate `analyst` logins in the same window.
+   The same rule also fired on six alerts from four routine `analyst` sessions in the
+   same window.
 4. **100120** — `FIM: SSH authorized_keys added or modified`, 15:22:22.
 
 Raw line:
@@ -79,7 +80,7 @@ password reset, so the attacker retains a route back in.
   list. Neither should be true for a service account.
 - No lockout: 20 attempts were allowed.
 - Stock 40112 is account-blind and source-IP-only; in this lab every session shares
-  the gateway, so it produced four false positives. Tune it rather than duplicating
+  the gateway, so it produced six false-positive alerts. Tune it rather than duplicating
   it.
 - Full execve auditing produced 292 alerts in 150 seconds. Filter by the account or
   session under investigation.
