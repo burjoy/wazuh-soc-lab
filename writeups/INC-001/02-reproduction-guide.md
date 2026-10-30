@@ -1,5 +1,7 @@
 # Reproduction Guide — INC-001 Lab
 
+<!-- subtitle: Rebuilding the lab from a bare host to a working detection pipeline -->
+
 This document rebuilds the environment from a bare host and reproduces the detection
 pipeline. It is written to be followed in order. Commands assume a Debian/Arch-family
 Linux host with Docker, QEMU, and `hydra`.

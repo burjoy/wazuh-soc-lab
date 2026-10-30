@@ -1,5 +1,7 @@
 # Detection, Mitigation, and Triage Guide
 
+<!-- subtitle: Rule behaviour, the triage playbook, and containment that removes access -->
+
 Audience: an L1 analyst who has the alert in front of them, and an L2 or detection
 engineer who owns the rules.
 

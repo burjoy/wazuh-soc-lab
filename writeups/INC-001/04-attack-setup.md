@@ -1,5 +1,7 @@
 # Attack Setup Guide — INC-001
 
+<!-- subtitle: Staging the incident phase by phase, inside an isolated lab -->
+
 A step-by-step script for reproducing the attack **inside the lab**. This document is
 for a defensive portfolio and for testing detections. It is not a guide to attacking
 systems you do not own.

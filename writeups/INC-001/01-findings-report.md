@@ -1,5 +1,7 @@
 # INC-001 — Detailed Findings Report
 
+<!-- subtitle: Evidence, analysis, and response for an SSH brute-force compromise -->
+
 | | |
 |---|---|
 | **Incident** | INC-001 — SSH brute force leading to account compromise and persistence |

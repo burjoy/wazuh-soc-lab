@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-"""Render a Markdown document to PDF.
+"""Render a Markdown document to PDF with a cover page and table of contents.
 
 Uses Python-Markdown for conversion and headless Chrome for printing. No LaTeX,
 pandoc, or system packages required beyond Chrome.
 
 Usage:
     python3 tools/md2pdf.py writeups/INC-001/01-findings-report.md
+
+A document can declare a cover subtitle with an HTML comment after its H1:
+
+    # Title
+    <!-- subtitle: A short line for the cover -->
 
 Requires:
     pip install markdown pygments
@@ -14,7 +19,9 @@ Requires:
 from __future__ import annotations
 
 import argparse
+import datetime
 import pathlib
+import re
 import subprocess
 import sys
 import tempfile
@@ -29,7 +36,7 @@ CSS = """
   margin: 17mm 15mm 17mm 15mm;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
 body {
   font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -135,7 +142,99 @@ hr {
 
 img { max-width: 100%; }
 
-/* Keep section leads with their content */
+/* ---------- Cover ---------- */
+
+.cover {
+  min-height: 245mm;
+  display: flex;
+  flex-direction: column;
+  page-break-after: always;
+}
+
+.cover-band {
+  height: 7mm;
+  background: #0b1f33;
+  margin-bottom: 20mm;
+}
+
+.cover-eyebrow {
+  font-size: 8.5pt;
+  letter-spacing: 2.2pt;
+  text-transform: uppercase;
+  color: #57606a;
+  font-weight: 600;
+}
+
+.cover-title {
+  font-size: 29pt;
+  line-height: 1.14;
+  border: none;
+  padding: 0;
+  margin: 5mm 0 4mm 0;
+  color: #0b1f33;
+}
+
+.cover-subtitle {
+  font-size: 13pt;
+  line-height: 1.4;
+  color: #57606a;
+  margin: 0;
+  max-width: 150mm;
+}
+
+.cover-meta {
+  margin-top: 22mm;
+  border-top: 1px solid #d0d7de;
+  padding-top: 6mm;
+}
+
+.cover-meta dl {
+  display: grid;
+  grid-template-columns: 38mm 1fr;
+  row-gap: 3mm;
+  margin: 0;
+  font-size: 9.5pt;
+}
+
+.cover-meta dt {
+  color: #57606a;
+  text-transform: uppercase;
+  letter-spacing: 0.6pt;
+  font-size: 8pt;
+  padding-top: 1pt;
+}
+
+.cover-meta dd { margin: 0; color: #1f2328; }
+
+.cover-footer {
+  margin-top: auto;
+  padding-top: 8mm;
+  border-top: 1px solid #d0d7de;
+  font-size: 8pt;
+  color: #8c959f;
+}
+
+/* ---------- Table of contents ---------- */
+
+.toc-page { page-break-after: always; }
+
+.toc-heading {
+  font-size: 19pt;
+  border: none;
+  padding: 0;
+  margin: 0 0 8mm 0;
+  color: #0b1f33;
+}
+
+.toc { font-size: 10pt; }
+.toc > ul { padding-left: 0; }
+.toc ul { list-style: none; margin: 0; padding-left: 0; }
+.toc ul ul { padding-left: 7mm; }
+.toc li { margin: 2.1mm 0; line-height: 1.3; }
+.toc a { color: #1f2328; }
+.toc ul ul a { color: #57606a; font-size: 9.2pt; }
+
+/* Keep a section heading with its first block */
 h2 + table, h3 + table { page-break-before: avoid; }
 """
 
@@ -147,6 +246,8 @@ TEMPLATE = """<!doctype html>
 <style>{css}</style>
 </head>
 <body>
+{cover}
+{toc_page}
 <article class="markdown-body">
 {body}
 </article>
@@ -154,9 +255,57 @@ TEMPLATE = """<!doctype html>
 </html>
 """
 
+COVER = """
+<section class="cover">
+  <div class="cover-band"></div>
+  <div class="cover-eyebrow">SOC L1 Lab &middot; INC-001</div>
+  <h1 class="cover-title">{title}</h1>
+  <p class="cover-subtitle">{subtitle}</p>
+  <div class="cover-meta">
+    <dl>
+      <dt>Incident</dt><dd>INC-001 &mdash; SSH brute force to persistence</dd>
+      <dt>Report date</dt><dd>{date}</dd>
+      <dt>Classification</dt><dd>Lab exercise &mdash; sanitized for publication</dd>
+      <dt>Environment</dt><dd>Wazuh 4.14.7 &middot; Debian 12 &middot; QEMU/KVM</dd>
+      <dt>Severity</dt><dd>High</dd>
+    </dl>
+  </div>
+  <div class="cover-footer">
+    Independent portfolio lab. No production systems, client data, or real credentials.
+  </div>
+</section>
+"""
+
+TOC_PAGE = """
+<section class="toc-page">
+  <h1 class="toc-heading">Contents</h1>
+  {toc}
+</section>
+"""
+
+SUBTITLE_RE = re.compile(r"<!--\s*subtitle:\s*(.*?)\s*-->", re.S | re.I)
+
+
+def split_title(text: str) -> tuple[str, str]:
+    """Return (title, body) with the first H1 removed from the body."""
+    lines = text.splitlines()
+    for index, line in enumerate(lines):
+        if line.startswith("# "):
+            title = line[2:].strip()
+            body = "\n".join(lines[:index] + lines[index + 1 :])
+            return title, body
+    raise SystemExit("document has no H1 title")
+
 
 def convert(md_path: pathlib.Path, pdf_path: pathlib.Path) -> None:
     text = md_path.read_text(encoding="utf-8")
+
+    match = SUBTITLE_RE.search(text)
+    subtitle = match.group(1).strip() if match else ""
+    text = SUBTITLE_RE.sub("", text)
+
+    title, body_md = split_title(text)
+
     md = markdown.Markdown(
         extensions=[
             "tables",
@@ -168,15 +317,26 @@ def convert(md_path: pathlib.Path, pdf_path: pathlib.Path) -> None:
         ],
         extension_configs={
             "codehilite": {"guess_lang": False, "noclasses": True},
-            "toc": {"permalink": False},
+            "toc": {"permalink": False, "toc_depth": "2-2"},
         },
     )
-    body = md.convert(text)
-    title = next(
-        (line[2:].strip() for line in text.splitlines() if line.startswith("# ")),
-        md_path.stem.replace("-", " ").title(),
+    body = md.convert(body_md)
+    toc = md.toc.strip()
+
+    cover = COVER.format(
+        title=title,
+        subtitle=subtitle,
+        date=datetime.date.today().isoformat(),
     )
-    html_doc = TEMPLATE.format(title=title, css=CSS, body=body)
+    toc_page = TOC_PAGE.format(toc=toc) if toc else ""
+
+    html_doc = TEMPLATE.format(
+        title=title,
+        css=CSS,
+        cover=cover,
+        toc_page=toc_page,
+        body=body,
+    )
 
     with tempfile.NamedTemporaryFile(
         "w", suffix=".html", dir=pdf_path.parent, delete=False, encoding="utf-8"
