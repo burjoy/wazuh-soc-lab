@@ -224,3 +224,56 @@ dashboard cert is `CN=wazuh.dashboard` with `SAN DNS:wazuh.dashboard` only. Ther
 no `localhost` or `127.0.0.1` SAN, so Chrome reports
 `ERR_CERT_COMMON_NAME_INVALID`. Expected for a self-signed lab; bypass once via
 Advanced → Proceed.
+
+## 2026-10-30 — INC-001 scenario run
+
+Goal: one coherent incident, with legitimate activity mixed in, so the detection
+has to be separated from noise.
+
+### First attempt (15:12 UTC) — failed evidence
+
+- The brute force targeted a **valid** account, `svc-backup`, so sshd produced
+  `5760` (authentication failed), not `5710` (non-existent user). The custom
+  correlation rule was keyed to `5710` and never fired.
+- `auditd` alerts were absent entirely. Wazuh's audit rules use a CDB list
+  (`/var/ossec/etc/lists/audit-keys`) and only recognise the keys
+  `audit-wazuh-w`, `audit-wazuh-r`, `audit-wazuh-a`, `audit-wazuh-x`,
+  `audit-wazuh-c`. The lab had been using descriptive keys (`identity`, `exec`,
+  `persistence`, `webroot`), so every event was decoded but no rule matched.
+- The `crontab` binary is not installed in the Debian cloud image, so the intended
+  cron persistence failed. The SSH-key persistence still worked.
+
+### Fixes before the second attempt
+
+- audit rules rewritten to `audit-wazuh-w` for writable files and `audit-wazuh-c`
+  for execve.
+- `<same_user />` tested and rejected: Wazuh compares `srcuser` on 5760 with
+  `dstuser` on 5715 and does not bridge them.
+- Correlation rule keyed to `5763` was also rejected: stock `40112` matches the
+  success event first, so the local sibling never fires. Recorded in
+  `rules/tuning-notes.md`.
+- The single-file bind mount for `local_rules.xml` stopped reflecting edits when the
+  editor replaced the inode. Switched to mounting the whole `rules/` directory.
+- Custom rule **100120** written against FIM instead: `authorized_keys` added or
+  modified, level 12. Validated by writing the file and observing the alert.
+
+### Second attempt (15:21–15:23 UTC) — clean evidence
+
+- 15:21:47 legitimate `svc-backup` login (baseline).
+- 15:21:50–15:22:19: 20 failed passwords.
+- 15:22:01: **5763** brute force.
+- 15:22:21: successful password login for `svc-backup`; **40112**.
+- 15:22:22: **100120**, `/home/svc-backup/.ssh/authorized_keys` added,
+  SHA-256 `61954205be034570c75bdd6db67b3fbd3410ac1d4bebb08b65d117667965c5e8`.
+- 15:22:23: audit trail of `id`, `whoami`, `uname -a`, `head`, `sudo -n -l`
+  (failed), `mkdir`, key write, `curl`.
+- Four additional **40112** alerts fired on legitimate `analyst` logins in the same
+  window. They share the QEMU gateway source `10.0.2.2`, which is the lab's
+  source-attribution limitation.
+
+Window totals: 400 alerts in 150 seconds; 292 were audit command events, 20 were
+authentication failures, 8 were 40112, 1 was 100120.
+
+Evidence written to `docs/evidence/`; narrative in
+`writeups/INC-001-ssh-brute-force.md`; ticket in
+`tickets/INC-001-ssh-brute-force.md`.

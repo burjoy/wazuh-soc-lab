@@ -1,0 +1,80 @@
+Oct 30 15:21:47 soc-victim audit[10751]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=564368bfb980 a1=564368c4d570 a2=564368bfb9c0 a3=0 items=3 ppid=9096 pid=10751 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key="audit-wazuh-c"
+Oct 30 15:21:47 soc-victim audit[10751]: SYSCALL arch=c000003e syscall=1 success=yes exit=4 a0=3 a1=7ffebcf7bf30 a2=4 a3=7ffebcf7bc44 items=0 ppid=9096 pid=10751 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=99 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key=(null)
+Oct 30 15:21:47 soc-victim sshd[10751]: Accepted password for svc-backup from 10.0.2.2 port 49820 ssh2
+Oct 30 15:21:47 soc-victim sshd[10751]: pam_unix(sshd:session): session opened for user svc-backup(uid=1002) by (uid=0)
+Oct 30 15:21:47 soc-victim sshd[10751]: pam_env(sshd:session): deprecated reading of user environment enabled
+Oct 30 15:21:47 soc-victim sshd[10774]: Received disconnect from 10.0.2.2 port 49820:11: disconnected by user
+Oct 30 15:21:47 soc-victim sshd[10774]: Disconnected from user svc-backup 10.0.2.2 port 49820
+Oct 30 15:21:47 soc-victim sshd[10751]: pam_unix(sshd:session): session closed for user svc-backup
+Oct 30 15:21:47 soc-victim audit[10776]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=564368bfb980 a1=564368c4d570 a2=564368bfb9c0 a3=0 items=3 ppid=9096 pid=10776 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key="audit-wazuh-c"
+Oct 30 15:21:47 soc-victim sshd[10776]: Received disconnect from 10.0.2.2 port 49828:11: Bye Bye [preauth]
+Oct 30 15:21:47 soc-victim sshd[10776]: Disconnected from authenticating user svc-backup 10.0.2.2 port 49828 [preauth]
+Oct 30 15:21:48 soc-victim audit[10778]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=564368bfb980 a1=564368c4d570 a2=564368bfb9c0 a3=0 items=3 ppid=9096 pid=10778 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key="audit-wazuh-c"
+Oct 30 15:21:48 soc-victim audit[10779]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=564368bfb980 a1=564368c4d570 a2=564368bfb9c0 a3=0 items=3 ppid=9096 pid=10779 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key="audit-wazuh-c"
+Oct 30 15:21:48 soc-victim sshd[10779]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=10.0.2.2  user=svc-backup
+Oct 30 15:21:48 soc-victim sshd[10778]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=10.0.2.2  user=svc-backup
+Oct 30 15:21:50 soc-victim sshd[10779]: Failed password for svc-backup from 10.0.2.2 port 49856 ssh2
+Oct 30 15:21:50 soc-victim sshd[10778]: Failed password for svc-backup from 10.0.2.2 port 49842 ssh2
+Oct 30 15:21:53 soc-victim sshd[10778]: Failed password for svc-backup from 10.0.2.2 port 49842 ssh2
+Oct 30 15:21:53 soc-victim sshd[10779]: Failed password for svc-backup from 10.0.2.2 port 49856 ssh2
+Oct 30 15:21:55 soc-victim sshd[10778]: Failed password for svc-backup from 10.0.2.2 port 49842 ssh2
+Oct 30 15:21:55 soc-victim sshd[10779]: Failed password for svc-backup from 10.0.2.2 port 49856 ssh2
+Oct 30 15:21:59 soc-victim sshd[10778]: Failed password for svc-backup from 10.0.2.2 port 49842 ssh2
+Oct 30 15:21:59 soc-victim sshd[10779]: Failed password for svc-backup from 10.0.2.2 port 49856 ssh2
+Oct 30 15:22:01 soc-victim sshd[10778]: Failed password for svc-backup from 10.0.2.2 port 49842 ssh2
+Oct 30 15:22:01 soc-victim sshd[10779]: Failed password for svc-backup from 10.0.2.2 port 49856 ssh2
+Oct 30 15:22:03 soc-victim audit[10783]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=564368bfb980 a1=564368c4d570 a2=564368bfb9c0 a3=0 items=3 ppid=9096 pid=10783 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key="audit-wazuh-c"
+Oct 30 15:22:03 soc-victim sshd[10783]: Accepted publickey for analyst from 10.0.2.2 port 55460 ssh2: ED25519 SHA256:xKxjZjftIo8qBJxHPE9IACZNJzWw/yo3k2tbJ6XRdzM
+Oct 30 15:22:03 soc-victim audit[10783]: SYSCALL arch=c000003e syscall=1 success=yes exit=4 a0=3 a1=7ffee022b390 a2=4 a3=7ffee022b0a4 items=0 ppid=9096 pid=10783 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=101 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key=(null)
+Oct 30 15:22:03 soc-victim sshd[10783]: pam_unix(sshd:session): session opened for user analyst(uid=1000) by (uid=0)
+Oct 30 15:22:03 soc-victim sshd[10778]: Failed password for svc-backup from 10.0.2.2 port 49842 ssh2
+Oct 30 15:22:03 soc-victim sshd[10779]: Failed password for svc-backup from 10.0.2.2 port 49856 ssh2
+Oct 30 15:22:03 soc-victim sshd[10783]: pam_env(sshd:session): deprecated reading of user environment enabled
+Oct 30 15:22:03 soc-victim sshd[10806]: Received disconnect from 10.0.2.2 port 55460:11: disconnected by user
+Oct 30 15:22:03 soc-victim sshd[10806]: Disconnected from user analyst 10.0.2.2 port 55460
+Oct 30 15:22:03 soc-victim sshd[10783]: pam_unix(sshd:session): session closed for user analyst
+Oct 30 15:22:03 soc-victim audit[10809]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=564368bfb980 a1=564368c4d570 a2=564368bfb9c0 a3=0 items=3 ppid=9096 pid=10809 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key="audit-wazuh-c"
+Oct 30 15:22:03 soc-victim sshd[10809]: Accepted publickey for analyst from 10.0.2.2 port 55462 ssh2: ED25519 SHA256:xKxjZjftIo8qBJxHPE9IACZNJzWw/yo3k2tbJ6XRdzM
+Oct 30 15:22:03 soc-victim audit[10809]: SYSCALL arch=c000003e syscall=1 success=yes exit=4 a0=3 a1=7ffce9ee9360 a2=4 a3=7ffce9ee9074 items=0 ppid=9096 pid=10809 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=103 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key=(null)
+Oct 30 15:22:03 soc-victim sshd[10809]: pam_unix(sshd:session): session opened for user analyst(uid=1000) by (uid=0)
+Oct 30 15:22:03 soc-victim sshd[10809]: pam_env(sshd:session): deprecated reading of user environment enabled
+Oct 30 15:22:03 soc-victim sshd[10816]: Received disconnect from 10.0.2.2 port 55462:11: disconnected by user
+Oct 30 15:22:03 soc-victim sshd[10816]: Disconnected from user analyst 10.0.2.2 port 55462
+Oct 30 15:22:03 soc-victim sshd[10809]: pam_unix(sshd:session): session closed for user analyst
+Oct 30 15:22:04 soc-victim sshd[10778]: error: maximum authentication attempts exceeded for svc-backup from 10.0.2.2 port 49842 ssh2 [preauth]
+Oct 30 15:22:04 soc-victim audit[10819]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=564368bfb980 a1=564368c4d570 a2=564368bfb9c0 a3=0 items=3 ppid=9096 pid=10819 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key="audit-wazuh-c"
+Oct 30 15:22:04 soc-victim sshd[10778]: Disconnecting authenticating user svc-backup 10.0.2.2 port 49842: Too many authentication failures [preauth]
+Oct 30 15:22:04 soc-victim sshd[10778]: PAM 5 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=10.0.2.2  user=svc-backup
+Oct 30 15:22:04 soc-victim sshd[10778]: PAM service(sshd) ignoring max retries; 6 > 3
+Oct 30 15:22:04 soc-victim sshd[10779]: error: maximum authentication attempts exceeded for svc-backup from 10.0.2.2 port 49856 ssh2 [preauth]
+Oct 30 15:22:04 soc-victim sshd[10779]: Disconnecting authenticating user svc-backup 10.0.2.2 port 49856: Too many authentication failures [preauth]
+Oct 30 15:22:04 soc-victim sshd[10779]: PAM 5 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=10.0.2.2  user=svc-backup
+Oct 30 15:22:04 soc-victim sshd[10779]: PAM service(sshd) ignoring max retries; 6 > 3
+Oct 30 15:22:04 soc-victim audit[10821]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=564368bfb980 a1=564368c4d570 a2=564368bfb9c0 a3=0 items=3 ppid=9096 pid=10821 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key="audit-wazuh-c"
+Oct 30 15:22:05 soc-victim sshd[10819]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=10.0.2.2  user=svc-backup
+Oct 30 15:22:05 soc-victim sshd[10821]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=10.0.2.2  user=svc-backup
+Oct 30 15:22:07 soc-victim sshd[10819]: Failed password for svc-backup from 10.0.2.2 port 55464 ssh2
+Oct 30 15:22:07 soc-victim sshd[10821]: Failed password for svc-backup from 10.0.2.2 port 55468 ssh2
+Oct 30 15:22:10 soc-victim sshd[10819]: Failed password for svc-backup from 10.0.2.2 port 55464 ssh2
+Oct 30 15:22:10 soc-victim sshd[10821]: Failed password for svc-backup from 10.0.2.2 port 55468 ssh2
+Oct 30 15:22:14 soc-victim sshd[10819]: Failed password for svc-backup from 10.0.2.2 port 55464 ssh2
+Oct 30 15:22:14 soc-victim sshd[10821]: Failed password for svc-backup from 10.0.2.2 port 55468 ssh2
+Oct 30 15:22:18 soc-victim sshd[10819]: Failed password for svc-backup from 10.0.2.2 port 55464 ssh2
+Oct 30 15:22:18 soc-victim sshd[10821]: Failed password for svc-backup from 10.0.2.2 port 55468 ssh2
+Oct 30 15:22:19 soc-victim sshd[10821]: Accepted password for svc-backup from 10.0.2.2 port 55468 ssh2
+Oct 30 15:22:19 soc-victim audit[10821]: SYSCALL arch=c000003e syscall=1 success=yes exit=4 a0=3 a1=7ffd4304e220 a2=4 a3=7ffd4304df34 items=0 ppid=9096 pid=10821 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=104 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key=(null)
+Oct 30 15:22:19 soc-victim sshd[10821]: pam_unix(sshd:session): session opened for user svc-backup(uid=1002) by (uid=0)
+Oct 30 15:22:20 soc-victim sshd[10821]: pam_env(sshd:session): deprecated reading of user environment enabled
+Oct 30 15:22:20 soc-victim sshd[10821]: pam_unix(sshd:session): session closed for user svc-backup
+Oct 30 15:22:21 soc-victim sshd[10819]: Failed password for svc-backup from 10.0.2.2 port 55464 ssh2
+Oct 30 15:22:21 soc-victim sshd[10819]: Connection closed by authenticating user svc-backup 10.0.2.2 port 55464 [preauth]
+Oct 30 15:22:21 soc-victim sshd[10819]: PAM 4 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=10.0.2.2  user=svc-backup
+Oct 30 15:22:21 soc-victim sshd[10819]: PAM service(sshd) ignoring max retries; 5 > 3
+Oct 30 15:22:21 soc-victim audit[10847]: SYSCALL arch=c000003e syscall=59 success=yes exit=0 a0=564368bfb980 a1=564368c4d570 a2=564368bfb9c0 a3=0 items=3 ppid=9096 pid=10847 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key="audit-wazuh-c"
+Oct 30 15:22:21 soc-victim sshd[10847]: Accepted password for svc-backup from 10.0.2.2 port 52318 ssh2
+Oct 30 15:22:21 soc-victim audit[10847]: SYSCALL arch=c000003e syscall=1 success=yes exit=4 a0=3 a1=7fff90783880 a2=4 a3=7fff90783594 items=0 ppid=9096 pid=10847 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=106 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key=(null)
+Oct 30 15:22:21 soc-victim sshd[10847]: pam_unix(sshd:session): session opened for user svc-backup(uid=1002) by (uid=0)
+Oct 30 15:22:21 soc-victim sshd[10847]: pam_env(sshd:session): deprecated reading of user environment enabled
+Oct 30 15:22:21 soc-victim sshd[10854]: Received disconnect from 10.0.2.2 port 52318:11: disconnected by user
+Oct 30 15:22:21 soc-victim sshd[10854]: Disconnected from user svc-backup 10.0.2.2 port 52318
+Oct 30 15:22:21 soc-victim sshd[10847]: pam_unix(sshd:session): session closed for user svc-backup

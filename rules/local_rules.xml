@@ -1,0 +1,29 @@
+<!--
+  Local rules for the SOC L1 lab.
+
+  Rule:   100120
+  Gap:    stock FIM reports a change under /home, but an added or modified
+          authorized_keys file is buried among shell history and cache writes.
+          After a successful password login, writing an SSH key is the cheapest
+          persistence available, so it deserves its own high-severity alert.
+  Sample: {"type":"event","data":{"path":"/home/svc-backup/.ssh/authorized_keys",
+          "event":"added"}}
+  Tuning: matches the file name, so it fires on any user's authorized_keys.
+          Legitimate key rotation will also trigger it; pair with a change
+          window or an allow-list of administrators.
+-->
+
+<group name="local,syscheck,">
+
+  <rule id="100120" level="12">
+    <if_sid>550,554</if_sid>
+    <match>authorized_keys</match>
+    <description>FIM: SSH authorized_keys added or modified (possible persistence)</description>
+    <mitre>
+      <id>T1098.004</id>
+      <id>T1078</id>
+    </mitre>
+    <group>syscheck,persistence,</group>
+  </rule>
+
+</group>
