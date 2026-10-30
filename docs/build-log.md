@@ -204,3 +204,23 @@ clean-baseline   1.37 GiB
 
 Host memory at the end of Day 1: 1.6 GB available with the Wazuh stack, the VM,
 and two unrelated `php2shell-*` containers running. Tight but stable.
+
+## 2026-10-30 — Dashboard reachability from the browser
+
+`localhost` resolves to `::1` before `127.0.0.1`, and the dashboard was published on
+IPv4 only, so the browser's first connection attempt was refused. Added a second
+mapping:
+
+```yaml
+- 127.0.0.1:443:5601
+- "[::1]:443:5601"
+```
+
+Both families now return `302`, and the login page returns `200` with title
+`Wazuh`.
+
+The remaining browser warning is the certificate, not the network: the upstream
+dashboard cert is `CN=wazuh.dashboard` with `SAN DNS:wazuh.dashboard` only. There is
+no `localhost` or `127.0.0.1` SAN, so Chrome reports
+`ERR_CERT_COMMON_NAME_INVALID`. Expected for a self-signed lab; bypass once via
+Advanced → Proceed.
