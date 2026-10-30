@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Start the victim VM (Ubuntu 24.04 cloud image, QEMU/KVM, user-mode networking).
+# Start the victim VM (Debian 12 genericcloud image, QEMU/KVM, user-mode networking).
 #
 # No sudo required. The guest reaches the host through the slirp gateway 10.0.2.2;
 # the host reaches the guest through forwarded ports 2222 (ssh) and 8080 (http).
@@ -9,7 +9,7 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$HERE"
 
-BASE_IMG="images/noble-server-cloudimg-amd64.img"
+BASE_IMG="images/debian-12-genericcloud-amd64.qcow2"
 DISK="disk.qcow2"
 KEY="keys/id_ed25519"
 SEED_DIR="seed"
@@ -18,9 +18,9 @@ SEED_PORT=8000
 mkdir -p images keys "$SEED_DIR"
 
 if [ ! -f "$BASE_IMG" ]; then
-  echo "Downloading Ubuntu 24.04 cloud image (~600 MB)..."
+  echo "Downloading Debian 12 genericcloud image (~350 MB)..."
   curl -L --fail --progress-bar -o "$BASE_IMG" \
-    https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+    https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2
 fi
 
 if [ ! -f "$KEY" ]; then
@@ -39,7 +39,7 @@ fi
 if pgrep -f "http.server $SEED_PORT" >/dev/null 2>&1; then
   echo "Seed server already running on 127.0.0.1:$SEED_PORT"
 else
-  python3 -m http.server "$SEED_PORT" --bind 127.0.0.1 --directory "$SEED_DIR" \
+  setsid python3 -m http.server "$SEED_PORT" --bind 127.0.0.1 --directory "$SEED_DIR" \
     >/dev/null 2>&1 &
   sleep 1
 fi

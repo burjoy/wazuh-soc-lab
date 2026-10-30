@@ -1,6 +1,6 @@
 # Victim VM
 
-Ubuntu 24.04 cloud image, QEMU/KVM, user-mode networking. No bridge, no tap, no
+Debian 12 genericcloud image, QEMU/KVM, user-mode networking. No bridge, no tap, no
 sudo required to run the VM.
 
 ## Why a VM and not a container
@@ -14,12 +14,12 @@ richest part of an endpoint alert. A 1.5 GB VM keeps that evidence.
 ```bash
 # 1. Base image (~600 MB, not committed)
 mkdir -p images
-curl -L -o images/noble-server-cloudimg-amd64.img \
-  https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+curl -L -o images/debian-12-genericcloud-amd64.qcow2 \
+  https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2
 
 # 2. Writable overlay
 qemu-img create -f qcow2 -F qcow2 \
-  -b images/noble-server-cloudimg-amd64.img disk.qcow2 20G
+  -b images/debian-12-genericcloud-amd64.qcow2 disk.qcow2 20G
 
 # 3. Seed data served to the guest over HTTP (QEMU user-net reaches the host at 10.0.2.2)
 python3 -m http.server 8000 --bind 127.0.0.1 --directory seed &

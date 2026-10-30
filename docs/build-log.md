@@ -98,3 +98,109 @@ Notes:
 - 3.2 GB RAM available, with two unrelated containers (`php2shell-*`) running.
   They are not part of this lab and were left alone.
 
+## 2026-10-30 — Port bindings tightened
+
+The upstream compose publishes the dashboard, indexer API, manager API and agent
+ports on `0.0.0.0`. Changed all of them to bind `127.0.0.1` only, consistent with
+`SCOPE.md`. Original file kept as `docker-compose.yml.bak`.
+
+## 2026-10-30 — Base image switched to Debian 12
+
+**Ruling:** Ubuntu 24.04 → Debian 12 genericcloud. The Ubuntu cloud-image mirror
+was delivering 0–370 KB/s, which put a ~600 MB download at hours; the Debian
+image is ~350 MB at ~1 MB/s. Wazuh publishes agent packages for Debian 12, and
+the scenario set is distro-agnostic. Cost if wrong: Suricata is 6.0.x rather than
+7.x, so a few rule/category names may differ; noted when the sensor is configured.
+
+
+
+## 2026-10-30 — Day 1: victim VM, agent, sensor
+
+Base image: Debian 12 genericcloud, ~350 MB at ~1 MB/s. Overlay disk 20 GB thin.
+QEMU user networking; guest `ens3` = `10.0.2.15`, host = `10.0.2.2`, forwarded
+ports `2222` (ssh) and `8080` (http). No sudo needed to run the VM.
+
+```
+$ cloud-init status --long
+status: error
+detail: package-update-upgrade-install ... apt-get install nginx auditd suricata jq ...
+Exit code: 100
+```
+
+Cause: `suricata` only exists in `bookworm-backports`, and apt will not cross
+suites on its own — it tried to resolve the backports suricata against the stable
+`libhtp2`. Installed explicitly:
+
+```
+$ sudo apt-get install -y -t bookworm-backports suricata suricata-update
+$ suricata --build-info | head -1
+This is Suricata version 7.0.10 RELEASE
+```
+
+Wazuh agent 4.14.7 installed from `packages.wazuh.com/4.x/apt`, enrolled as agent
+`001` (`soc-victim`), status **Active**. auditd rules loaded (identity, cron.d,
+webroot, execve).
+
+### Suricata sizing
+
+First attempt used the full ET Open set: 53,299 active rules, **1.1 GB RSS** in a
+1.5 GB VM with no swap. The OOM killer took the Wazuh agent; `systemctl` showed
+the unit inactive while the processes had been running.
+
+Narrowed by file with `disable.conf` (`re:.*`) plus `enable.conf`:
+
+```
+group:emerging-scan.rules
+group:emerging-web-server.rules
+group:emerging-web_specific_apps.rules
+group:emerging-web_client.rules
+group:emerging-dns.rules
+```
+
+8,234 active rules, ~80 MB RSS, 900 MB free in the guest.
+
+**Ruling:** narrow rule set over full ET Open — the lab needs scan, web and DNS
+coverage, not malware/trojan signatures. Cost if wrong: a scenario needing a
+category outside this set has to add a group and restart Suricata.
+
+**Ruling:** `HOME_NET` is the victim only (`10.0.2.15/32`), not `10.0.2.0/24`.
+With the subnet as home, traffic from the QEMU gateway is internal→internal and
+the directional ET rules never fire. Cost if wrong: a second victim on the same
+segment would be misclassified as external; there is only one.
+
+### Other fixes
+
+- ET Open renamed its web rule files. `emerging-web-application-attack.rules`
+  does not exist any more; the current names are `emerging-web_server.rules`,
+  `emerging-web_specific_apps.rules` and `emerging-web_client.rules`. The first
+  update reported `Enabled 0 rules` for that group, which is how it was caught.
+- The agent config ended up with the Suricata `<localfile>` block twice, because
+  the Debian `ossec.conf` contains two `<ossec_config>` sections and the Python
+  insert replaced both closing tags. Removed one; the `log file is duplicated`
+  warning stopped.
+- Added realtime FIM for `/etc` and `/var/www/html`. The stock config has a 12-hour
+  frequency, which is useless for scenario work.
+- `suricata-update` writes 69,264 lines to `suricata.rules`; disabled rules are
+  commented out with `# `. `grep -c '^alert'` is the reliable active-rule count.
+
+### Evidence that the pipeline works
+
+| Event | Rule | Detail |
+|---|---|---|
+| Invalid SSH user ×5 | 5710 | `srcip=10.0.2.2`, `srcuser=baduserN`, MITRE T1110.001 |
+| Successful SSH login | 5715 | `analyst` from `10.0.2.2` |
+| sudo to root | 5402 | command `/usr/bin/tee /etc/cron.d/soc-lab-test` |
+| File created in `/etc/cron.d` | FIM | 2 alerts for `soc-lab-test` (added, then deleted) |
+| sqlmap user-agent | Suricata | `ET SCAN Sqlmap SQL Injection Scan` |
+
+Indexer count after the tests: `wazuh-alerts-*` → **675** documents.
+
+Snapshot `clean-baseline` taken after removing the test cron file:
+
+```
+$ qemu-img info disk.qcow2   # (monitor: info snapshots)
+clean-baseline   1.37 GiB
+```
+
+Host memory at the end of Day 1: 1.6 GB available with the Wazuh stack, the VM,
+and two unrelated `php2shell-*` containers running. Tight but stable.

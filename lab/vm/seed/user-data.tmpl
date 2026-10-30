@@ -20,12 +20,13 @@ package_update: true
 packages:
   - nginx
   - auditd
-  - suricata
   - jq
   - curl
   - python3
 
 runcmd:
+  # Suricata lives in bookworm-backports; apt will not cross suites on its own.
+  - DEBIAN_FRONTEND=noninteractive apt-get install -y -t bookworm-backports suricata suricata-update
   - systemctl enable --now ssh
   - systemctl enable --now nginx
   - systemctl enable --now auditd

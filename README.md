@@ -13,7 +13,7 @@ Analyst work: alerts generated, investigated, ticketed, escalated, and documente
 |---|---|
 | **Role target** | SOC Analyst Level 1 — monitoring, first-line triage, ticketing, escalation |
 | **SIEM** | Wazuh 4.14.7, single-node, Docker |
-| **Endpoint** | Ubuntu 24.04 Server VM, Wazuh agent, `auditd`, nginx, `sshd` |
+| **Endpoint** | Debian 12 VM, Wazuh agent, `auditd`, nginx, `sshd` |
 | **Network sensor** | Suricata, inside the endpoint VM, trimmed ET Open ruleset |
 | **Ticketing** | Jira (free tier) |
 | **Attacker** | Host shell — `nmap`, `hydra`, `curl`, `ssh` |
@@ -33,7 +33,7 @@ Host (CachyOS, 7.5 GB RAM)
 └───────────────┬──────────────────────────────────────────┘
                 │ isolated host-only network
 ┌───────────────┴──────────────────────────────────────────┐
-│  Victim VM — Ubuntu 24.04 Server, 1.5 GB                  │
+│  Victim VM — Debian 12, 1.5 GB                  │
 │  sshd · nginx · auditd · wazuh-agent · suricata           │
 │  suricata -i eth0 → /var/log/suricata/eve.json            │
 └──────────────────────────────────────────────────────────┘

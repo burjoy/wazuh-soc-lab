@@ -18,8 +18,20 @@ if ! timeout 5 bash -c "cat < /dev/null > /dev/tcp/${WAZUH_MANAGER}/1514" 2>/dev
   exit 1
 fi
 
+echo "==> Suricata (bookworm-backports)"
+if ! command -v suricata >/dev/null 2>&1; then
+  apt-get update -qq
+  DEBIAN_FRONTEND=noninteractive apt-get install -y -qq -t bookworm-backports \
+    suricata suricata-update
+fi
+
+IFACE="$(ip -o -4 addr show | awk '$2 != "lo" {print $2; exit}')"
+echo "==> primary interface: ${IFACE}"
+
 echo "==> Wazuh agent"
 if ! dpkg -s wazuh-agent >/dev/null 2>&1; then
+  apt-get update -qq
+  DEBIAN_FRONTEND=noninteractive apt-get install -y -qq curl gnupg
   curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH \
     | gpg --dearmor -o /usr/share/keyrings/wazuh.gpg
   echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" \
@@ -41,11 +53,13 @@ augenrules --load
 systemctl restart auditd || true
 
 echo "==> Suricata: restrict to the lab network"
-if ! grep -q 'HOME_NET: "\[10.0.2.0/24\]"' /etc/suricata/suricata.yaml; then
+if ! grep -q 'HOME_NET: "\[10.0.2.15/32\]"' /etc/suricata/suricata.yaml; then
   cp /etc/suricata/suricata.yaml /etc/suricata/suricata.yaml.bak
-  sed -i 's|^\(\s*HOME_NET:\s*\).*|\1"[10.0.2.0/24]"|' /etc/suricata/suricata.yaml
+  sed -i 's|^\(\s*HOME_NET:\s*\).*|\1"[10.0.2.15/32]"|' /etc/suricata/suricata.yaml
   sed -i 's|^\(\s*EXTERNAL_NET:\s*\).*|\1"!$HOME_NET"|' /etc/suricata/suricata.yaml
 fi
+sed -i "s|^\(\s*-\?\s*interface:\s*\).*|\1${IFACE}|" /etc/suricata/suricata.yaml
+grep -nE '^\s*-?\s*(HOME_NET|EXTERNAL_NET|interface):' /etc/suricata/suricata.yaml | head
 
 echo "==> Suricata: enable a narrow rule set"
 suricata-update update-sources >/dev/null 2>&1 || true
@@ -54,7 +68,11 @@ cat > /etc/suricata/disable.conf <<'EOF'
 re:.*
 EOF
 cat > /etc/suricata/enable.conf <<'EOF'
-re:^(emerging-scan|emerging-web-application-attack|emerging-web-server|emerging-dns)
+group:emerging-scan.rules
+group:emerging-web-server.rules
+group:emerging-web_specific_apps.rules
+group:emerging-web_client.rules
+group:emerging-dns.rules
 EOF
 suricata-update >/dev/null 2>&1 || true
 
