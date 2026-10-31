@@ -21,3 +21,4 @@ lab/vm/keys/
 # Editor / OS noise
 .DS_Store
 *.swp
+lab/vm/seed/user-data
