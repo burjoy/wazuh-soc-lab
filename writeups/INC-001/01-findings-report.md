@@ -292,7 +292,19 @@ The first two are the hard part in Wazuh. Failures expose `srcuser`; successes e
 `dstuser`, and `<same_user />` does not bridge them. This is documented in
 `03-detection-mitigation-triage.md` and `rules/tuning-notes.md`.
 
-### 7.3 What did not fire
+### 7.3 FIM lookalike test
+
+The custom rule was re-run against legitimate activity. `ssh-keygen` and dotfile edits
+were silent, but files named `authorized_keys.txt` and `authorized_keys.bak` triggered
+100120 because the rule matches the filename substring. Legitimate key rotation also
+triggered it, as designed.
+
+Exact-path matching was attempted and rejected: `<match>` normalizes punctuation,
+`<regex>` variants did not match the FIM log, and `syscheck.path` is not a usable rule
+field. The operational controls are naming discipline, a key-fingerprint baseline, and
+change-control context. Details: `rules/inc-002-rules.md` §5.2.
+
+### 7.4 What did not fire
 
 | Gap | Why it matters |
 |---|---|

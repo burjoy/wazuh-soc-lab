@@ -301,6 +301,38 @@ This is the value of running legitimate activity through the rules: a rule that 
 false-positives in a demo can still be wrong in a real estate with `sudo-audit` or
 `admin-tools`.
 
+### 5.2 100120 lookalike test
+
+Tested on 2026-10-31 with legitimate activity on the endpoint:
+
+| Action | Result |
+|---|---|
+| `ssh-keygen`, `.bashrc` edit | silent |
+| `/home/analyst/notes/authorized_keys.txt` | **100120 fired** (false positive) |
+| `/home/analyst/.ssh/authorized_keys.bak` | **100120 fired** (false positive) |
+| Real `~/.ssh/authorized_keys` rotation | fired (expected) |
+| Restore of the original file | fired (expected) |
+
+The rule matches the substring `authorized_keys`, so a lookalike filename triggers it.
+Exact-path attempts all failed:
+
+- `<match>authorized_keys'</match>` — the match engine normalizes punctuation, so the
+  quote is never seen.
+- `<regex>authorized_keys'</regex>`, `<regex>authorized_keys[^.]</regex>`, and
+  `<regex>authorized_keys. modified</regex>` — no match against the FIM log.
+- `<field name="syscheck.path" type="pcre2">` — accepted by the parser but never
+  evaluated; the FIM path is not a rule field.
+
+Keeping the broad match is the honest choice: it catches the real file. The cost is
+lookalike names and legitimate key rotation. Mitigations:
+
+- do not name backups `authorized_keys.*` inside FIM-monitored paths;
+- keep a key-fingerprint baseline and allow-list expected keys;
+- match legitimate rotations to a change ticket.
+
+A custom decoder that extracts the path into a dynamic field is the next step if the
+lookalike noise becomes material.
+
 ---
 
 ## 6. Coverage and gaps

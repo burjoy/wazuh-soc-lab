@@ -21,6 +21,12 @@ fingerprints or a change window, not by suppressing the rule.
 name, or uses a tool that bypasses FIM (for example, a write the agent does not see).
 Pair with authentication logs and key fingerprints.
 
+**Tested 2026-10-31:** lookalike filenames (`authorized_keys.txt`,
+`authorized_keys.bak`) also trigger the rule because the match is a substring. Exact
+path matching was not achievable with `<match>` or `<regex>` against the FIM log, and
+`<field name="syscheck.path">` is not evaluated. Mitigate by naming and by a key
+baseline; see `inc-002-rules.md` §5.2.
+
 ## 40112 — not duplicated
 
 Stock rule 40112 already correlates "multiple authentication failures followed by a
