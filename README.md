@@ -77,6 +77,8 @@ and escalation note, plus the runbook used.
 - [INC-004 ticket](tickets/INC-004-cron-systemd.md) — [rules paper](rules/inc-004-rules.md)
 - [INC-005 document package](writeups/INC-005/README.md) — outbound port scan (Markdown + PDF)
 - [INC-005 ticket](tickets/INC-005-port-scan.md) — [rules paper](rules/inc-005-rules.md)
+- [INC-006 document package](writeups/INC-006/README.md) — authorized-change closure (Markdown + PDF)
+- [INC-006 ticket](tickets/INC-006-authorized-change.md) — benign true positive, no incident
 - [INC-001 ticket](tickets/INC-001-ssh-brute-force.md)
 - [Evidence](docs/evidence/) — alerts, auth log, audit records, decoded commands
 - [Detection tuning notes](rules/tuning-notes.md)

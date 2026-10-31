@@ -450,3 +450,20 @@ Added to `/var/lib/suricata/rules/local.rules` and `rule-files` in `suricata.yam
 
 Evidence: `docs/evidence/INC-005-*`; package `writeups/INC-005/`; rules paper
 `rules/inc-005-rules.md`.
+
+## 2026-11-01 — INC-006 authorized-change triage
+
+Scenario: a legitimate maintenance change that trips the persistence rules, then a
+written closure.
+
+- Change **CHG-2026-1101-01**, approved by a synthetic change manager, with file hashes
+  and a rollback.
+- Files: `/etc/cron.d/log-maintenance`, `logrotate-check.service`,
+  `logrotate-check.timer`.
+- Alerts: 100129 ×1, 100130 ×3 (service, timer, enable symlink).
+- Hashes matched 3/3; timer active; cron content benign; no auth/process/egress anomaly.
+- Decision: **authorized change, no incident**. This is a benign true positive, not a
+  false positive. No containment, no suppression.
+
+Evidence: `docs/evidence/INC-006-*`; package `writeups/INC-006/`; ticket
+`tickets/INC-006-authorized-change.md`.

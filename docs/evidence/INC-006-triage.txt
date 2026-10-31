@@ -1,0 +1,35 @@
+## systemd timer
+active
+NEXT                        LEFT       LAST PASSED UNIT                  ACTIVATES
+Sun 2026-11-01 00:00:00 UTC 23min left -    -      logrotate-check.timer logrotate-check.service
+
+## unit contents
+# /etc/systemd/system/logrotate-check.service
+[Unit]
+Description=Logrotate health check
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/true
+# /etc/systemd/system/logrotate-check.timer
+[Unit]
+Description=Daily logrotate health check
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+Unit=logrotate-check.service
+
+[Install]
+WantedBy=timers.target
+
+## cron file
+# Nightly cleanup of rotated logs older than 7 days
+15 2 * * * root /usr/bin/find /var/log -type f -name '*.gz' -mtime +7 -delete
+
+## hashes
+58acf8face227878d58765d32cebe4b82b562996b9e77b02d7011e7533835437  /etc/cron.d/log-maintenance
+6a0555d9e6831f2dcf2b208e7f7bf4da9473f145b4d31b46ebde76def3a50f19  /etc/systemd/system/logrotate-check.service
+83d683d881cc93e29c2f56f6925756b60d53c84f4234e2bbdeac060d87658cd8  /etc/systemd/system/logrotate-check.timer
+
+## authentication anomalies since change
