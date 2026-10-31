@@ -315,3 +315,48 @@ returned to `analyst,debian`.
 
 Evidence: `docs/evidence/INC-002-alerts.json`, `INC-002-account.log`,
 `INC-002-account-commands.txt`, `INC-002-membership.txt`.
+
+## 2026-10-31 — INC-003 scenario run
+
+Scenario: drop a PHP web shell in the nginx docroot, execute a command through it, and
+see which layers catch the drop versus the use.
+
+### Setup note
+
+The first attempt served the PHP source because PHP was not configured. Installed
+`php-fpm` 8.2 and added the standard nginx `location ~ \.php$` block. The package
+install generated ~3,900 audit/dpkg alerts in the broad window; the clean-run evidence
+window is 22:12:15–22:12:35 (67 alerts).
+
+### First run — detection gap
+
+- 22:07:18 FIM **554** `/var/www/html/updates.php` added.
+- 22:07:19 audit **80790** created the file; **80792** `cp`; **5402** `sudo cp`.
+- 22:07:51 Suricata **86601** `ET SCAN Sqlmap SQL Injection Scan` on the sqlmap UA.
+- **No stock alert for the successful `200` request** to `updates.php?cmd=id`.
+  Rule 31101 fired only for an unrelated 404.
+
+### Rules added
+
+- **100128** FIM `.php` added or modified (`if_sid 550,554`), level 12.
+- **100127** access-log `.php?cmd=` (parent 31100), level 12.
+
+Implementation notes:
+
+- Wazuh uses one `<match>` per rule; two `<match>` tags are not ANDed.
+- OS_Regex variants (`\.php.*cmd=`, `[^.]`) did not match the web/FIM logs.
+- The literal `.php?cmd=` works and is intentionally narrow.
+
+### Clean run
+
+- 22:12:20.956 **100128** `/var/www/html/updates2.php` added.
+- 22:12:21.160 **80790** audit created file.
+- 22:12:24 `GET /updates2.php?cmd=id` → `uid=33(www-data)`.
+- 22:12:25 **100127** on `cmd=id` and `cmd=uname -a`.
+- 22:12:28 **100127** on the sqlmap request.
+- 22:14:11 **100128** on a modified `.php` file (add and modify both tested).
+
+Files removed; webroot returned to `index.nginx-debian.html` only.
+
+Evidence: `docs/evidence/INC-003-alerts.json` (67 alerts),
+`INC-003-web.log`, `INC-003-commands.txt`.

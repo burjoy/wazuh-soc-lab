@@ -1,0 +1,4515 @@
+[
+ {
+  "timestamp": "2026-10-31T22:12:20.956+0000",
+  "rule": {
+   "level": 12,
+   "description": "FIM: PHP file added under a monitored path (possible web shell)",
+   "id": "100128",
+   "mitre": {
+    "id": [
+     "T1505.003"
+    ],
+    "tactic": [
+     "Persistence"
+    ],
+    "technique": [
+     "Web Shell"
+    ]
+   },
+   "firedtimes": 1,
+   "mail": true,
+   "groups": [
+    "local",
+    "syscheck",
+    "syscheck",
+    "web",
+    "persistence"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484740.22978121",
+  "full_log": "File '/var/www/html/updates2.php' added\nMode: realtime\n",
+  "syscheck": {
+   "path": "/var/www/html/updates2.php",
+   "mode": "realtime",
+   "size_after": "31",
+   "perm_after": "rw-r--r--",
+   "uid_after": "0",
+   "gid_after": "0",
+   "md5_after": "e88d9c921ac17e074964e2c22d780f03",
+   "sha1_after": "05ecab1deb5796ba5968d77c221ae3421a113629",
+   "sha256_after": "50e626c8e31a460af48991b83dfd98c0b24f3a9d9e6eb906e961e77a2aecf15d",
+   "uname_after": "root",
+   "gname_after": "root",
+   "mtime_after": "2026-10-31T22:12:20",
+   "inode_after": 135563,
+   "event": "added"
+  },
+  "decoder": {
+   "name": "syscheck_new_entry"
+  },
+  "location": "syscheck"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.030+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/sbin/sshd.",
+   "id": "80792",
+   "firedtimes": 1,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22978703",
+  "full_log": "type=SYSCALL msg=audit(1793484740.572:5245): arch=c000003e syscall=59 success=yes exit=0 a0=55f9ebf72980 a1=55f9ebfc4460 a2=55f9ebf729c0 a3=0 items=3 ppid=385 pid=7640 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm=\"sshd\" exe=\"/usr/sbin/sshd\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"unset\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.572:5245): argc=3 a0=\"/usr/sbin/sshd\" a1=\"-D\" a2=\"-R\" type=CWD msg=audit(1793484740.572:5245): cwd=\"/\" type=PATH msg=audit(1793484740.572:5245): item=0 name=\"/usr/sbin/sshd\" inode=9556 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.572:5245): item=1 name=\"/usr/sbin/sshd\" inode=9556 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.572:5245): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.572:5245): proctitle=2F7573722F7362696E2F73736864002D44002D52",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5245",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "385",
+    "pid": "7640",
+    "auid": "4294967295",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "4294967295",
+    "command": "sshd",
+    "exe": "/usr/sbin/sshd",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "/usr/sbin/sshd",
+     "a1": "-D",
+     "a2": "-R"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/sbin/sshd",
+     "inode": "9556",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.037+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/lib/systemd/systemd-user-runtime-dir.",
+   "id": "80792",
+   "firedtimes": 2,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22980854",
+  "full_log": "type=SYSCALL msg=audit(1793484740.704:5249): arch=c000003e syscall=59 success=yes exit=0 a0=55d5cd89a080 a1=55d5cd863c50 a2=55d5cd8a4fb0 a3=55d5cd8ea840 items=3 ppid=1 pid=7642 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm=\"systemd-user-ru\" exe=\"/usr/lib/systemd/systemd-user-runtime-dir\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"unset\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.704:5249): argc=3 a0=\"/lib/systemd/systemd-user-runtime-dir\" a1=\"start\" a2=\"1000\" type=CWD msg=audit(1793484740.704:5249): cwd=\"/\" type=PATH msg=audit(1793484740.704:5249): item=0 name=\"/lib/systemd/systemd-user-runtime-dir\" inode=6929 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.704:5249): item=1 name=\"/lib/systemd/systemd-user-runtime-dir\" inode=6929 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.704:5249): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.704:5249): proctitle=2F6C69622F73797374656D642F73797374656D642D757365722D72756E74696D652D6469720073746172740031303030",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5249",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "1",
+    "pid": "7642",
+    "auid": "4294967295",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "4294967295",
+    "command": "systemd-user-ru",
+    "exe": "/usr/lib/systemd/systemd-user-runtime-dir",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "/lib/systemd/systemd-user-runtime-dir",
+     "a1": "start",
+     "a2": "1000"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/lib/systemd/systemd-user-runtime-dir",
+     "inode": "6929",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.049+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/lib/systemd/systemd.",
+   "id": "80792",
+   "firedtimes": 3,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22983296",
+  "full_log": "type=SYSCALL msg=audit(1793484740.716:5255): arch=c000003e syscall=59 success=yes exit=0 a0=55d5cd7359d0 a1=55d5cd795510 a2=55d5cd85dee0 a3=55d5cd731900 items=3 ppid=1 pid=7643 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"systemd\" exe=\"/usr/lib/systemd/systemd\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.716:5255): argc=2 a0=\"/lib/systemd/systemd\" a1=\"--user\" type=CWD msg=audit(1793484740.716:5255): cwd=\"/\" type=PATH msg=audit(1793484740.716:5255): item=0 name=\"/lib/systemd/systemd\" inode=6890 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.716:5255): item=1 name=\"/lib/systemd/systemd\" inode=6890 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.716:5255): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.716:5255): proctitle=\"(systemd)\"",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5255",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "1",
+    "pid": "7643",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "systemd",
+    "exe": "/usr/lib/systemd/systemd",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "/lib/systemd/systemd",
+     "a1": "--user"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/lib/systemd/systemd",
+     "inode": "6890",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.051+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator.",
+   "id": "80792",
+   "firedtimes": 4,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22985517",
+  "full_log": "type=SYSCALL msg=audit(1793484740.724:5256): arch=c000003e syscall=59 success=yes exit=0 a0=563c6afd5a70 a1=7ffc8223a380 a2=7ffc8223ac30 a3=0 items=3 ppid=7645 pid=7646 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"30-systemd-envi\" exe=\"/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.724:5256): argc=1 a0=\"/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator\" type=CWD msg=audit(1793484740.724:5256): cwd=\"/\" type=PATH msg=audit(1793484740.724:5256): item=0 name=\"/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator\" inode=7453 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.724:5256): item=1 name=\"/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator\" inode=7453 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.724:5256): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.724:5256): proctitle=\"/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator\"",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5256",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7645",
+    "pid": "7646",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "30-systemd-envi",
+    "exe": "/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "1",
+     "a0": "/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator",
+     "inode": "7453",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.053+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/bash.",
+   "id": "80792",
+   "firedtimes": 5,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22988243",
+  "full_log": "type=SYSCALL msg=audit(1793484740.732:5257): arch=c000003e syscall=59 success=yes exit=0 a0=563c6afd59d0 a1=7ffc8223a380 a2=7ffc8223ac30 a3=0 items=4 ppid=7645 pid=7647 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"90gpg-agent\" exe=\"/usr/bin/bash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.732:5257): argc=2 a0=\"/bin/bash\" a1=\"/usr/lib/systemd/user-environment-generators/90gpg-agent\" type=CWD msg=audit(1793484740.732:5257): cwd=\"/\" type=PATH msg=audit(1793484740.732:5257): item=0 name=\"/usr/lib/systemd/user-environment-generators/90gpg-agent\" inode=26267 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.732:5257): item=1 name=\"/usr/lib/systemd/user-environment-generators/90gpg-agent\" inode=26267 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.732:5257): item=2 name=\"/bin/bash\" inode=438 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.732:5257): item=3 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.732:5257): proctitle=2F62696E2F62617368002F7573722F6C69622F73797374656D642F757365722D656E7669726F6E6D656E742D67656E657261746F72732F39306770672D6167656E74",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5257",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7645",
+    "pid": "7647",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "90gpg-agent",
+    "exe": "/usr/bin/bash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "/bin/bash",
+     "a1": "/usr/lib/systemd/user-environment-generators/90gpg-agent"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/lib/systemd/user-environment-generators/90gpg-agent",
+     "inode": "26267",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.055+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/mawk.",
+   "id": "80792",
+   "firedtimes": 6,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22990960",
+  "full_log": "type=SYSCALL msg=audit(1793484740.732:5258): arch=c000003e syscall=59 success=yes exit=0 a0=55a88eca8310 a1=55a88eca7b70 a2=55a88eca4150 a3=8 items=3 ppid=7647 pid=7649 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"awk\" exe=\"/usr/bin/mawk\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\"",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5258",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7647",
+    "pid": "7649",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "awk",
+    "exe": "/usr/bin/mawk",
+    "key": "audit-wazuh-c"
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.058+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/gpgconf.",
+   "id": "80792",
+   "firedtimes": 7,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22992055",
+  "full_log": "type=SYSCALL msg=audit(1793484740.732:5259): arch=c000003e syscall=59 success=yes exit=0 a0=55a88eca8080 a1=55a88eca8960 a2=55a88eca4150 a3=8 items=3 ppid=7647 pid=7648 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"gpgconf\" exe=\"/usr/bin/gpgconf\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\"",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5259",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7647",
+    "pid": "7648",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "gpgconf",
+    "exe": "/usr/bin/gpgconf",
+    "key": "audit-wazuh-c"
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.064+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/gpg-agent.",
+   "id": "80792",
+   "firedtimes": 8,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22993167",
+  "full_log": "type=SYSCALL msg=audit(1793484740.736:5260): arch=c000003e syscall=59 success=yes exit=0 a0=5595e4e617d0 a1=5595e4e617f0 a2=7ffe36570b98 a3=7f8d59aabac0 items=3 ppid=7648 pid=7650 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"gpg-agent\" exe=\"/usr/bin/gpg-agent\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.736:5260): argc=2 a0=\"gpg-agent\" a1=\"--gpgconf-test\" type=CWD msg=audit(1793484740.736:5260): cwd=\"/\" type=PATH msg=audit(1793484740.736:5260): item=0 name=\"/usr/bin/gpg-agent\" inode=26261 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.736:5260): item=1 name=\"/usr/bin/gpg-agent\" inode=26261 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.736:5260): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.736:5260): proctitle=6770672D6167656E74002D2D677067636F6E662D74657374",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5260",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7648",
+    "pid": "7650",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "gpg-agent",
+    "exe": "/usr/bin/gpg-agent",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "gpg-agent",
+     "a1": "--gpgconf-test"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/gpg-agent",
+     "inode": "26261",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.066+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/gpgconf.",
+   "id": "80792",
+   "firedtimes": 9,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22995408",
+  "full_log": "type=SYSCALL msg=audit(1793484740.740:5261): arch=c000003e syscall=59 success=yes exit=0 a0=55a88eca9410 a1=55a88eca9cf0 a2=55a88eca4150 a3=8 items=3 ppid=7652 pid=7653 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"gpgconf\" exe=\"/usr/bin/gpgconf\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.740:5261): argc=3 a0=\"gpgconf\" a1=\"--list-options\" a2=\"gpg-agent\" type=CWD msg=audit(1793484740.740:5261): cwd=\"/\" type=PATH msg=audit(1793484740.740:5261): item=0 name=\"/usr/bin/gpgconf\" inode=6220 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.740:5261): item=1 name=\"/usr/bin/gpgconf\" inode=6220 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.740:5261): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.740:5261): proctitle=677067636F6E66002D2D6C6973742D6F7074696F6E73006770672D6167656E74",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5261",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7652",
+    "pid": "7653",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "gpgconf",
+    "exe": "/usr/bin/gpgconf",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "gpgconf",
+     "a1": "--list-options",
+     "a2": "gpg-agent"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/gpgconf",
+     "inode": "6220",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.068+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/mawk.",
+   "id": "80792",
+   "firedtimes": 10,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22997673",
+  "full_log": "type=SYSCALL msg=audit(1793484740.740:5262): arch=c000003e syscall=59 success=yes exit=0 a0=55a88eca9430 a1=55a88eca9050 a2=55a88eca4150 a3=8 items=3 ppid=7652 pid=7654 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"awk\" exe=\"/usr/bin/mawk\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.740:5262): argc=3 a0=\"awk\" a1=\"-F:\" a2=2F5E656E61626C652D7373682D737570706F72743A2F7B207072696E7420243130207D type=CWD msg=audit(1793484740.740:5262): cwd=\"/\" type=PATH msg=audit(1793484740.740:5262): item=0 name=\"/usr/bin/awk\" inode=3043 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.740:5262): item=1 name=\"/usr/bin/awk\" inode=3200 dev=fe:01 mode=0120777 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.740:5262): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.740:5262): proctitle=61776B002D463A002F5E656E61626C652D7373682D737570706F72743A2F7B207072696E7420243130207D",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5262",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7652",
+    "pid": "7654",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "awk",
+    "exe": "/usr/bin/mawk",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "awk",
+     "a1": "-F:"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/awk",
+     "inode": "3043",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.070+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/gpg-agent.",
+   "id": "80792",
+   "firedtimes": 11,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.22999933",
+  "full_log": "type=SYSCALL msg=audit(1793484740.740:5263): arch=c000003e syscall=59 success=yes exit=0 a0=55b357cb87d0 a1=55b357cb87f0 a2=7ffee64ac088 a3=7fcbfdeb0ac0 items=3 ppid=7653 pid=7655 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"gpg-agent\" exe=\"/usr/bin/gpg-agent\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.740:5263): argc=2 a0=\"gpg-agent\" a1=\"--dump-option-table\" type=CWD msg=audit(1793484740.740:5263): cwd=\"/\" type=PATH msg=audit(1793484740.740:5263): item=0 name=\"/usr/bin/gpg-agent\" inode=26261 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.740:5263): item=1 name=\"/usr/bin/gpg-agent\" inode=26261 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.740:5263): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.740:5263): proctitle=6770672D6167656E74002D2D64756D702D6F7074696F6E2D7461626C65",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5263",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7653",
+    "pid": "7655",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "gpg-agent",
+    "exe": "/usr/bin/gpg-agent",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "gpg-agent",
+     "a1": "--dump-option-table"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/gpg-agent",
+     "inode": "26261",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.072+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/gpg-agent.",
+   "id": "80792",
+   "firedtimes": 12,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23002194",
+  "full_log": "type=SYSCALL msg=audit(1793484740.744:5264): arch=c000003e syscall=59 success=yes exit=0 a0=55b357cb87d0 a1=55b357cb87f0 a2=7ffee64ac088 a3=7fcbfdeb0ac0 items=3 ppid=7653 pid=7656 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"gpg-agent\" exe=\"/usr/bin/gpg-agent\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.744:5264): argc=2 a0=\"gpg-agent\" a1=\"--gpgconf-list\" type=CWD msg=audit(1793484740.744:5264): cwd=\"/\" type=PATH msg=audit(1793484740.744:5264): item=0 name=\"/usr/bin/gpg-agent\" inode=26261 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.744:5264): item=1 name=\"/usr/bin/gpg-agent\" inode=26261 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.744:5264): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.744:5264): proctitle=6770672D6167656E74002D2D677067636F6E662D6C697374",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5264",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7653",
+    "pid": "7656",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "gpg-agent",
+    "exe": "/usr/bin/gpg-agent",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "gpg-agent",
+     "a1": "--gpgconf-list"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/gpg-agent",
+     "inode": "26261",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.074+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/lib/systemd/user-generators/systemd-xdg-autostart-generator.",
+   "id": "80792",
+   "firedtimes": 13,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23004435",
+  "full_log": "type=SYSCALL msg=audit(1793484740.744:5265): arch=c000003e syscall=59 success=yes exit=0 a0=563c6afd5af0 a1=7ffc8223a3f0 a2=563c6afd5b90 a3=3ad668c63128d894 items=3 ppid=7657 pid=7658 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=15 comm=\"systemd-xdg-aut\" exe=\"/usr/lib/systemd/user-generators/systemd-xdg-autostart-generator\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.744:5265): argc=4 a0=\"/usr/lib/systemd/user-generators/systemd-xdg-autostart-generator\" a1=\"/run/user/1000/systemd/generator\" a2=\"/run/user/1000/systemd/generator.early\" a3=\"/run/user/1000/systemd/generator.late\" type=CWD msg=audit(1793484740.744:5265): cwd=\"/\" type=PATH msg=audit(1793484740.744:5265): item=0 name=\"/usr/lib/systemd/user-generators/systemd-xdg-autostart-generator\" inode=7455 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.744:5265): item=1 name=\"/usr/lib/systemd/user-generators/systemd-xdg-autostart-generator\" inode=7455 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.744:5265): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.744:5265): proctitle=2F7573722F6C69622F73797374656D642F757365722D67656E657261746F72732F73797374656D642D7864672D6175746F73746172742D67656E657261746F72002F72756E2F757365722F313030302F73797374656D642F67656E657261746F72002F72756E2F757365722F313030302F73797374656D642F67656E65726174",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5265",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7657",
+    "pid": "7658",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "15",
+    "command": "systemd-xdg-aut",
+    "exe": "/usr/lib/systemd/user-generators/systemd-xdg-autostart-generator",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "4",
+     "a0": "/usr/lib/systemd/user-generators/systemd-xdg-autostart-generator",
+     "a1": "/run/user/1000/systemd/generator",
+     "a2": "/run/user/1000/systemd/generator.early",
+     "a3": "/run/user/1000/systemd/generator.late"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/lib/systemd/user-generators/systemd-xdg-autostart-generator",
+     "inode": "7455",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.078+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 14,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23007517",
+  "full_log": "type=SYSCALL msg=audit(1793484740.796:5267): arch=c000003e syscall=59 success=yes exit=0 a0=7fefa0f96031 a1=7ffd65a97ea0 a2=559048af69f0 a3=8 items=3 ppid=7640 pid=7659 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=14 comm=\"sh\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.796:5267): argc=3 a0=\"sh\" a1=\"-c\" a2=2F7573722F62696E2F656E76202D6920504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E2072756E2D7061727473202D2D6C7362737973696E6974202F6574632F7570646174652D6D6F74642E64203E202F72756E2F6D6F74642E64796E616D69632E6E6577 type=CWD msg=audit(1793484740.796:5267): cwd=\"/\" type=PATH msg=audit(1793484740.796:5267): item=0 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.796:5267): item=1 name=\"/bin/sh\" inode=801 dev=fe:01 mode=0120777 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.796:5267): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.796:5267): proctitle=7368002D63002F7573722F62696E2F656E76202D6920504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E2072756E2D7061727473202D2D6C7362737973696E6974202F6574632F7570646174652D6D6F74642E",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5267",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7640",
+    "pid": "7659",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "14",
+    "command": "sh",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "sh",
+     "a1": "-c"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/bin/sh",
+     "inode": "790",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.080+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/env.",
+   "id": "80792",
+   "firedtimes": 15,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23010075",
+  "full_log": "type=SYSCALL msg=audit(1793484740.796:5268): arch=c000003e syscall=59 success=yes exit=0 a0=5636338f75a8 a1=5636338f76a8 a2=5636338f7848 a3=8 items=3 ppid=7659 pid=7660 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=14 comm=\"env\" exe=\"/usr/bin/env\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.796:5268): argc=6 a0=\"/usr/bin/env\" a1=\"-i\" a2=\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\" a3=\"run-parts\" a4=\"--lsbsysinit\" a5=\"/etc/update-motd.d\" type=CWD msg=audit(1793484740.796:5268): cwd=\"/\" type=PATH msg=audit(1793484740.796:5268): item=0 name=\"/usr/bin/env\" inode=717 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.796:5268): item=1 name=\"/usr/bin/env\" inode=717 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.796:5268): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.796:5268): proctitle=2F7573722F62696E2F656E76002D6900504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E0072756E2D7061727473002D2D6C7362737973696E6974002F6574632F7570646174652D6D6F74642E64",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5268",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7659",
+    "pid": "7660",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "14",
+    "command": "env",
+    "exe": "/usr/bin/env",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "6",
+     "a0": "/usr/bin/env",
+     "a1": "-i",
+     "a2": "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+     "a3": "run-parts",
+     "a4": "--lsbsysinit",
+     "a5": "/etc/update-motd.d"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/env",
+     "inode": "717",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.082+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/env.",
+   "id": "80792",
+   "firedtimes": 16,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23012663",
+  "full_log": "type=SYSCALL msg=audit(1793484740.796:5269): arch=c000003e syscall=59 success=no exit=-2 a0=7ffc0088e460 a1=7ffc0088e7a0 a2=5560dc682c70 a3=7ffc00890e80 items=1 ppid=7659 pid=7660 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=14 comm=\"env\" exe=\"/usr/bin/env\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=CWD msg=audit(1793484740.796:5269): cwd=\"/\" type=PATH msg=audit(1793484740.796:5269): item=0 name=\"/usr/local/sbin/run-parts\" nametype=UNKNOWN cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0 type=PROCTITLE msg=audit(1793484740.796:5269): proctitle=2F7573722F62696E2F656E76002D6900504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E0072756E2D7061727473002D2D6C7362737973696E6974002F6574632F7570646174652D6D6F74642E64",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5269",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "no",
+    "exit": "-2",
+    "ppid": "7659",
+    "pid": "7660",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "14",
+    "command": "env",
+    "exe": "/usr/bin/env",
+    "key": "audit-wazuh-c",
+    "cwd": "/"
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.085+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/env.",
+   "id": "80792",
+   "firedtimes": 17,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23014211",
+  "full_log": "type=SYSCALL msg=audit(1793484740.796:5270): arch=c000003e syscall=59 success=no exit=-2 a0=7ffc0088e460 a1=7ffc0088e7a0 a2=5560dc682c70 a3=7ffc00890e80 items=1 ppid=7659 pid=7660 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=14 comm=\"env\" exe=\"/usr/bin/env\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=CWD msg=audit(1793484740.796:5270): cwd=\"/\" type=PATH msg=audit(1793484740.796:5270): item=0 name=\"/usr/local/bin/run-parts\" nametype=UNKNOWN cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0 type=PROCTITLE msg=audit(1793484740.796:5270): proctitle=2F7573722F62696E2F656E76002D6900504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E0072756E2D7061727473002D2D6C7362737973696E6974002F6574632F7570646174652D6D6F74642E64",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5270",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "no",
+    "exit": "-2",
+    "ppid": "7659",
+    "pid": "7660",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "14",
+    "command": "env",
+    "exe": "/usr/bin/env",
+    "key": "audit-wazuh-c",
+    "cwd": "/"
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.087+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/env.",
+   "id": "80792",
+   "firedtimes": 18,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23015758",
+  "full_log": "type=SYSCALL msg=audit(1793484740.796:5271): arch=c000003e syscall=59 success=no exit=-2 a0=7ffc0088e460 a1=7ffc0088e7a0 a2=5560dc682c70 a3=7ffc00890e80 items=1 ppid=7659 pid=7660 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=14 comm=\"env\" exe=\"/usr/bin/env\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=CWD msg=audit(1793484740.796:5271): cwd=\"/\" type=PATH msg=audit(1793484740.796:5271): item=0 name=\"/usr/sbin/run-parts\" nametype=UNKNOWN cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0 type=PROCTITLE msg=audit(1793484740.796:5271): proctitle=2F7573722F62696E2F656E76002D6900504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E0072756E2D7061727473002D2D6C7362737973696E6974002F6574632F7570646174652D6D6F74642E64",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5271",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "no",
+    "exit": "-2",
+    "ppid": "7659",
+    "pid": "7660",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "14",
+    "command": "env",
+    "exe": "/usr/bin/env",
+    "key": "audit-wazuh-c",
+    "cwd": "/"
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.089+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/run-parts.",
+   "id": "80792",
+   "firedtimes": 19,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23017300",
+  "full_log": "type=SYSCALL msg=audit(1793484740.796:5272): arch=c000003e syscall=59 success=yes exit=0 a0=7ffc0088e460 a1=7ffc0088e7a0 a2=5560dc682c70 a3=7ffc00890e80 items=3 ppid=7659 pid=7660 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=14 comm=\"run-parts\" exe=\"/usr/bin/run-parts\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.796:5272): argc=3 a0=\"run-parts\" a1=\"--lsbsysinit\" a2=\"/etc/update-motd.d\" type=CWD msg=audit(1793484740.796:5272): cwd=\"/\" type=PATH msg=audit(1793484740.796:5272): item=0 name=\"/usr/bin/run-parts\" inode=1045 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.796:5272): item=1 name=\"/usr/bin/run-parts\" inode=1045 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.796:5272): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.796:5272): proctitle=2F7573722F62696E2F656E76002D6900504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E0072756E2D7061727473002D2D6C7362737973696E6974002F6574632F7570646174652D6D6F74642E64",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5272",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7659",
+    "pid": "7660",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "14",
+    "command": "run-parts",
+    "exe": "/usr/bin/run-parts",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "run-parts",
+     "a1": "--lsbsysinit",
+     "a2": "/etc/update-motd.d"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/run-parts",
+     "inode": "1045",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.091+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 20,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23019720",
+  "full_log": "type=SYSCALL msg=audit(1793484740.800:5273): arch=c000003e syscall=59 success=yes exit=0 a0=562ed1abcdb0 a1=562ed1ab82a0 a2=7ffeedd103a8 a3=7fd1f4e5b6a0 items=4 ppid=7660 pid=7661 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=14 comm=\"10-uname\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.800:5273): argc=2 a0=\"/bin/sh\" a1=\"/etc/update-motd.d/10-uname\" type=CWD msg=audit(1793484740.800:5273): cwd=\"/\" type=PATH msg=audit(1793484740.800:5273): item=0 name=\"/etc/update-motd.d/10-uname\" inode=589 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5273): item=1 name=\"/etc/update-motd.d/10-uname\" inode=589 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5273): item=2 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5273): item=3 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.800:5273): proctitle=2F62696E2F7368002F6574632F7570646174652D6D6F74642E642F31302D756E616D65",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5273",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7660",
+    "pid": "7661",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "14",
+    "command": "10-uname",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "/bin/sh",
+     "a1": "/etc/update-motd.d/10-uname"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/etc/update-motd.d/10-uname",
+     "inode": "589",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.093+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/uname.",
+   "id": "80792",
+   "firedtimes": 21,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23022151",
+  "full_log": "type=SYSCALL msg=audit(1793484740.800:5274): arch=c000003e syscall=59 success=yes exit=0 a0=55a55741b8c0 a1=55a55741b890 a2=55a55741b8a8 a3=8 items=3 ppid=7661 pid=7662 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=14 comm=\"uname\" exe=\"/usr/bin/uname\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.800:5274): argc=2 a0=\"uname\" a1=\"-snrvm\" type=CWD msg=audit(1793484740.800:5274): cwd=\"/\" type=PATH msg=audit(1793484740.800:5274): item=0 name=\"/usr/bin/uname\" inode=690 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5274): item=1 name=\"/usr/bin/uname\" inode=690 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5274): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.800:5274): proctitle=756E616D65002D736E72766D",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5274",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7661",
+    "pid": "7662",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "14",
+    "command": "uname",
+    "exe": "/usr/bin/uname",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "uname",
+     "a1": "-snrvm"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/uname",
+     "inode": "690",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.095+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 22,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23024223",
+  "full_log": "type=SYSCALL msg=audit(1793484740.800:5275): arch=c000003e syscall=59 success=yes exit=0 a0=562ed1abcdb0 a1=562ed1ab82a0 a2=7ffeedd103a8 a3=7fd1f4e5b6a0 items=4 ppid=7660 pid=7663 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=14 comm=\"92-unattended-u\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.800:5275): argc=2 a0=\"/bin/sh\" a1=\"/etc/update-motd.d/92-unattended-upgrades\" type=CWD msg=audit(1793484740.800:5275): cwd=\"/\" type=PATH msg=audit(1793484740.800:5275): item=0 name=\"/etc/update-motd.d/92-unattended-upgrades\" inode=21275 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5275): item=1 name=\"/etc/update-motd.d/92-unattended-upgrades\" inode=21275 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5275): item=2 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5275): item=3 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.800:5275): proctitle=2F62696E2F7368002F6574632F7570646174652D6D6F74642E642F39322D756E617474656E6465642D7570677261646573",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5275",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7660",
+    "pid": "7663",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "14",
+    "command": "92-unattended-u",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "/bin/sh",
+     "a1": "/etc/update-motd.d/92-unattended-upgrades"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/etc/update-motd.d/92-unattended-upgrades",
+     "inode": "21275",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.097+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 23,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23026772",
+  "full_log": "type=SYSCALL msg=audit(1793484740.800:5276): arch=c000003e syscall=59 success=yes exit=0 a0=5607bfe3d378 a1=5607bfe3d3d8 a2=5607bfe3d3e8 a3=fffffffffffff9d2 items=4 ppid=7660 pid=7663 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=14 comm=\"update-motd-una\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.800:5276): argc=2 a0=\"/bin/sh\" a1=\"/usr/share/unattended-upgrades/update-motd-unattended-upgrades\" type=CWD msg=audit(1793484740.800:5276): cwd=\"/\" type=PATH msg=audit(1793484740.800:5276): item=0 name=\"/usr/share/unattended-upgrades/update-motd-unattended-upgrades\" inode=21311 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5276): item=1 name=\"/usr/share/unattended-upgrades/update-motd-unattended-upgrades\" inode=21311 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5276): item=2 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.800:5276): item=3 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.800:5276): proctitle=2F62696E2F7368002F6574632F7570646174652D6D6F74642E642F39322D756E617474656E6465642D7570677261646573",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5276",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7660",
+    "pid": "7663",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "14",
+    "command": "update-motd-una",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "/bin/sh",
+     "a1": "/usr/share/unattended-upgrades/update-motd-unattended-upgrades"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/share/unattended-upgrades/update-motd-unattended-upgrades",
+     "inode": "21311",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.103+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/bash.",
+   "id": "80792",
+   "firedtimes": 24,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23029430",
+  "full_log": "type=SYSCALL msg=audit(1793484740.804:5279): arch=c000003e syscall=59 success=yes exit=0 a0=559048b4eee0 a1=7ffd65a97160 a2=559048b53f60 a3=0 items=3 ppid=7664 pid=7665 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=14 comm=\"bash\" exe=\"/usr/bin/bash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.804:5279): argc=3 a0=\"bash\" a1=\"-c\" a2=\"/usr/lib/openssh/sftp-server\" type=CWD msg=audit(1793484740.804:5279): cwd=\"/home/analyst\" type=PATH msg=audit(1793484740.804:5279): item=0 name=\"/bin/bash\" inode=438 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.804:5279): item=1 name=\"/bin/bash\" inode=438 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.804:5279): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.804:5279): proctitle=62617368002D63002F7573722F6C69622F6F70656E7373682F736674702D736572766572",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5279",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7664",
+    "pid": "7665",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "14",
+    "command": "bash",
+    "exe": "/usr/bin/bash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "bash",
+     "a1": "-c",
+     "a2": "/usr/lib/openssh/sftp-server"
+    },
+    "cwd": "/home/analyst",
+    "file": {
+     "name": "/bin/bash",
+     "inode": "438",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.105+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/lib/openssh/sftp-server.",
+   "id": "80792",
+   "firedtimes": 25,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23031696",
+  "full_log": "type=SYSCALL msg=audit(1793484740.808:5280): arch=c000003e syscall=59 success=yes exit=0 a0=55c004345010 a1=55c0043437d0 a2=55c0043342c0 a3=8 items=3 ppid=7664 pid=7665 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=14 comm=\"sftp-server\" exe=\"/usr/lib/openssh/sftp-server\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.808:5280): argc=1 a0=\"/usr/lib/openssh/sftp-server\" type=CWD msg=audit(1793484740.808:5280): cwd=\"/home/analyst\" type=PATH msg=audit(1793484740.808:5280): item=0 name=\"/usr/lib/openssh/sftp-server\" inode=9070 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.808:5280): item=1 name=\"/usr/lib/openssh/sftp-server\" inode=9070 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.808:5280): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.808:5280): proctitle=62617368002D63002F7573722F6C69622F6F70656E7373682F736674702D736572766572",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5280",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7664",
+    "pid": "7665",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "14",
+    "command": "sftp-server",
+    "exe": "/usr/lib/openssh/sftp-server",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "1",
+     "a0": "/usr/lib/openssh/sftp-server"
+    },
+    "cwd": "/home/analyst",
+    "file": {
+     "name": "/usr/lib/openssh/sftp-server",
+     "inode": "9070",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.112+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/sbin/sshd.",
+   "id": "80792",
+   "firedtimes": 26,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23034021",
+  "full_log": "type=SYSCALL msg=audit(1793484740.812:5283): arch=c000003e syscall=59 success=yes exit=0 a0=55f9ebf72980 a1=55f9ebfc4460 a2=55f9ebf729c0 a3=0 items=3 ppid=385 pid=7666 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm=\"sshd\" exe=\"/usr/sbin/sshd\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"unset\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.812:5283): argc=3 a0=\"/usr/sbin/sshd\" a1=\"-D\" a2=\"-R\" type=CWD msg=audit(1793484740.812:5283): cwd=\"/\" type=PATH msg=audit(1793484740.812:5283): item=0 name=\"/usr/sbin/sshd\" inode=9556 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.812:5283): item=1 name=\"/usr/sbin/sshd\" inode=9556 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.812:5283): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.812:5283): proctitle=2F7573722F7362696E2F73736864002D44002D52",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5283",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "385",
+    "pid": "7666",
+    "auid": "4294967295",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "4294967295",
+    "command": "sshd",
+    "exe": "/usr/sbin/sshd",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "/usr/sbin/sshd",
+     "a1": "-D",
+     "a2": "-R"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/sbin/sshd",
+     "inode": "9556",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.120+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 27,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23036172",
+  "full_log": "type=SYSCALL msg=audit(1793484740.920:5287): arch=c000003e syscall=59 success=yes exit=0 a0=7f0850bb5031 a1=7ffea653a530 a2=5651f8d0d9f0 a3=8 items=3 ppid=7666 pid=7668 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"sh\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.920:5287): argc=3 a0=\"sh\" a1=\"-c\" a2=2F7573722F62696E2F656E76202D6920504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E2072756E2D7061727473202D2D6C7362737973696E6974202F6574632F7570646174652D6D6F74642E64203E202F72756E2F6D6F74642E64796E616D69632E6E6577 type=CWD msg=audit(1793484740.920:5287): cwd=\"/\" type=PATH msg=audit(1793484740.920:5287): item=0 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.920:5287): item=1 name=\"/bin/sh\" inode=801 dev=fe:01 mode=0120777 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.920:5287): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.920:5287): proctitle=7368002D63002F7573722F62696E2F656E76202D6920504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E2072756E2D7061727473202D2D6C7362737973696E6974202F6574632F7570646174652D6D6F74642E",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5287",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7666",
+    "pid": "7668",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "sh",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "sh",
+     "a1": "-c"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/bin/sh",
+     "inode": "790",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.122+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/env.",
+   "id": "80792",
+   "firedtimes": 28,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23038730",
+  "full_log": "type=SYSCALL msg=audit(1793484740.920:5288): arch=c000003e syscall=59 success=yes exit=0 a0=560072a1f5a8 a1=560072a1f6a8 a2=560072a1f848 a3=8 items=3 ppid=7668 pid=7669 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"env\" exe=\"/usr/bin/env\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.920:5288): argc=6 a0=\"/usr/bin/env\" a1=\"-i\" a2=\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\" a3=\"run-parts\" a4=\"--lsbsysinit\" a5=\"/etc/update-motd.d\" type=CWD msg=audit(1793484740.920:5288): cwd=\"/\" type=PATH msg=audit(1793484740.920:5288): item=0 name=\"/usr/bin/env\" inode=717 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.920:5288): item=1 name=\"/usr/bin/env\" inode=717 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.920:5288): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.920:5288): proctitle=2F7573722F62696E2F656E76002D6900504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E0072756E2D7061727473002D2D6C7362737973696E6974002F6574632F7570646174652D6D6F74642E64",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5288",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7668",
+    "pid": "7669",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "env",
+    "exe": "/usr/bin/env",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "6",
+     "a0": "/usr/bin/env",
+     "a1": "-i",
+     "a2": "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+     "a3": "run-parts",
+     "a4": "--lsbsysinit",
+     "a5": "/etc/update-motd.d"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/env",
+     "inode": "717",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.124+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/env.",
+   "id": "80792",
+   "firedtimes": 29,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23041318",
+  "full_log": "type=SYSCALL msg=audit(1793484740.920:5289): arch=c000003e syscall=59 success=no exit=-2 a0=7ffcb7300dc0 a1=7ffcb7301100 a2=557d2d3ddc70 a3=7ffcb7303e80 items=1 ppid=7668 pid=7669 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"env\" exe=\"/usr/bin/env\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=CWD msg=audit(1793484740.920:5289): cwd=\"/\" type=PATH msg=audit(1793484740.920:5289): item=0 name=\"/usr/local/sbin/run-parts\" nametype=UNKNOWN cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0 type=PROCTITLE msg=audit(1793484740.920:5289): proctitle=2F7573722F62696E2F656E76002D6900504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E0072756E2D7061727473002D2D6C7362737973696E6974002F6574632F7570646174652D6D6F74642E64",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5289",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "no",
+    "exit": "-2",
+    "ppid": "7668",
+    "pid": "7669",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "env",
+    "exe": "/usr/bin/env",
+    "key": "audit-wazuh-c",
+    "cwd": "/"
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.126+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/env.",
+   "id": "80792",
+   "firedtimes": 30,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23042866",
+  "full_log": "type=SYSCALL msg=audit(1793484740.920:5290): arch=c000003e syscall=59 success=no exit=-2 a0=7ffcb7300dc0 a1=7ffcb7301100 a2=557d2d3ddc70 a3=7ffcb7303e80 items=1 ppid=7668 pid=7669 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"env\" exe=\"/usr/bin/env\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=CWD msg=audit(1793484740.920:5290): cwd=\"/\" type=PATH msg=audit(1793484740.920:5290): item=0 name=\"/usr/local/bin/run-parts\" nametype=UNKNOWN cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0 type=PROCTITLE msg=audit(1793484740.920:5290): proctitle=2F7573722F62696E2F656E76002D6900504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E0072756E2D7061727473002D2D6C7362737973696E6974002F6574632F7570646174652D6D6F74642E64",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5290",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "no",
+    "exit": "-2",
+    "ppid": "7668",
+    "pid": "7669",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "env",
+    "exe": "/usr/bin/env",
+    "key": "audit-wazuh-c",
+    "cwd": "/"
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.128+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/env.",
+   "id": "80792",
+   "firedtimes": 31,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23044413",
+  "full_log": "type=SYSCALL msg=audit(1793484740.920:5291): arch=c000003e syscall=59 success=no exit=-2 a0=7ffcb7300dc0 a1=7ffcb7301100 a2=557d2d3ddc70 a3=7ffcb7303e80 items=1 ppid=7668 pid=7669 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"env\" exe=\"/usr/bin/env\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=CWD msg=audit(1793484740.920:5291): cwd=\"/\" type=PATH msg=audit(1793484740.920:5291): item=0 name=\"/usr/sbin/run-parts\" nametype=UNKNOWN cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0 type=PROCTITLE msg=audit(1793484740.920:5291): proctitle=2F7573722F62696E2F656E76002D6900504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E0072756E2D7061727473002D2D6C7362737973696E6974002F6574632F7570646174652D6D6F74642E64",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5291",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "no",
+    "exit": "-2",
+    "ppid": "7668",
+    "pid": "7669",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "env",
+    "exe": "/usr/bin/env",
+    "key": "audit-wazuh-c",
+    "cwd": "/"
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.130+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/run-parts.",
+   "id": "80792",
+   "firedtimes": 32,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23045955",
+  "full_log": "type=SYSCALL msg=audit(1793484740.920:5292): arch=c000003e syscall=59 success=yes exit=0 a0=7ffcb7300dc0 a1=7ffcb7301100 a2=557d2d3ddc70 a3=7ffcb7303e80 items=3 ppid=7668 pid=7669 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"run-parts\" exe=\"/usr/bin/run-parts\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.920:5292): argc=3 a0=\"run-parts\" a1=\"--lsbsysinit\" a2=\"/etc/update-motd.d\" type=CWD msg=audit(1793484740.920:5292): cwd=\"/\" type=PATH msg=audit(1793484740.920:5292): item=0 name=\"/usr/bin/run-parts\" inode=1045 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.920:5292): item=1 name=\"/usr/bin/run-parts\" inode=1045 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.920:5292): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.920:5292): proctitle=2F7573722F62696E2F656E76002D6900504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E0072756E2D7061727473002D2D6C7362737973696E6974002F6574632F7570646174652D6D6F74642E64",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5292",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7668",
+    "pid": "7669",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "run-parts",
+    "exe": "/usr/bin/run-parts",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "run-parts",
+     "a1": "--lsbsysinit",
+     "a2": "/etc/update-motd.d"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/run-parts",
+     "inode": "1045",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.133+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 33,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23048375",
+  "full_log": "type=SYSCALL msg=audit(1793484740.924:5293): arch=c000003e syscall=59 success=yes exit=0 a0=5602835d3db0 a1=5602835cf2a0 a2=7fffb9518a28 a3=7fa0fe2fc6a0 items=4 ppid=7669 pid=7670 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"10-uname\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.924:5293): argc=2 a0=\"/bin/sh\" a1=\"/etc/update-motd.d/10-uname\" type=CWD msg=audit(1793484740.924:5293): cwd=\"/\" type=PATH msg=audit(1793484740.924:5293): item=0 name=\"/etc/update-motd.d/10-uname\" inode=589 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5293): item=1 name=\"/etc/update-motd.d/10-uname\" inode=589 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5293): item=2 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5293): item=3 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.924:5293): proctitle=2F62696E2F7368002F6574632F7570646174652D6D6F74642E642F31302D756E616D65",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5293",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7669",
+    "pid": "7670",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "10-uname",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "/bin/sh",
+     "a1": "/etc/update-motd.d/10-uname"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/etc/update-motd.d/10-uname",
+     "inode": "589",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.135+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/uname.",
+   "id": "80792",
+   "firedtimes": 34,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23050806",
+  "full_log": "type=SYSCALL msg=audit(1793484740.924:5294): arch=c000003e syscall=59 success=yes exit=0 a0=55779d1e68c0 a1=55779d1e6890 a2=55779d1e68a8 a3=8 items=3 ppid=7670 pid=7671 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"uname\" exe=\"/usr/bin/uname\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.924:5294): argc=2 a0=\"uname\" a1=\"-snrvm\" type=CWD msg=audit(1793484740.924:5294): cwd=\"/\" type=PATH msg=audit(1793484740.924:5294): item=0 name=\"/usr/bin/uname\" inode=690 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5294): item=1 name=\"/usr/bin/uname\" inode=690 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5294): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.924:5294): proctitle=756E616D65002D736E72766D",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5294",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7670",
+    "pid": "7671",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "uname",
+    "exe": "/usr/bin/uname",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "uname",
+     "a1": "-snrvm"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/bin/uname",
+     "inode": "690",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.137+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 35,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23052878",
+  "full_log": "type=SYSCALL msg=audit(1793484740.924:5295): arch=c000003e syscall=59 success=yes exit=0 a0=5602835d3db0 a1=5602835cf2a0 a2=7fffb9518a28 a3=7fa0fe2fc6a0 items=4 ppid=7669 pid=7672 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"92-unattended-u\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.924:5295): argc=2 a0=\"/bin/sh\" a1=\"/etc/update-motd.d/92-unattended-upgrades\" type=CWD msg=audit(1793484740.924:5295): cwd=\"/\" type=PATH msg=audit(1793484740.924:5295): item=0 name=\"/etc/update-motd.d/92-unattended-upgrades\" inode=21275 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5295): item=1 name=\"/etc/update-motd.d/92-unattended-upgrades\" inode=21275 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5295): item=2 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5295): item=3 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.924:5295): proctitle=2F62696E2F7368002F6574632F7570646174652D6D6F74642E642F39322D756E617474656E6465642D7570677261646573",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5295",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7669",
+    "pid": "7672",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "92-unattended-u",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "/bin/sh",
+     "a1": "/etc/update-motd.d/92-unattended-upgrades"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/etc/update-motd.d/92-unattended-upgrades",
+     "inode": "21275",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.139+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 36,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23055427",
+  "full_log": "type=SYSCALL msg=audit(1793484740.924:5296): arch=c000003e syscall=59 success=yes exit=0 a0=560441b06378 a1=560441b063d8 a2=560441b063e8 a3=fffffffffffff9d2 items=4 ppid=7669 pid=7672 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"update-motd-una\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.924:5296): argc=2 a0=\"/bin/sh\" a1=\"/usr/share/unattended-upgrades/update-motd-unattended-upgrades\" type=CWD msg=audit(1793484740.924:5296): cwd=\"/\" type=PATH msg=audit(1793484740.924:5296): item=0 name=\"/usr/share/unattended-upgrades/update-motd-unattended-upgrades\" inode=21311 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5296): item=1 name=\"/usr/share/unattended-upgrades/update-motd-unattended-upgrades\" inode=21311 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5296): item=2 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.924:5296): item=3 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.924:5296): proctitle=2F62696E2F7368002F6574632F7570646174652D6D6F74642E642F39322D756E617474656E6465642D7570677261646573",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5296",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7669",
+    "pid": "7672",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "update-motd-una",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "/bin/sh",
+     "a1": "/usr/share/unattended-upgrades/update-motd-unattended-upgrades"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/usr/share/unattended-upgrades/update-motd-unattended-upgrades",
+     "inode": "21311",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.145+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/bash.",
+   "id": "80792",
+   "firedtimes": 37,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23058085",
+  "full_log": "type=SYSCALL msg=audit(1793484740.928:5299): arch=c000003e syscall=59 success=yes exit=0 a0=5651f8d65870 a1=7ffea65397f0 a2=5651f8d7e6c0 a3=0 items=3 ppid=7673 pid=7674 auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=16 comm=\"bash\" exe=\"/usr/bin/bash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"analyst\" SUID=\"analyst\" FSUID=\"analyst\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.928:5299): argc=3 a0=\"bash\" a1=\"-c\" a2=7375646F206370202F746D702F75706461746573322E706870202F7661722F7777772F68746D6C2F75706461746573322E7068703B207375646F2073686132353673756D202F7661722F7777772F68746D6C2F75706461746573322E706870 type=CWD msg=audit(1793484740.928:5299): cwd=\"/home/analyst\" type=PATH msg=audit(1793484740.928:5299): item=0 name=\"/bin/bash\" inode=438 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.928:5299): item=1 name=\"/bin/bash\" inode=438 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.928:5299): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.928:5299): proctitle=62617368002D63007375646F206370202F746D702F75706461746573322E706870202F7661722F7777772F68746D6C2F75706461746573322E7068703B207375646F2073686132353673756D202F7661722F7777772F68746D6C2F75706461746573322E706870",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5299",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7673",
+    "pid": "7674",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "1000",
+    "suid": "1000",
+    "fsuid": "1000",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "16",
+    "command": "bash",
+    "exe": "/usr/bin/bash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "bash",
+     "a1": "-c"
+    },
+    "cwd": "/home/analyst",
+    "file": {
+     "name": "/bin/bash",
+     "inode": "438",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.147+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/sudo.",
+   "id": "80792",
+   "firedtimes": 38,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23060599",
+  "full_log": "type=SYSCALL msg=audit(1793484740.932:5300): arch=c000003e syscall=59 success=yes exit=0 a0=55604efa4b80 a1=55604efa5460 a2=55604ef932c0 a3=1ce1ffe3dd5b7188 items=3 ppid=7674 pid=7675 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=16 comm=\"sudo\" exe=\"/usr/bin/sudo\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.932:5300): argc=4 a0=\"sudo\" a1=\"cp\" a2=\"/tmp/updates2.php\" a3=\"/var/www/html/updates2.php\" type=CWD msg=audit(1793484740.932:5300): cwd=\"/home/analyst\" type=PATH msg=audit(1793484740.932:5300): item=0 name=\"/usr/bin/sudo\" inode=11397 dev=fe:01 mode=0104755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.932:5300): item=1 name=\"/usr/bin/sudo\" inode=11397 dev=fe:01 mode=0104755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.932:5300): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.932:5300): proctitle=7375646F006370002F746D702F75706461746573322E706870002F7661722F7777772F68746D6C2F75706461746573322E706870",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5300",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7674",
+    "pid": "7675",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "16",
+    "command": "sudo",
+    "exe": "/usr/bin/sudo",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "4",
+     "a0": "sudo",
+     "a1": "cp",
+     "a2": "/tmp/updates2.php",
+     "a3": "/var/www/html/updates2.php"
+    },
+    "cwd": "/home/analyst",
+    "file": {
+     "name": "/usr/bin/sudo",
+     "inode": "11397",
+     "mode": "0104755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.158+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/cp.",
+   "id": "80792",
+   "firedtimes": 39,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23062957",
+  "full_log": "type=SYSCALL msg=audit(1793484740.936:5305): arch=c000003e syscall=59 success=yes exit=0 a0=55db30354a88 a1=55db30352d60 a2=55db3035dac0 a3=0 items=3 ppid=7675 pid=7676 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"cp\" exe=\"/usr/bin/cp\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.936:5305): argc=3 a0=\"cp\" a1=\"/tmp/updates2.php\" a2=\"/var/www/html/updates2.php\" type=CWD msg=audit(1793484740.936:5305): cwd=\"/home/analyst\" type=PATH msg=audit(1793484740.936:5305): item=0 name=\"/usr/bin/cp\" inode=573 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.936:5305): item=1 name=\"/usr/bin/cp\" inode=573 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.936:5305): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.936:5305): proctitle=6370002F746D702F75706461746573322E706870002F7661722F7777772F68746D6C2F75706461746573322E706870",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5305",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7675",
+    "pid": "7676",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "cp",
+    "exe": "/usr/bin/cp",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "cp",
+     "a1": "/tmp/updates2.php",
+     "a2": "/var/www/html/updates2.php"
+    },
+    "cwd": "/home/analyst",
+    "file": {
+     "name": "/usr/bin/cp",
+     "inode": "573",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.160+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Created: /var/www/html/updates2.php.",
+   "id": "80790",
+   "firedtimes": 1,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_watch_create",
+    "audit_watch_write"
+   ],
+   "gdpr": [
+    "II_5.1.f",
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23065191",
+  "full_log": "type=SYSCALL msg=audit(1793484740.936:5306): arch=c000003e syscall=257 success=yes exit=4 a0=ffffff9c a1=7ffd3a978ebb a2=c1 a3=1a4 items=2 ppid=7675 pid=7676 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"cp\" exe=\"/usr/bin/cp\" subj=unconfined key=\"audit-wazuh-w\"\u001dARCH=x86_64 SYSCALL=openat AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=CWD msg=audit(1793484740.936:5306): cwd=\"/home/analyst\" type=PATH msg=audit(1793484740.936:5306): item=0 name=\"/var/www/html/\" inode=131245 dev=fe:01 mode=040755 ouid=0 ogid=0 rdev=00:00 nametype=PARENT cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.936:5306): item=1 name=\"/var/www/html/updates2.php\" inode=135563 dev=fe:01 mode=0100644 ouid=0 ogid=0 rdev=00:00 nametype=CREATE cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.936:5306): proctitle=6370002F746D702F75706461746573322E706870002F7661722F7777772F68746D6C2F75706461746573322E706870",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5306",
+    "arch": "c000003e",
+    "syscall": "257",
+    "success": "yes",
+    "exit": "4",
+    "ppid": "7675",
+    "pid": "7676",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "cp",
+    "exe": "/usr/bin/cp",
+    "key": "audit-wazuh-w",
+    "cwd": "/home/analyst",
+    "directory": {
+     "name": "/var/www/html/",
+     "inode": "131245",
+     "mode": "040755"
+    },
+    "file": {
+     "name": "/var/www/html/updates2.php",
+     "inode": "135563",
+     "mode": "0100644"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.166+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/sudo.",
+   "id": "80792",
+   "firedtimes": 40,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23067135",
+  "full_log": "type=SYSCALL msg=audit(1793484740.940:5309): arch=c000003e syscall=59 success=yes exit=0 a0=55604efa35f0 a1=55604efa5460 a2=55604ef932c0 a3=8 items=3 ppid=7673 pid=7674 auid=1000 uid=1000 gid=1000 euid=0 suid=0 fsuid=0 egid=1000 sgid=1000 fsgid=1000 tty=(none) ses=16 comm=\"sudo\" exe=\"/usr/bin/sudo\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"analyst\" GID=\"analyst\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"analyst\" SGID=\"analyst\" FSGID=\"analyst\" type=EXECVE msg=audit(1793484740.940:5309): argc=3 a0=\"sudo\" a1=\"sha256sum\" a2=\"/var/www/html/updates2.php\" type=CWD msg=audit(1793484740.940:5309): cwd=\"/home/analyst\" type=PATH msg=audit(1793484740.940:5309): item=0 name=\"/usr/bin/sudo\" inode=11397 dev=fe:01 mode=0104755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.940:5309): item=1 name=\"/usr/bin/sudo\" inode=11397 dev=fe:01 mode=0104755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.940:5309): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.940:5309): proctitle=62617368002D63007375646F206370202F746D702F75706461746573322E706870202F7661722F7777772F68746D6C2F75706461746573322E7068703B207375646F2073686132353673756D202F7661722F7777772F68746D6C2F75706461746573322E706870",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5309",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7673",
+    "pid": "7674",
+    "auid": "1000",
+    "uid": "1000",
+    "gid": "1000",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "1000",
+    "sgid": "1000",
+    "fsgid": "1000",
+    "tty": "(none)",
+    "session": "16",
+    "command": "sudo",
+    "exe": "/usr/bin/sudo",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "sudo",
+     "a1": "sha256sum",
+     "a2": "/var/www/html/updates2.php"
+    },
+    "cwd": "/home/analyst",
+    "file": {
+     "name": "/usr/bin/sudo",
+     "inode": "11397",
+     "mode": "0104755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.177+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/sha256sum.",
+   "id": "80792",
+   "firedtimes": 41,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23069536",
+  "full_log": "type=SYSCALL msg=audit(1793484740.944:5314): arch=c000003e syscall=59 success=yes exit=0 a0=56013cfa1678 a1=56013cf9ad60 a2=56013cfa5ac0 a3=0 items=3 ppid=7674 pid=7677 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=16 comm=\"sha256sum\" exe=\"/usr/bin/sha256sum\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"analyst\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484740.944:5314): argc=2 a0=\"sha256sum\" a1=\"/var/www/html/updates2.php\" type=CWD msg=audit(1793484740.944:5314): cwd=\"/home/analyst\" type=PATH msg=audit(1793484740.944:5314): item=0 name=\"/usr/bin/sha256sum\" inode=760 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.944:5314): item=1 name=\"/usr/bin/sha256sum\" inode=760 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484740.944:5314): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484740.944:5314): proctitle=73686132353673756D002F7661722F7777772F68746D6C2F75706461746573322E706870",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5314",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7674",
+    "pid": "7677",
+    "auid": "1000",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "16",
+    "command": "sha256sum",
+    "exe": "/usr/bin/sha256sum",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "sha256sum",
+     "a1": "/var/www/html/updates2.php"
+    },
+    "cwd": "/home/analyst",
+    "file": {
+     "name": "/usr/bin/sha256sum",
+     "inode": "760",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.483+0000",
+  "rule": {
+   "level": 3,
+   "description": "sshd: authentication success.",
+   "id": "5715",
+   "mitre": {
+    "id": [
+     "T1078",
+     "T1021"
+    ],
+    "tactic": [
+     "Defense Evasion",
+     "Persistence",
+     "Privilege Escalation",
+     "Initial Access",
+     "Lateral Movement"
+    ],
+    "technique": [
+     "Valid Accounts",
+     "Remote Services"
+    ]
+   },
+   "firedtimes": 1,
+   "mail": false,
+   "groups": [
+    "syslog",
+    "sshd",
+    "authentication_success"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "gpg13": [
+    "7.1",
+    "7.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23071760",
+  "full_log": "Oct 31 22:12:20 soc-victim sshd[7640]: Accepted publickey for analyst from 10.0.2.2 port 52282 ssh2: ED25519 SHA256:xKxjZjftIo8qBJxHPE9IACZNJzWw/yo3k2tbJ6XRdzM",
+  "predecoder": {
+   "program_name": "sshd",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "sshd",
+   "name": "sshd"
+  },
+  "data": {
+   "srcip": "10.0.2.2",
+   "srcport": "52282",
+   "dstuser": "analyst"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.491+0000",
+  "rule": {
+   "level": 3,
+   "description": "PAM: Login session opened.",
+   "id": "5501",
+   "mitre": {
+    "id": [
+     "T1078"
+    ],
+    "tactic": [
+     "Defense Evasion",
+     "Persistence",
+     "Privilege Escalation",
+     "Initial Access"
+    ],
+    "technique": [
+     "Valid Accounts"
+    ]
+   },
+   "firedtimes": 1,
+   "mail": false,
+   "groups": [
+    "pam",
+    "syslog",
+    "authentication_success"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "gpg13": [
+    "7.8",
+    "7.9"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23072269",
+  "full_log": "Oct 31 22:12:20 soc-victim sshd[7640]: pam_unix(sshd:session): session opened for user analyst(uid=1000) by (uid=0)",
+  "predecoder": {
+   "program_name": "sshd",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "pam",
+   "name": "pam"
+  },
+  "data": {
+   "dstuser": "analyst",
+   "uid": "0"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.528+0000",
+  "rule": {
+   "level": 3,
+   "description": "PAM: Login session opened.",
+   "id": "5501",
+   "mitre": {
+    "id": [
+     "T1078"
+    ],
+    "tactic": [
+     "Defense Evasion",
+     "Persistence",
+     "Privilege Escalation",
+     "Initial Access"
+    ],
+    "technique": [
+     "Valid Accounts"
+    ]
+   },
+   "firedtimes": 2,
+   "mail": false,
+   "groups": [
+    "pam",
+    "syslog",
+    "authentication_success"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "gpg13": [
+    "7.8",
+    "7.9"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23072704",
+  "full_log": "Oct 31 22:12:20 soc-victim (systemd)[7643]: pam_unix(systemd-user:session): session opened for user analyst(uid=1000) by (uid=0)",
+  "predecoder": {
+   "program_name": "(systemd)",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "pam",
+   "name": "pam"
+  },
+  "data": {
+   "dstuser": "analyst",
+   "uid": "0"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.903+0000",
+  "rule": {
+   "level": 3,
+   "description": "PAM: Login session closed.",
+   "id": "5502",
+   "firedtimes": 1,
+   "mail": false,
+   "groups": [
+    "pam",
+    "syslog"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "gpg13": [
+    "7.8",
+    "7.9"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23073152",
+  "full_log": "Oct 31 22:12:20 soc-victim sshd[7640]: pam_unix(sshd:session): session closed for user analyst",
+  "predecoder": {
+   "program_name": "sshd",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "pam",
+   "name": "pam"
+  },
+  "data": {
+   "dstuser": "analyst"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.932+0000",
+  "rule": {
+   "level": 3,
+   "description": "sshd: authentication success.",
+   "id": "5715",
+   "mitre": {
+    "id": [
+     "T1078",
+     "T1021"
+    ],
+    "tactic": [
+     "Defense Evasion",
+     "Persistence",
+     "Privilege Escalation",
+     "Initial Access",
+     "Lateral Movement"
+    ],
+    "technique": [
+     "Valid Accounts",
+     "Remote Services"
+    ]
+   },
+   "firedtimes": 2,
+   "mail": false,
+   "groups": [
+    "syslog",
+    "sshd",
+    "authentication_success"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "gpg13": [
+    "7.1",
+    "7.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23073536",
+  "full_log": "Oct 31 22:12:20 soc-victim sshd[7666]: Accepted publickey for analyst from 10.0.2.2 port 52296 ssh2: ED25519 SHA256:xKxjZjftIo8qBJxHPE9IACZNJzWw/yo3k2tbJ6XRdzM",
+  "predecoder": {
+   "program_name": "sshd",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "sshd",
+   "name": "sshd"
+  },
+  "data": {
+   "srcip": "10.0.2.2",
+   "srcport": "52296",
+   "dstuser": "analyst"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:21.940+0000",
+  "rule": {
+   "level": 3,
+   "description": "PAM: Login session opened.",
+   "id": "5501",
+   "mitre": {
+    "id": [
+     "T1078"
+    ],
+    "tactic": [
+     "Defense Evasion",
+     "Persistence",
+     "Privilege Escalation",
+     "Initial Access"
+    ],
+    "technique": [
+     "Valid Accounts"
+    ]
+   },
+   "firedtimes": 3,
+   "mail": false,
+   "groups": [
+    "pam",
+    "syslog",
+    "authentication_success"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "gpg13": [
+    "7.8",
+    "7.9"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484741.23074045",
+  "full_log": "Oct 31 22:12:20 soc-victim sshd[7666]: pam_unix(sshd:session): session opened for user analyst(uid=1000) by (uid=0)",
+  "predecoder": {
+   "program_name": "sshd",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "pam",
+   "name": "pam"
+  },
+  "data": {
+   "dstuser": "analyst",
+   "uid": "0"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:22.120+0000",
+  "rule": {
+   "level": 3,
+   "description": "Successful sudo to ROOT executed.",
+   "id": "5402",
+   "mitre": {
+    "id": [
+     "T1548.003"
+    ],
+    "tactic": [
+     "Privilege Escalation",
+     "Defense Evasion"
+    ],
+    "technique": [
+     "Sudo and Sudo Caching"
+    ]
+   },
+   "firedtimes": 1,
+   "mail": false,
+   "groups": [
+    "syslog",
+    "sudo"
+   ],
+   "pci_dss": [
+    "10.2.5",
+    "10.2.2"
+   ],
+   "gpg13": [
+    "7.6",
+    "7.8",
+    "7.13"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7",
+    "AC.6"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484742.23074480",
+  "full_log": "Oct 31 22:12:20 soc-victim sudo[7675]:  analyst : PWD=/home/analyst ; USER=root ; COMMAND=/usr/bin/cp /tmp/updates2.php /var/www/html/updates2.php",
+  "predecoder": {
+   "program_name": "sudo",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "sudo",
+   "name": "sudo",
+   "ftscomment": "First time user executed the sudo command"
+  },
+  "data": {
+   "srcuser": "analyst",
+   "dstuser": "root",
+   "pwd": "/home/analyst",
+   "command": "/usr/bin/cp /tmp/updates2.php /var/www/html/updates2.php"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:22.124+0000",
+  "rule": {
+   "level": 3,
+   "description": "PAM: Login session opened.",
+   "id": "5501",
+   "mitre": {
+    "id": [
+     "T1078"
+    ],
+    "tactic": [
+     "Defense Evasion",
+     "Persistence",
+     "Privilege Escalation",
+     "Initial Access"
+    ],
+    "technique": [
+     "Valid Accounts"
+    ]
+   },
+   "firedtimes": 4,
+   "mail": false,
+   "groups": [
+    "pam",
+    "syslog",
+    "authentication_success"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "gpg13": [
+    "7.8",
+    "7.9"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484742.23075049",
+  "full_log": "Oct 31 22:12:20 soc-victim sudo[7675]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=1000)",
+  "predecoder": {
+   "program_name": "sudo",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "pam",
+   "name": "pam"
+  },
+  "data": {
+   "dstuser": "root",
+   "uid": "1000"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:22.153+0000",
+  "rule": {
+   "level": 3,
+   "description": "PAM: Login session closed.",
+   "id": "5502",
+   "firedtimes": 2,
+   "mail": false,
+   "groups": [
+    "pam",
+    "syslog"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "gpg13": [
+    "7.8",
+    "7.9"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484742.23075481",
+  "full_log": "Oct 31 22:12:20 soc-victim sudo[7675]: pam_unix(sudo:session): session closed for user root",
+  "predecoder": {
+   "program_name": "sudo",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "pam",
+   "name": "pam"
+  },
+  "data": {
+   "dstuser": "root"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:22.178+0000",
+  "rule": {
+   "level": 3,
+   "description": "Successful sudo to ROOT executed.",
+   "id": "5402",
+   "mitre": {
+    "id": [
+     "T1548.003"
+    ],
+    "tactic": [
+     "Privilege Escalation",
+     "Defense Evasion"
+    ],
+    "technique": [
+     "Sudo and Sudo Caching"
+    ]
+   },
+   "firedtimes": 2,
+   "mail": false,
+   "groups": [
+    "syslog",
+    "sudo"
+   ],
+   "pci_dss": [
+    "10.2.5",
+    "10.2.2"
+   ],
+   "gpg13": [
+    "7.6",
+    "7.8",
+    "7.13"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7",
+    "AC.6"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484742.23075859",
+  "full_log": "Oct 31 22:12:20 soc-victim sudo[7674]:  analyst : PWD=/home/analyst ; USER=root ; COMMAND=/usr/bin/sha256sum /var/www/html/updates2.php",
+  "predecoder": {
+   "program_name": "sudo",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "sudo",
+   "name": "sudo",
+   "ftscomment": "First time user executed the sudo command"
+  },
+  "data": {
+   "srcuser": "analyst",
+   "dstuser": "root",
+   "pwd": "/home/analyst",
+   "command": "/usr/bin/sha256sum /var/www/html/updates2.php"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:22.180+0000",
+  "rule": {
+   "level": 3,
+   "description": "PAM: Login session opened.",
+   "id": "5501",
+   "mitre": {
+    "id": [
+     "T1078"
+    ],
+    "tactic": [
+     "Defense Evasion",
+     "Persistence",
+     "Privilege Escalation",
+     "Initial Access"
+    ],
+    "technique": [
+     "Valid Accounts"
+    ]
+   },
+   "firedtimes": 5,
+   "mail": false,
+   "groups": [
+    "pam",
+    "syslog",
+    "authentication_success"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "gpg13": [
+    "7.8",
+    "7.9"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484742.23076406",
+  "full_log": "Oct 31 22:12:20 soc-victim sudo[7674]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=1000)",
+  "predecoder": {
+   "program_name": "sudo",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "pam",
+   "name": "pam"
+  },
+  "data": {
+   "dstuser": "root",
+   "uid": "1000"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:22.205+0000",
+  "rule": {
+   "level": 3,
+   "description": "PAM: Login session closed.",
+   "id": "5502",
+   "firedtimes": 3,
+   "mail": false,
+   "groups": [
+    "pam",
+    "syslog"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "gpg13": [
+    "7.8",
+    "7.9"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484742.23076838",
+  "full_log": "Oct 31 22:12:20 soc-victim sudo[7674]: pam_unix(sudo:session): session closed for user root",
+  "predecoder": {
+   "program_name": "sudo",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "pam",
+   "name": "pam"
+  },
+  "data": {
+   "dstuser": "root"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:22.212+0000",
+  "rule": {
+   "level": 3,
+   "description": "PAM: Login session closed.",
+   "id": "5502",
+   "firedtimes": 4,
+   "mail": false,
+   "groups": [
+    "pam",
+    "syslog"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "gpg13": [
+    "7.8",
+    "7.9"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484742.23077216",
+  "full_log": "Oct 31 22:12:20 soc-victim sshd[7666]: pam_unix(sshd:session): session closed for user analyst",
+  "predecoder": {
+   "program_name": "sshd",
+   "timestamp": "Oct 31 22:12:20",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "pam",
+   "name": "pam"
+  },
+  "data": {
+   "dstuser": "analyst"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:25.031+0000",
+  "rule": {
+   "level": 12,
+   "description": "Web: command parameter in a PHP request (possible web shell)",
+   "id": "100127",
+   "mitre": {
+    "id": [
+     "T1505.003",
+     "T1059.004"
+    ],
+    "tactic": [
+     "Persistence",
+     "Execution"
+    ],
+    "technique": [
+     "Web Shell",
+     "Unix Shell"
+    ]
+   },
+   "firedtimes": 1,
+   "mail": true,
+   "groups": [
+    "local",
+    "web",
+    "web",
+    "attack"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484745.23077600",
+  "full_log": "10.0.2.2 - - [31/Oct/2026:22:12:24 +0000] \"GET /updates2.php?cmd=id HTTP/1.1\" 200 65 \"-\" \"curl/8.22.0\"",
+  "decoder": {
+   "name": "web-accesslog"
+  },
+  "data": {
+   "protocol": "GET",
+   "srcip": "10.0.2.2",
+   "id": "200",
+   "url": "/updates2.php?cmd=id"
+  },
+  "location": "/var/log/nginx/access.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:25.031+0000",
+  "rule": {
+   "level": 12,
+   "description": "Web: command parameter in a PHP request (possible web shell)",
+   "id": "100127",
+   "mitre": {
+    "id": [
+     "T1505.003",
+     "T1059.004"
+    ],
+    "tactic": [
+     "Persistence",
+     "Execution"
+    ],
+    "technique": [
+     "Web Shell",
+     "Unix Shell"
+    ]
+   },
+   "firedtimes": 2,
+   "mail": true,
+   "groups": [
+    "local",
+    "web",
+    "web",
+    "attack"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484745.23077936",
+  "full_log": "10.0.2.2 - - [31/Oct/2026:22:12:24 +0000] \"GET /updates2.php?cmd=uname%20-a HTTP/1.1\" 200 119 \"-\" \"curl/8.22.0\"",
+  "decoder": {
+   "name": "web-accesslog"
+  },
+  "data": {
+   "protocol": "GET",
+   "srcip": "10.0.2.2",
+   "id": "200",
+   "url": "/updates2.php?cmd=uname%20-a"
+  },
+  "location": "/var/log/nginx/access.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:25.033+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 42,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484745.23078281",
+  "full_log": "type=SYSCALL msg=audit(1793484744.968:5319): arch=c000003e syscall=59 success=yes exit=0 a0=7fa2bb0a3031 a1=7ffc95fd8cf0 a2=557d60b70070 a3=8 items=3 ppid=7457 pid=7678 auid=4294967295 uid=33 gid=33 euid=33 suid=33 fsuid=33 egid=33 sgid=33 fsgid=33 tty=(none) ses=4294967295 comm=\"sh\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"unset\" UID=\"www-data\" GID=\"www-data\" EUID=\"www-data\" SUID=\"www-data\" FSUID=\"www-data\" EGID=\"www-data\" SGID=\"www-data\" FSGID=\"www-data\" type=EXECVE msg=audit(1793484744.968:5319): argc=3 a0=\"sh\" a1=\"-c\" a2=\"id\" type=CWD msg=audit(1793484744.968:5319): cwd=\"/var/www/html\" type=PATH msg=audit(1793484744.968:5319): item=0 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484744.968:5319): item=1 name=\"/bin/sh\" inode=801 dev=fe:01 mode=0120777 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484744.968:5319): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484744.968:5319): proctitle=7368002D63006964",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5319",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7457",
+    "pid": "7678",
+    "auid": "4294967295",
+    "uid": "33",
+    "gid": "33",
+    "euid": "33",
+    "suid": "33",
+    "fsuid": "33",
+    "egid": "33",
+    "sgid": "33",
+    "fsgid": "33",
+    "tty": "(none)",
+    "session": "4294967295",
+    "command": "sh",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "sh",
+     "a1": "-c",
+     "a2": "id"
+    },
+    "cwd": "/var/www/html",
+    "file": {
+     "name": "/bin/sh",
+     "inode": "790",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:25.035+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/id.",
+   "id": "80792",
+   "firedtimes": 43,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484745.23080427",
+  "full_log": "type=SYSCALL msg=audit(1793484744.968:5320): arch=c000003e syscall=59 success=yes exit=0 a0=5629448e0888 a1=5629448e0858 a2=5629448e0868 a3=8 items=3 ppid=7678 pid=7679 auid=4294967295 uid=33 gid=33 euid=33 suid=33 fsuid=33 egid=33 sgid=33 fsgid=33 tty=(none) ses=4294967295 comm=\"id\" exe=\"/usr/bin/id\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"unset\" UID=\"www-data\" GID=\"www-data\" EUID=\"www-data\" SUID=\"www-data\" FSUID=\"www-data\" EGID=\"www-data\" SGID=\"www-data\" FSGID=\"www-data\" type=EXECVE msg=audit(1793484744.968:5320): argc=1 a0=\"id\" type=CWD msg=audit(1793484744.968:5320): cwd=\"/var/www/html\" type=PATH msg=audit(1793484744.968:5320): item=0 name=\"/usr/bin/id\" inode=732 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484744.968:5320): item=1 name=\"/usr/bin/id\" inode=732 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484744.968:5320): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484744.968:5320): proctitle=\"id\"",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5320",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7678",
+    "pid": "7679",
+    "auid": "4294967295",
+    "uid": "33",
+    "gid": "33",
+    "euid": "33",
+    "suid": "33",
+    "fsuid": "33",
+    "egid": "33",
+    "sgid": "33",
+    "fsgid": "33",
+    "tty": "(none)",
+    "session": "4294967295",
+    "command": "id",
+    "exe": "/usr/bin/id",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "1",
+     "a0": "id"
+    },
+    "cwd": "/var/www/html",
+    "file": {
+     "name": "/usr/bin/id",
+     "inode": "732",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:25.037+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 44,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484745.23082511",
+  "full_log": "type=SYSCALL msg=audit(1793484744.976:5321): arch=c000003e syscall=59 success=yes exit=0 a0=7fa2bb0a3031 a1=7ffc95fd8cf0 a2=557d60b701c0 a3=8 items=3 ppid=7458 pid=7680 auid=4294967295 uid=33 gid=33 euid=33 suid=33 fsuid=33 egid=33 sgid=33 fsgid=33 tty=(none) ses=4294967295 comm=\"sh\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"unset\" UID=\"www-data\" GID=\"www-data\" EUID=\"www-data\" SUID=\"www-data\" FSUID=\"www-data\" EGID=\"www-data\" SGID=\"www-data\" FSGID=\"www-data\" type=EXECVE msg=audit(1793484744.976:5321): argc=3 a0=\"sh\" a1=\"-c\" a2=756E616D65202D61 type=CWD msg=audit(1793484744.976:5321): cwd=\"/var/www/html\" type=PATH msg=audit(1793484744.976:5321): item=0 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484744.976:5321): item=1 name=\"/bin/sh\" inode=801 dev=fe:01 mode=0120777 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484744.976:5321): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484744.976:5321): proctitle=7368002D6300756E616D65202D61",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5321",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7458",
+    "pid": "7680",
+    "auid": "4294967295",
+    "uid": "33",
+    "gid": "33",
+    "euid": "33",
+    "suid": "33",
+    "fsuid": "33",
+    "egid": "33",
+    "sgid": "33",
+    "fsgid": "33",
+    "tty": "(none)",
+    "session": "4294967295",
+    "command": "sh",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "sh",
+     "a1": "-c"
+    },
+    "cwd": "/var/www/html",
+    "file": {
+     "name": "/bin/sh",
+     "inode": "790",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:25.039+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/uname.",
+   "id": "80792",
+   "firedtimes": 45,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484745.23084661",
+  "full_log": "type=SYSCALL msg=audit(1793484744.976:5322): arch=c000003e syscall=59 success=yes exit=0 a0=5632dcf9a8d8 a1=5632dcf9a8a0 a2=5632dcf9a8b8 a3=8 items=3 ppid=7680 pid=7681 auid=4294967295 uid=33 gid=33 euid=33 suid=33 fsuid=33 egid=33 sgid=33 fsgid=33 tty=(none) ses=4294967295 comm=\"uname\" exe=\"/usr/bin/uname\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"unset\" UID=\"www-data\" GID=\"www-data\" EUID=\"www-data\" SUID=\"www-data\" FSUID=\"www-data\" EGID=\"www-data\" SGID=\"www-data\" FSGID=\"www-data\" type=EXECVE msg=audit(1793484744.976:5322): argc=2 a0=\"uname\" a1=\"-a\" type=CWD msg=audit(1793484744.976:5322): cwd=\"/var/www/html\" type=PATH msg=audit(1793484744.976:5322): item=0 name=\"/usr/bin/uname\" inode=690 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484744.976:5322): item=1 name=\"/usr/bin/uname\" inode=690 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484744.976:5322): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484744.976:5322): proctitle=756E616D65002D61",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5322",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7680",
+    "pid": "7681",
+    "auid": "4294967295",
+    "uid": "33",
+    "gid": "33",
+    "euid": "33",
+    "suid": "33",
+    "fsuid": "33",
+    "egid": "33",
+    "sgid": "33",
+    "fsgid": "33",
+    "tty": "(none)",
+    "session": "4294967295",
+    "command": "uname",
+    "exe": "/usr/bin/uname",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "2",
+     "a0": "uname",
+     "a1": "-a"
+    },
+    "cwd": "/var/www/html",
+    "file": {
+     "name": "/usr/bin/uname",
+     "inode": "690",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:29.031+0000",
+  "rule": {
+   "level": 12,
+   "description": "Web: command parameter in a PHP request (possible web shell)",
+   "id": "100127",
+   "mitre": {
+    "id": [
+     "T1505.003",
+     "T1059.004"
+    ],
+    "tactic": [
+     "Persistence",
+     "Execution"
+    ],
+    "technique": [
+     "Web Shell",
+     "Unix Shell"
+    ]
+   },
+   "firedtimes": 3,
+   "mail": true,
+   "groups": [
+    "local",
+    "web",
+    "web",
+    "attack"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484749.23086815",
+  "full_log": "10.0.2.2 - - [31/Oct/2026:22:12:28 +0000] \"GET /updates2.php?cmd=id HTTP/1.1\" 200 65 \"-\" \"sqlmap/1.7\"",
+  "decoder": {
+   "name": "web-accesslog"
+  },
+  "data": {
+   "protocol": "GET",
+   "srcip": "10.0.2.2",
+   "id": "200",
+   "url": "/updates2.php?cmd=id"
+  },
+  "location": "/var/log/nginx/access.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:29.031+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/dash.",
+   "id": "80792",
+   "firedtimes": 46,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484749.23087150",
+  "full_log": "type=SYSCALL msg=audit(1793484748.984:5323): arch=c000003e syscall=59 success=yes exit=0 a0=7fa2bb0a3031 a1=7ffc95fd8cf0 a2=557d60b70070 a3=8 items=3 ppid=7457 pid=7682 auid=4294967295 uid=33 gid=33 euid=33 suid=33 fsuid=33 egid=33 sgid=33 fsgid=33 tty=(none) ses=4294967295 comm=\"sh\" exe=\"/usr/bin/dash\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"unset\" UID=\"www-data\" GID=\"www-data\" EUID=\"www-data\" SUID=\"www-data\" FSUID=\"www-data\" EGID=\"www-data\" SGID=\"www-data\" FSGID=\"www-data\" type=EXECVE msg=audit(1793484748.984:5323): argc=3 a0=\"sh\" a1=\"-c\" a2=\"id\" type=CWD msg=audit(1793484748.984:5323): cwd=\"/var/www/html\" type=PATH msg=audit(1793484748.984:5323): item=0 name=\"/bin/sh\" inode=790 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484748.984:5323): item=1 name=\"/bin/sh\" inode=801 dev=fe:01 mode=0120777 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484748.984:5323): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484748.984:5323): proctitle=7368002D63006964",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5323",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7457",
+    "pid": "7682",
+    "auid": "4294967295",
+    "uid": "33",
+    "gid": "33",
+    "euid": "33",
+    "suid": "33",
+    "fsuid": "33",
+    "egid": "33",
+    "sgid": "33",
+    "fsgid": "33",
+    "tty": "(none)",
+    "session": "4294967295",
+    "command": "sh",
+    "exe": "/usr/bin/dash",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "sh",
+     "a1": "-c",
+     "a2": "id"
+    },
+    "cwd": "/var/www/html",
+    "file": {
+     "name": "/bin/sh",
+     "inode": "790",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:29.033+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/bin/id.",
+   "id": "80792",
+   "firedtimes": 47,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484749.23089296",
+  "full_log": "type=SYSCALL msg=audit(1793484748.984:5324): arch=c000003e syscall=59 success=yes exit=0 a0=55df0ff99888 a1=55df0ff99858 a2=55df0ff99868 a3=8 items=3 ppid=7682 pid=7683 auid=4294967295 uid=33 gid=33 euid=33 suid=33 fsuid=33 egid=33 sgid=33 fsgid=33 tty=(none) ses=4294967295 comm=\"id\" exe=\"/usr/bin/id\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"unset\" UID=\"www-data\" GID=\"www-data\" EUID=\"www-data\" SUID=\"www-data\" FSUID=\"www-data\" EGID=\"www-data\" SGID=\"www-data\" FSGID=\"www-data\" type=EXECVE msg=audit(1793484748.984:5324): argc=1 a0=\"id\" type=CWD msg=audit(1793484748.984:5324): cwd=\"/var/www/html\" type=PATH msg=audit(1793484748.984:5324): item=0 name=\"/usr/bin/id\" inode=732 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484748.984:5324): item=1 name=\"/usr/bin/id\" inode=732 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484748.984:5324): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484748.984:5324): proctitle=\"id\"",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5324",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "7682",
+    "pid": "7683",
+    "auid": "4294967295",
+    "uid": "33",
+    "gid": "33",
+    "euid": "33",
+    "suid": "33",
+    "fsuid": "33",
+    "egid": "33",
+    "sgid": "33",
+    "fsgid": "33",
+    "tty": "(none)",
+    "session": "4294967295",
+    "command": "id",
+    "exe": "/usr/bin/id",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "1",
+     "a0": "id"
+    },
+    "cwd": "/var/www/html",
+    "file": {
+     "name": "/usr/bin/id",
+     "inode": "732",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:31.491+0000",
+  "rule": {
+   "level": 3,
+   "description": "PAM: Login session closed.",
+   "id": "5502",
+   "firedtimes": 5,
+   "mail": false,
+   "groups": [
+    "pam",
+    "syslog"
+   ],
+   "pci_dss": [
+    "10.2.5"
+   ],
+   "gpg13": [
+    "7.8",
+    "7.9"
+   ],
+   "gdpr": [
+    "IV_32.2"
+   ],
+   "hipaa": [
+    "164.312.b"
+   ],
+   "nist_800_53": [
+    "AU.14",
+    "AC.7"
+   ],
+   "tsc": [
+    "CC6.8",
+    "CC7.2",
+    "CC7.3"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484751.23091380",
+  "full_log": "Oct 31 22:12:31 soc-victim (sd-pam)[7644]: pam_unix(systemd-user:session): session closed for user analyst",
+  "predecoder": {
+   "program_name": "(sd-pam)",
+   "timestamp": "Oct 31 22:12:31",
+   "hostname": "soc-victim"
+  },
+  "decoder": {
+   "parent": "pam",
+   "name": "pam"
+  },
+  "data": {
+   "dstuser": "analyst"
+  },
+  "location": "journald"
+ },
+ {
+  "timestamp": "2026-10-31T22:12:31.539+0000",
+  "rule": {
+   "level": 3,
+   "description": "Audit: Command: /usr/lib/systemd/systemd-user-runtime-dir.",
+   "id": "80792",
+   "firedtimes": 48,
+   "mail": false,
+   "groups": [
+    "audit",
+    "audit_command"
+   ],
+   "gdpr": [
+    "IV_30.1.g"
+   ]
+  },
+  "agent": {
+   "id": "001",
+   "name": "soc-victim",
+   "ip": "10.0.2.15"
+  },
+  "manager": {
+   "name": "wazuh.manager"
+  },
+  "id": "1793484751.23091776",
+  "full_log": "type=SYSCALL msg=audit(1793484751.276:5326): arch=c000003e syscall=59 success=yes exit=0 a0=55d5cd859f60 a1=55d5cd8c9220 a2=55d5cd8eeee0 a3=55d5cd837100 items=3 ppid=1 pid=7684 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4294967295 comm=\"systemd-user-ru\" exe=\"/usr/lib/systemd/systemd-user-runtime-dir\" subj=unconfined key=\"audit-wazuh-c\"\u001dARCH=x86_64 SYSCALL=execve AUID=\"unset\" UID=\"root\" GID=\"root\" EUID=\"root\" SUID=\"root\" FSUID=\"root\" EGID=\"root\" SGID=\"root\" FSGID=\"root\" type=EXECVE msg=audit(1793484751.276:5326): argc=3 a0=\"/lib/systemd/systemd-user-runtime-dir\" a1=\"stop\" a2=\"1000\" type=CWD msg=audit(1793484751.276:5326): cwd=\"/\" type=PATH msg=audit(1793484751.276:5326): item=0 name=\"/lib/systemd/systemd-user-runtime-dir\" inode=6929 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484751.276:5326): item=1 name=\"/lib/systemd/systemd-user-runtime-dir\" inode=6929 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PATH msg=audit(1793484751.276:5326): item=2 name=\"/lib64/ld-linux-x86-64.so.2\" inode=2074 dev=fe:01 mode=0100755 ouid=0 ogid=0 rdev=00:00 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0\u001dOUID=\"root\" OGID=\"root\" type=PROCTITLE msg=audit(1793484751.276:5326): proctitle=2F6C69622F73797374656D642F73797374656D642D757365722D72756E74696D652D6469720073746F700031303030",
+  "decoder": {
+   "parent": "auditd",
+   "name": "auditd"
+  },
+  "data": {
+   "audit": {
+    "type": "SYSCALL",
+    "id": "5326",
+    "arch": "c000003e",
+    "syscall": "59",
+    "success": "yes",
+    "exit": "0",
+    "ppid": "1",
+    "pid": "7684",
+    "auid": "4294967295",
+    "uid": "0",
+    "gid": "0",
+    "euid": "0",
+    "suid": "0",
+    "fsuid": "0",
+    "egid": "0",
+    "sgid": "0",
+    "fsgid": "0",
+    "tty": "(none)",
+    "session": "4294967295",
+    "command": "systemd-user-ru",
+    "exe": "/usr/lib/systemd/systemd-user-runtime-dir",
+    "key": "audit-wazuh-c",
+    "execve": {
+     "argc": "3",
+     "a0": "/lib/systemd/systemd-user-runtime-dir",
+     "a1": "stop",
+     "a2": "1000"
+    },
+    "cwd": "/",
+    "file": {
+     "name": "/lib/systemd/systemd-user-runtime-dir",
+     "inode": "6929",
+     "mode": "0100755"
+    }
+   }
+  },
+  "location": "/var/log/audit/audit.log"
+ }
+]

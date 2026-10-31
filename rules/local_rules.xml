@@ -12,6 +12,10 @@
     100125  useradd creates an account directly in a privileged group
     100126  usermod -a -G adds an account to a privileged group (shifted argv)
 
+  INC-003
+    100127  HTTP request to a .php file carrying a cmd= parameter
+    100128  PHP file added under the webroot
+
   Privileged groups in this lab: sudo (Debian), wheel (RHEL family), admin.
   If your estate uses different groups, change the alternation in 100121/100123/
   100124/100125/100126 or move the list into a CDB lookup.
@@ -122,6 +126,36 @@
       <id>T1078</id>
     </mitre>
     <group>authentication_success,</group>
+  </rule>
+
+</group>
+
+
+<group name="local,web,">
+
+  <rule id="100127" level="12">
+    <if_sid>31100</if_sid>
+    <match>.php?cmd=</match>
+    <description>Web: command parameter in a PHP request (possible web shell)</description>
+    <mitre>
+      <id>T1505.003</id>
+      <id>T1059.004</id>
+    </mitre>
+    <group>web,attack,</group>
+  </rule>
+
+</group>
+
+<group name="local,syscheck,">
+
+  <rule id="100128" level="12">
+    <if_sid>550,554</if_sid>
+    <match>.php</match>
+    <description>FIM: PHP file added under a monitored path (possible web shell)</description>
+    <mitre>
+      <id>T1505.003</id>
+    </mitre>
+    <group>syscheck,web,persistence,</group>
   </rule>
 
 </group>
