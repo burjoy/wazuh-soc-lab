@@ -1,0 +1,2 @@
+sudo:x:27:analyst,debian,svc-ops
+svc-ops:x:1003:1003::/home/svc-ops:/bin/bash

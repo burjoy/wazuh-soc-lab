@@ -26,4 +26,18 @@
     <group>syscheck,persistence,</group>
   </rule>
 
+  <!-- A user added to the sudo group is a privilege assignment. Stock 5902
+       reports the new account at level 8, but nothing names the escalation. -->
+  <rule id="100121" level="12">
+    <if_sid>80792</if_sid>
+    <field name="audit.exe">/usr/sbin/usermod</field>
+    <field name="audit.execve.a2">sudo</field>
+    <description>Privilege assignment: user added to the sudo group ($(audit.execve.a3))</description>
+    <mitre>
+      <id>T1098</id>
+      <id>T1548.003</id>
+    </mitre>
+    <group>audit_command,privilege_escalation,</group>
+  </rule>
+
 </group>

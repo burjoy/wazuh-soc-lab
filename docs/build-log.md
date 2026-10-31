@@ -277,3 +277,41 @@ authentication failures, 8 were 40112, 1 was 100120.
 Evidence written to `docs/evidence/`; narrative in
 `writeups/INC-001-ssh-brute-force.md`; ticket in
 `tickets/INC-001-ssh-brute-force.md`.
+
+## 2026-10-31 — INC-002 scenario run
+
+Scenario: a local account created and added to the `sudo` group, with routine admin
+activity around it.
+
+### Detection
+
+The first account (`svc-support`) was used to confirm which rules fire. Stock output:
+
+- **5902** new user, level 8, `dstuser=svc-support`, uid 1003;
+- **5901** new group, level 8;
+- FIM **550** on `/etc/passwd`, `/etc/group`, `/etc/shadow`, `/etc/gshadow`;
+- audit **80792** `useradd`, `chpasswd`, `usermod`, and **80781** write access to
+  `/etc/group`.
+
+Nothing named the privilege assignment. The audit record for `usermod` did contain the
+full argument vector (`a1=-aG`, `a2=sudo`, `a3=svc-support`), unlike the earlier
+`bash -c` event where `a2` was dropped. Rule **100121** was written against
+`audit.exe=/usr/sbin/usermod` and `audit.execve.a2=sudo`.
+
+### Clean run
+
+Removed `svc-support`, then created `svc-ops` in a fresh window:
+
+- 04:30:46 `useradd -m -s /bin/bash svc-ops`, `chpasswd`;
+- 04:30:47 `usermod -aG sudo svc-ops`;
+- 04:30:48 **100121** (level 12) names `svc-ops`;
+- 04:30:48 **5901/5902** (level 8);
+- FIM 550 on the identity files.
+
+Window total: 237 alerts, dominated by audit command and FIM events.
+
+Cleanup at 04:32:07: removed from `sudo`, account deleted, home removed. Group membership
+returned to `analyst,debian`.
+
+Evidence: `docs/evidence/INC-002-alerts.json`, `INC-002-account.log`,
+`INC-002-account-commands.txt`, `INC-002-membership.txt`.

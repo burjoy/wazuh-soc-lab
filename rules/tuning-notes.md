@@ -35,3 +35,23 @@ success". Two variants were attempted and discarded:
 the failure threshold, and make the account part of the condition if a decoder can
 expose it consistently. A duplicate rule that never fires is worse than no rule: it
 looks like coverage.
+
+## 100121 — user added to the sudo group
+
+**What fired:** audit execve of `/usr/sbin/usermod` with `a2=sudo`, raised to level 12.
+INC-002 produced it at 04:30:48, naming the affected account (`svc-ops`) in the alert.
+
+**Why it matters:** stock 5902 reports a new user at level 8, without saying the account
+can become root. In a window with 237 alerts, level 8 is easy to defer.
+
+**Narrowest condition that still catches the behaviour:** the `usermod` binary plus the
+group argument `sudo`. It works for both `-aG` (append) and `-G` (replace), because the
+group name is still `a2`.
+
+**Known false positives:** legitimate administrator onboarding, automated account
+provisioning, and configuration management that grants sudo. These should be matched
+against a change ticket, not suppressed.
+
+**What would make this wrong:** a site that uses a different privileged group (`wheel`,
+`admin`), a host without auditd, or an attacker who edits `/etc/group` directly instead
+of using `usermod`. Pair with FIM on `/etc/group` and a group-membership baseline.

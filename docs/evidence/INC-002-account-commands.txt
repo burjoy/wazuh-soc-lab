@@ -1,0 +1,30 @@
+04:30:46Z  /lib/systemd/systemd --user
+04:30:46Z  /usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator
+04:30:46Z  /bin/bash /usr/lib/systemd/user-environment-generators/90gpg-agent
+04:30:46Z  gpgconf --check-options gpg-agent
+04:30:46Z  awk -F: 424547494E7B7265743D317D202F5E6770672D6167656E743A2F7B696620282435203D3D2022312229207B207265743D303B20657869742030207D207D20454E44207B65786974207265747D
+
+04:30:46Z  gpg-agent --gpgconf-test
+04:30:46Z  gpgconf --list-options gpg-agent
+04:30:46Z  awk -F: 2F5E656E61626C652D7373682D737570706F72743A2F7B207072696E7420243130207D
+
+04:30:46Z  gpg-agent --dump-option-table
+04:30:46Z  gpg-agent --gpgconf-list
+04:30:46Z  /usr/lib/systemd/user-generators/systemd-xdg-autostart-generator /run/user/1000/systemd/generator /run/user/1000/systemd/generator.early /run/user/1000/systemd/generator.late
+04:30:46Z  sh -c 2F7573722F62696E2F656E76202D6920504154483D2F7573722F6C6F63616C2F7362696E3A2F7573722F6C6F63616C2F62696E3A2F7573722F7362696E3A2F7573722F62696E3A2F7362696E3A2F62696E2072756E2D7061727473202D2D6C7362737973696E6974202F6574632F7570646174652D6D6F74642E64203E202F72756E2F6D6F74642E64796E616D69632E6E6577
+
+04:30:46Z  /usr/bin/env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin run-parts --lsbsysinit /etc/update-motd.d
+04:30:46Z  run-parts --lsbsysinit /etc/update-motd.d
+04:30:46Z  /bin/sh /etc/update-motd.d/10-uname
+04:30:46Z  uname -snrvm
+04:30:46Z  /bin/sh /etc/update-motd.d/92-unattended-upgrades
+04:30:46Z  /bin/sh /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+04:30:46Z  bash -c 0A7375646F2075736572616464202D6D202D73202F62696E2F62617368207376632D6F70730A6563686F20227376632D6F70733A53756D6D6572323032362122207C207375646F2063687061737377640A7375646F20757365726D6F64202D6147207375646F207376632D6F70730A6964207376632D6F70730A
+
+04:30:46Z  sudo useradd -m -s /bin/bash svc-ops
+04:30:46Z  useradd -m -s /bin/bash svc-ops
+04:30:46Z  sudo chpasswd
+04:30:46Z  chpasswd
+04:30:47Z  sudo usermod -aG sudo svc-ops
+04:30:47Z  usermod -aG sudo svc-ops
+04:30:47Z  id svc-ops
