@@ -68,7 +68,7 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" \
 
 ---
 
-## 3. Part B — Deploy rule 100121
+## 3. Part B — Deploy the INC-002 rules
 
 The manager mounts the repository's `rules/` directory. Mount the **directory**, not a
 single file; a single-file bind mount follows the inode and stops seeing edits when the
@@ -85,11 +85,15 @@ Deploy:
 cd "$HOME/wazuh-docker/single-node"
 docker compose up -d wazuh.manager
 sleep 20
-docker exec single-node-wazuh.manager-1 \
-  grep -c 100121 /var/ossec/etc/rules/local_rules.xml
+for id in 100121 100122 100123 100124 100125 100126; do
+  printf '%s: ' "$id"
+  docker exec single-node-wazuh.manager-1 \
+    grep -c "id=\"$id\"" /var/ossec/etc/rules/local_rules.xml
+done
 ```
 
-Expected: `1` (the rule id line).
+Expected: `1` for each. The deployed file is `rules/local_rules.xml`; the rationale and
+test matrix are in `rules/inc-002-rules.md`.
 
 ---
 

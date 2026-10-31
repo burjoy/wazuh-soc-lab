@@ -22,6 +22,12 @@ The ticket is [../../tickets/INC-002-rogue-account.md](../../tickets/INC-002-rog
 
 ---
 
+
+## Detection rules
+
+- [Rules paper](../../rules/inc-002-rules.md) · [PDF](../../rules/inc-002-rules.pdf) — 100121 and the variant rules (100122–100126), with the test matrix
+- [Deployed rules](../../rules/local_rules.xml)
+
 ## Reading order
 
 - **Hiring manager / interviewer:** document 1, then the narrative.

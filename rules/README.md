@@ -2,6 +2,13 @@
 
 Custom rules and suppressions, each with a written reason.
 
+
+## Current rules
+
+- [`local_rules.xml`](local_rules.xml) — deployed rules (100120–100126)
+- [INC-002 rules paper](inc-002-rules.md) · [PDF](inc-002-rules.pdf) — rationale, test matrix, coverage gaps
+- [`tuning-notes.md`](tuning-notes.md) — known false positives and narrowest conditions
+
 ## What belongs here
 
 - Rules that close a genuine gap in the stock ruleset, with the log sample that

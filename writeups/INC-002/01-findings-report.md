@@ -313,6 +313,10 @@ waits behind 160 audit commands.
   `-G` (replace).
 - It puts the affected account (`a3`) in the description.
 
+The repository also carries rules **100123–100126** for the other common paths:
+`gpasswd -a`, Debian `adduser`, `useradd -G`, and the `usermod -a -G` argument shape.
+The full family, its test matrix, and its gaps are in `rules/inc-002-rules.md`.
+
 ### 7.4 What did not fire
 
 | Gap | Consequence |
@@ -412,7 +416,7 @@ Critical.
 
 | # | Action |
 |---|---|
-| 6 | Deploy rule 100121; extend it to `wheel`, `admin`, or a CDB list of privileged groups |
+| 6 | Deploy 100121–100126; extend the group alternation (`sudo|wheel|admin`) to your estate or a CDB list |
 | 7 | Baseline `sudo` group membership and alert on drift |
 | 8 | Require `nologin` and no `sudo` for service accounts |
 | 9 | Integrate identity changes with change control; include the ticket ID in the audit trail |

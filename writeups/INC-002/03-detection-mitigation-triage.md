@@ -120,6 +120,23 @@ sudo gpasswd -d svc-test sudo && sudo userdel -r svc-test
 
 ---
 
+### 2.6 Variant coverage
+
+The privilege-assignment family covers more than `usermod -aG`:
+
+| Path | Rule |
+|---|---|
+| `usermod -aG sudo user` / `usermod -G sudo user` | 100121 |
+| `usermod -a -G sudo user` | 100126 |
+| `gpasswd -a user sudo` | 100123 |
+| `adduser user sudo` (Debian, Perl wrapper) | 100124, with 100126 from the internal usermod |
+| `useradd -G sudo user` | 100125 |
+| `authorized_keys` write | 100120 |
+
+The exact XML, test commands, and known gaps are in `rules/inc-002-rules.md`. Two
+gaps remain structural: a direct `/etc/group` edit and an argument order that shifts
+the group to a different index. FIM plus a membership baseline is the backstop.
+
 ## 3. Tuning
 
 ### 3.1 Privileged groups

@@ -287,16 +287,19 @@ sudo usermod -G sudo svc-ops
 This replaces the account's supplementary groups. Rule 100121 still matches, because
 `a2` is still `sudo`. Verify it fires, then restore the account's groups if needed.
 
+The other spellings have their own rules: `usermod -a -G` → 100126, `gpasswd -a` →
+100123, Debian `adduser` → 100124 (plus 100126 internally), and `useradd -G` → 100125.
+
 ### 12.2 A custom privileged group
 
-On a RHEL-family host, the group is often `wheel`. Rule 100121 will not match until the
-group name is added or a CDB list is used. This is the most important variant to test;
+On a RHEL-family host, the group is often `wheel`. The family (100121–100126) uses
+`sudo|wheel|admin`; a different group needs the alternation changed or a CDB list. This is the most important variant to test;
 it is the difference between a portable rule and a Debian-only rule.
 
 ```bash
 sudo groupadd -r ops-admin
 sudo usermod -aG ops-admin svc-ops
-# expected: 100121 does NOT fire until the rule or list is updated
+# expected: no alert from 100121–100126 until the alternation or list is updated
 ```
 
 ### 12.3 Direct `/etc/group` edit
@@ -308,7 +311,8 @@ sudo cp /etc/group /etc/group.bak
 sudo sed -i 's/^\(sudo:x:27:.*\)$/\1,svc-ops/' /etc/group
 ```
 
-Expected: FIM **550** on `/etc/group`, **no 100121**. This is the documented gap. A
+Expected: FIM **550** on `/etc/group`, **no alert from 100121–100126**. This is the
+documented gap. A
 membership baseline or a FIM-diff rule is required to catch it. Restore the file
 afterwards:
 

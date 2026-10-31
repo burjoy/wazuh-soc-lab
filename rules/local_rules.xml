@@ -1,16 +1,20 @@
 <!--
   Local rules for the SOC L1 lab.
 
-  Rule:   100120
-  Gap:    stock FIM reports a change under /home, but an added or modified
-          authorized_keys file is buried among shell history and cache writes.
-          After a successful password login, writing an SSH key is the cheapest
-          persistence available, so it deserves its own high-severity alert.
-  Sample: {"type":"event","data":{"path":"/home/svc-backup/.ssh/authorized_keys",
-          "event":"added"}}
-  Tuning: matches the file name, so it fires on any user's authorized_keys.
-          Legitimate key rotation will also trigger it; pair with a change
-          window or an allow-list of administrators.
+  INC-001
+    100120  FIM: authorized_keys added or modified (SSH persistence)
+
+  INC-002
+    100121  usermod adds an account to a privileged group
+    100122  interactive SSH login by a service account (svc-*)
+    100123  gpasswd adds an account to a privileged group
+    100124  adduser adds an account to a privileged group
+    100125  useradd creates an account directly in a privileged group
+    100126  usermod -a -G adds an account to a privileged group (shifted argv)
+
+  Privileged groups in this lab: sudo (Debian), wheel (RHEL family), admin.
+  If your estate uses different groups, change the alternation in 100121/100123/
+  100124/100125/100126 or move the list into a CDB lookup.
 -->
 
 <group name="local,syscheck,">
@@ -30,18 +34,94 @@
 
 <group name="local,audit,">
 
-  <!-- A user added to the sudo group is a privilege assignment. Stock 5902
-       reports the new account at level 8, but nothing names the escalation. -->
+  <!-- The primary path: usermod -aG sudo user, or usermod -G sudo user. -->
   <rule id="100121" level="12">
     <if_sid>80792</if_sid>
     <field name="audit.exe">/usr/sbin/usermod</field>
-    <field name="audit.execve.a2">sudo</field>
-    <description>Privilege assignment: user added to the sudo group ($(audit.execve.a3))</description>
+    <field name="audit.execve.a2">sudo|wheel|admin</field>
+    <description>Privilege assignment: user $(audit.execve.a3) added to privileged group $(audit.execve.a2) via usermod</description>
     <mitre>
       <id>T1098</id>
       <id>T1548.003</id>
     </mitre>
     <group>audit_command,privilege_escalation,</group>
+  </rule>
+
+  <!-- usermod -a -G sudo user; a3 is the group. This is the form Debian
+       adduser uses internally, and it shifts the argument index compared with
+       -aG. -->
+  <rule id="100126" level="12">
+    <if_sid>80792</if_sid>
+    <field name="audit.exe">/usr/sbin/usermod</field>
+    <field name="audit.execve.a1">-a</field>
+    <field name="audit.execve.a2">-G</field>
+    <field name="audit.execve.a3">sudo|wheel|admin</field>
+    <description>Privilege assignment: user $(audit.execve.a4) added to privileged group $(audit.execve.a3) via usermod -a -G</description>
+    <mitre>
+      <id>T1098</id>
+      <id>T1548.003</id>
+    </mitre>
+    <group>audit_command,privilege_escalation,</group>
+  </rule>
+
+  <!-- gpasswd -a user sudo; a3 is the group. -->
+  <rule id="100123" level="12">
+    <if_sid>80792</if_sid>
+    <field name="audit.exe">/usr/bin/gpasswd</field>
+    <field name="audit.execve.a1">-a</field>
+    <field name="audit.execve.a3">sudo|wheel|admin</field>
+    <description>Privilege assignment: user $(audit.execve.a2) added to privileged group $(audit.execve.a3) via gpasswd</description>
+    <mitre>
+      <id>T1098</id>
+      <id>T1548.003</id>
+    </mitre>
+    <group>audit_command,privilege_escalation,</group>
+  </rule>
+
+  <!-- Debian adduser user sudo; a2 is the user, a3 is the group. -->
+  <rule id="100124" level="12">
+    <if_sid>80792</if_sid>
+    <field name="audit.exe">/usr/bin/perl</field>
+    <field name="audit.execve.a1">/usr/sbin/adduser</field>
+    <field name="audit.execve.a3">sudo|wheel|admin</field>
+    <description>Privilege assignment: user $(audit.execve.a2) added to privileged group $(audit.execve.a3) via adduser</description>
+    <mitre>
+      <id>T1098</id>
+      <id>T1548.003</id>
+    </mitre>
+    <group>audit_command,privilege_escalation,</group>
+  </rule>
+
+  <!-- useradd -G sudo user; a1 is -G and a2 is the group in the canonical
+       ordering. Options before -G shift the index, which is why the FIM +
+       group-baseline check remains necessary. -->
+  <rule id="100125" level="12">
+    <if_sid>80792</if_sid>
+    <field name="audit.exe">/usr/sbin/useradd</field>
+    <field name="audit.execve.a1">-G</field>
+    <field name="audit.execve.a2">sudo|wheel|admin</field>
+    <description>Privilege assignment: new account $(audit.execve.a3) created in privileged group $(audit.execve.a2)</description>
+    <mitre>
+      <id>T1136.001</id>
+      <id>T1098</id>
+    </mitre>
+    <group>audit_command,privilege_escalation,</group>
+  </rule>
+
+</group>
+
+<group name="local,syslog,sshd,">
+
+  <!-- A service account should not open an interactive shell. The regex covers
+       the svc-* naming convention used in this lab. -->
+  <rule id="100122" level="10">
+    <if_sid>5715</if_sid>
+    <match>for svc-</match>
+    <description>SSH: interactive login by a service account</description>
+    <mitre>
+      <id>T1078</id>
+    </mitre>
+    <group>authentication_success,</group>
   </rule>
 
 </group>
