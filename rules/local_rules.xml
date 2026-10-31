@@ -26,6 +26,10 @@
     <group>syscheck,persistence,</group>
   </rule>
 
+</group>
+
+<group name="local,audit,">
+
   <!-- A user added to the sudo group is a privilege assignment. Stock 5902
        reports the new account at level 8, but nothing names the escalation. -->
   <rule id="100121" level="12">

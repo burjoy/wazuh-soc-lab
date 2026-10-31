@@ -258,16 +258,16 @@ TEMPLATE = """<!doctype html>
 COVER = """
 <section class="cover">
   <div class="cover-band"></div>
-  <div class="cover-eyebrow">SOC L1 Lab &middot; INC-001</div>
+  <div class="cover-eyebrow">SOC L1 Lab &middot; {id}</div>
   <h1 class="cover-title">{title}</h1>
   <p class="cover-subtitle">{subtitle}</p>
   <div class="cover-meta">
     <dl>
-      <dt>Incident</dt><dd>INC-001 &mdash; SSH brute force to persistence</dd>
+      <dt>Incident</dt><dd>{incident}</dd>
       <dt>Report date</dt><dd>{date}</dd>
-      <dt>Classification</dt><dd>Lab exercise &mdash; sanitized for publication</dd>
-      <dt>Environment</dt><dd>Wazuh 4.14.7 &middot; Debian 12 &middot; QEMU/KVM</dd>
-      <dt>Severity</dt><dd>High</dd>
+      <dt>Classification</dt><dd>{classification}</dd>
+      <dt>Environment</dt><dd>{environment}</dd>
+      <dt>Severity</dt><dd>{severity}</dd>
     </dl>
   </div>
   <div class="cover-footer">
@@ -284,6 +284,7 @@ TOC_PAGE = """
 """
 
 SUBTITLE_RE = re.compile(r"<!--\s*subtitle:\s*(.*?)\s*-->", re.S | re.I)
+META_RE = re.compile(r"<!--\s*meta\s*(.*?)\s*-->", re.S | re.I)
 
 
 def split_title(text: str) -> tuple[str, str]:
@@ -299,6 +300,21 @@ def split_title(text: str) -> tuple[str, str]:
 
 def convert(md_path: pathlib.Path, pdf_path: pathlib.Path) -> None:
     text = md_path.read_text(encoding="utf-8")
+
+    meta = {
+        "id": "INC-001",
+        "incident": "INC-001 &mdash; SSH brute force to persistence",
+        "severity": "High",
+        "classification": "Lab exercise &mdash; sanitized for publication",
+        "environment": "Wazuh 4.14.7 &middot; Debian 12 &middot; QEMU/KVM",
+    }
+    meta_match = META_RE.search(text)
+    if meta_match:
+        for raw_line in meta_match.group(1).splitlines():
+            if ":" in raw_line:
+                key, value = raw_line.split(":", 1)
+                meta[key.strip().lower()] = value.strip()
+        text = META_RE.sub("", text)
 
     match = SUBTITLE_RE.search(text)
     subtitle = match.group(1).strip() if match else ""
@@ -327,6 +343,7 @@ def convert(md_path: pathlib.Path, pdf_path: pathlib.Path) -> None:
         title=title,
         subtitle=subtitle,
         date=datetime.date.today().isoformat(),
+        **meta,
     )
     toc_page = TOC_PAGE.format(toc=toc) if toc else ""
 
