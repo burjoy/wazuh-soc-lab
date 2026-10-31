@@ -278,14 +278,23 @@ Legitimate activity was run on 2026-10-31 at 23:01–23:02.
 | `legacy.php5` | **100128 fired** (`.php` is a substring of `.php5`) |
 | `/home/analyst/notes/app.php` | **100128 fired** (outside webroot; broad match) |
 | `style.css` | silent |
+| Staging `/home/analyst/deploy/index.php` | **100128 fired** (staging copy) |
+| `index.php.bak` | **100128 fired** (backup copy) |
+| `index.php.tmp` | **100128 fired** (temp copy) |
+| `health.php` | **100128 fired** (legitimate deploy) |
+| Referer containing `.php?cmd=` | no 100127 (match is scoped to the request path) |
+| User-Agent containing `.php?cmd=` | no 100127 (match is scoped to the request path) |
 
 Conclusions:
 
 - **100128 is a deployment monitor, not a web-shell-specific rule.** It will fire on
-  every legitimate PHP release. That is acceptable if a change ticket is attached; it
-  is not acceptable as an unreviewed pager alert.
-- **100127 is a pattern match.** A legitimate `cmd` parameter at the first position
-  triggers it; a malicious `cmd` at the second position escapes it.
+  every legitimate PHP release, staging copy, backup (`index.php.bak`), and temp file
+  (`index.php.tmp`). That is acceptable only if a change ticket is attached and the
+  queue expects deployment events; it is not acceptable as an unreviewed pager alert.
+- **100127 is a pattern match scoped to the request path.** A legitimate `cmd` parameter
+  at the first position triggers it; a malicious `cmd` at the second position escapes
+  it. Referer and User-Agent text containing `.php?cmd=` did **not** trigger it, which
+  is the correct behaviour.
 - **Extensions matter.** `.phtml` is missed; `.php5` is caught only because it contains
   `.php`.
 

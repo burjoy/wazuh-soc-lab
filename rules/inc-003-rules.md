@@ -72,6 +72,8 @@ The deployed file is `rules/local_rules.xml`.
   form.
 - **False positives:** a legitimate PHP application that uses `cmd` as the first query
   parameter. Allow-list the path or the parameter name if that is normal for the app.
+  Referer and User-Agent text containing `.php?cmd=` does **not** trigger it; the match
+  is scoped to the request path.
 - **Gaps:** `?foo=1&cmd=id` does not match; POST bodies are not in the access log;
   `.phtml`, `.php5`, and framework routes are not covered.
 
@@ -81,8 +83,10 @@ The deployed file is `rules/local_rules.xml`.
 - **Match:** `.php` in the FIM log.
 - **Tested:** 22:12:20.956 (`updates2.php` added) and 22:14:11.305
   (`test.php` modified). Both fired.
-- **False positives:** legitimate PHP deployments and updates. Match them to a change
-  ticket; do not suppress the rule.
+- **False positives:** legitimate PHP deployments and updates, **staging copies**, and
+  backup/temp files (`index.php.bak`, `index.php.tmp`) because `.php` is a substring.
+  Match them to a change ticket; do not suppress the rule. If backups are routine,
+  exclude `*.php.bak` and `*.php.tmp` in the FIM configuration.
 - **Gaps:** `.phtml`, `.php5`, `.phar`, and files added outside FIM-monitored paths. It
   also fires for a PHP file added anywhere under `/etc`, `/home`, or the webroot, not
   just the webroot.

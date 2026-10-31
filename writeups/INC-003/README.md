@@ -27,7 +27,7 @@ The ticket is [../../tickets/INC-003-web-shell.md](../../tickets/INC-003-web-she
 - **Hiring manager / interviewer:** document 1, then the narrative.
 - **Analyst:** document 3, then document 1 §6–8.
 - **Rebuilding it:** document 2, then 4.
-- **Detection engineering:** document 3 §2–3, plus [the rules paper](../../rules/inc-003-rules.md).
+- **Detection engineering:** document 3 §2–3, plus [the rules paper](../../rules/inc-003-rules.md) · [PDF](../../rules/inc-003-rules.pdf).
 
 ---
 
@@ -60,6 +60,9 @@ Legitimate PHP deployment and parameter usage were tested on 2026-10-31 at 23:01
 | `legacy.php5` | 100128 fires (`.php` substring) |
 | `/home/analyst/notes/app.php` | 100128 fires (outside webroot) |
 | `style.css` | silent |
+| Staging copy `/home/analyst/deploy/index.php` | 100128 fires |
+| `index.php.bak` / `.tmp` | 100128 fires |
+| Referer/UA containing `.php?cmd=` | no 100127 (scoped to request path) |
 
 Full analysis: document 1 §8 and document 3 §5.
 
