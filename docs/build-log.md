@@ -379,3 +379,41 @@ Recorded in the INC-003 findings report §8, detection guide §5, and the packag
 
 Four-document package generated in `writeups/INC-003/` with covers and PDFs:
 findings (13 pages), reproduction (8), detection/triage (9), attack setup (8).
+
+## 2026-11-01 — INC-004 scenario run
+
+Scenario: cron and systemd persistence, both executing as root.
+
+### Prerequisite
+
+The cloud image shipped cron files but no daemon. Installed `cron` (3.0), enabled and
+started it. This also created the `cron.service` enable symlink, which is legitimate
+noise for 100130.
+
+### False-positive baseline (23:16:52)
+
+- Legit `/etc/cron.d/apt-maintenance` added and modified → **100129 ×2**.
+- `systemctl enable cron` → **100130 ×1** (enable symlink).
+- `systemctl disable cron` → silent (deletion is 553).
+- No unexpected hits.
+
+### Rules
+
+- **100129** FIM `/etc/cron.d/` (level 12).
+- **100130** FIM `/etc/systemd/system/` (level 10; enable symlinks are noisy).
+
+### Attack (23:17:24)
+
+- `/etc/cron.d/updates`: `* * * * * root /usr/bin/id > /tmp/cron-proof`.
+- `updates.service` + `updates.timer`: root oneshot, enabled at boot.
+- 100129 at 23:17:25.115.
+- 100130 at 23:17:28.122, 23:17:28.128, 23:17:31.309 (unit, timer, enable symlink).
+- 80792 `tee` with paths; `systemctl daemon-reload` and `enable --now`.
+- 5402 sudo attribution.
+- Proof files: `uid=0(root)` for both mechanisms.
+
+Cleanup: timer disabled, units removed, `daemon-reload`, cron file and proofs removed.
+cron remains installed and active. Webroot clean.
+
+Evidence: `docs/evidence/INC-004-*`; package `writeups/INC-004/`; rules paper
+`rules/inc-004-rules.md`.

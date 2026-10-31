@@ -8,6 +8,7 @@ Custom rules and suppressions, each with a written reason.
 - [`local_rules.xml`](local_rules.xml) — deployed rules (100120–100126)
 - [INC-002 rules paper](inc-002-rules.md) · [PDF](inc-002-rules.pdf) — rationale, test matrix, coverage gaps
 - [INC-003 rules paper](inc-003-rules.md) · [PDF](inc-003-rules.pdf) — web shell detection, test matrix, gaps
+- [INC-004 rules paper](inc-004-rules.md) · [PDF](inc-004-rules.pdf) — cron/systemd persistence, test matrix, gaps
 - [`tuning-notes.md`](tuning-notes.md) — known false positives and narrowest conditions
 
 ## What belongs here

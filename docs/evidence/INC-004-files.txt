@@ -1,0 +1,22 @@
+# /etc/cron.d/updates
+* * * * * root /usr/bin/id > /tmp/cron-proof 2>&1
+
+# /etc/systemd/system/updates.service
+[Unit]
+Description=Updates
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "id > /tmp/systemd-proof 2>&1"
+
+# /etc/systemd/system/updates.timer
+[Unit]
+Description=Updates timer
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=60s
+Unit=updates.service
+
+[Install]
+WantedBy=timers.target

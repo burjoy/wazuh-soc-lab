@@ -1,0 +1,45 @@
+23:17:25Z  /bin/sh /etc/update-motd.d/10-uname
+23:17:25Z  /bin/sh /etc/update-motd.d/92-unattended-upgrades
+23:17:25Z  /bin/sh /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+23:17:25Z  sudo tee /etc/cron.d/updates
+23:17:25Z  tee /etc/cron.d/updates
+23:17:28Z  sudo tee /etc/systemd/system/updates.service
+23:17:28Z  tee /etc/systemd/system/updates.service
+23:17:28Z  sudo tee /etc/systemd/system/updates.timer
+23:17:28Z  tee /etc/systemd/system/updates.timer
+23:17:31Z  sudo systemctl daemon-reload
+23:17:31Z  systemctl daemon-reload
+23:17:31Z  /bin/sh /usr/lib/systemd/system-generators/cloud-init-generator /run/systemd/generator /run/systemd/generator.early /run/systemd/generator.late
+23:17:31Z  /bin/sh /usr/lib/cloud-init/ds-identify
+23:17:31Z  sudo systemctl enable --now updates.timer
+23:17:31Z  systemctl enable --now updates.timer
+23:17:31Z  /bin/sh /usr/lib/systemd/system-generators/cloud-init-generator /run/systemd/generator /run/systemd/generator.early /run/systemd/generator.late
+23:17:31Z  /bin/sh /usr/lib/cloud-init/ds-identify
+23:17:31Z  /bin/sh -c 6964203E202F746D702F73797374656D642D70726F6F6620323E2631
+
+23:18:01Z  /bin/sh -c 2F7573722F62696E2F6964203E202F746D702F63726F6E2D70726F6F6620323E2631
+
+23:18:01Z  /usr/bin/id
+23:18:35Z  /bin/sh -c 6964203E202F746D702F73797374656D642D70726F6F6620323E2631
+
+23:18:51Z  /bin/sh /etc/update-motd.d/10-uname
+23:18:51Z  /bin/sh /etc/update-motd.d/92-unattended-upgrades
+23:18:51Z  /bin/sh /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+23:18:51Z  systemctl is-active updates.timer
+23:19:00Z  /bin/sh /etc/update-motd.d/10-uname
+23:19:00Z  /bin/sh /etc/update-motd.d/92-unattended-upgrades
+23:19:00Z  /bin/sh /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+23:19:00Z  /bin/sh /etc/update-motd.d/10-uname
+23:19:00Z  /bin/sh /etc/update-motd.d/92-unattended-upgrades
+23:19:00Z  /bin/sh /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+23:19:00Z  /bin/sh /etc/update-motd.d/10-uname
+23:19:00Z  /bin/sh /etc/update-motd.d/92-unattended-upgrades
+23:19:00Z  /bin/sh /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+23:19:00Z  sudo systemctl disable --now updates.timer
+23:19:00Z  systemctl disable --now updates.timer
+23:19:00Z  /bin/sh /usr/lib/systemd/system-generators/cloud-init-generator /run/systemd/generator /run/systemd/generator.early /run/systemd/generator.late
+23:19:00Z  /bin/sh /usr/lib/cloud-init/ds-identify
+23:19:00Z  sudo systemctl daemon-reload
+23:19:00Z  systemctl daemon-reload
+23:19:00Z  /bin/sh /usr/lib/systemd/system-generators/cloud-init-generator /run/systemd/generator /run/systemd/generator.early /run/systemd/generator.late
+23:19:00Z  /bin/sh /usr/lib/cloud-init/ds-identify

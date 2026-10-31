@@ -16,6 +16,10 @@
     100127  HTTP request to a .php file carrying a cmd= parameter
     100128  PHP file added under the webroot
 
+  INC-004
+    100129  cron file added or modified under /etc/cron.d
+    100130  systemd unit or enable-link changed under /etc/systemd/system
+
   Privileged groups in this lab: sudo (Debian), wheel (RHEL family), admin.
   If your estate uses different groups, change the alternation in 100121/100123/
   100124/100125/100126 or move the list into a CDB lookup.
@@ -156,6 +160,31 @@
       <id>T1505.003</id>
     </mitre>
     <group>syscheck,web,persistence,</group>
+  </rule>
+
+</group>
+
+
+<group name="local,syscheck,">
+
+  <rule id="100129" level="12">
+    <if_sid>550,554</if_sid>
+    <match>/etc/cron.d/</match>
+    <description>FIM: cron file added or modified (possible persistence)</description>
+    <mitre>
+      <id>T1053.003</id>
+    </mitre>
+    <group>syscheck,persistence,</group>
+  </rule>
+
+  <rule id="100130" level="10">
+    <if_sid>550,554</if_sid>
+    <match>/etc/systemd/system/</match>
+    <description>FIM: systemd unit or enable-link changed (possible persistence)</description>
+    <mitre>
+      <id>T1543.002</id>
+    </mitre>
+    <group>syscheck,persistence,</group>
   </rule>
 
 </group>

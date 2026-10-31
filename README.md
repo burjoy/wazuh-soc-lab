@@ -73,6 +73,8 @@ and escalation note, plus the runbook used.
 - [INC-003 document package](writeups/INC-003/README.md) — findings, reproduction, detection/triage, attack setup (Markdown + PDF)
 - [INC-003 narrative](writeups/INC-003-web-shell.md) — [ticket](tickets/INC-003-web-shell.md)
 - [INC-003 detection rules](rules/inc-003-rules.md) — 100127/100128, test matrix, gaps
+- [INC-004 document package](writeups/INC-004/README.md) — cron/systemd persistence (Markdown + PDF)
+- [INC-004 ticket](tickets/INC-004-cron-systemd.md) — [rules paper](rules/inc-004-rules.md)
 - [INC-001 ticket](tickets/INC-001-ssh-brute-force.md)
 - [Evidence](docs/evidence/) — alerts, auth log, audit records, decoded commands
 - [Detection tuning notes](rules/tuning-notes.md)
