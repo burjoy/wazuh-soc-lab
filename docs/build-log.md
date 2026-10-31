@@ -467,3 +467,27 @@ written closure.
 
 Evidence: `docs/evidence/INC-006-*`; package `writeups/INC-006/`; ticket
 `tickets/INC-006-authorized-change.md`.
+
+## 2026-11-01 — REGRESSION-001 full-suite run
+
+Ran all six scenarios in one window with real legitimate activity: apt installs
+(`sysstat`, `unattended-upgrades`), a PHP deploy with backups, a maintenance cron/systemd
+unit, key rotation, routine SSH/web traffic.
+
+Key result: **100122 never fired** on the successful `svc-backup` login because stock
+40112 matched the same success event. Added **100131**, a child of 40112 with the
+`for svc-` match. `wazuh-logtest`: failures + success → 100131; normal success → 100122.
+
+Other findings:
+
+- 100129 fired on `/etc/cron.d/sysstat.dpkg-new` (package transient).
+- 100130 fired on `sysstat` package enable symlinks.
+- 100128 fired on the legitimate PHP deploy/backup/temp files (known).
+- 100127 fired on the legitimate `cmd=status` (known).
+- 100120 fired on the authorized key rotation (known).
+- Stock Suricata ET SCAN fired `Potential SSH Scan` on normal SSH sessions; the local
+  LAB SCAN rule did not fire on apt/normal traffic.
+- Delayed scan retransmits produced LAB SCAN alerts ~45 s after nmap.
+
+Evidence: `docs/evidence/REGRESSION-001-*`; report
+`writeups/REGRESSION-001-all-scenarios.md`.

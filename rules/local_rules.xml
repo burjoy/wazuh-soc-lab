@@ -7,6 +7,7 @@
   INC-002
     100121  usermod adds an account to a privileged group
     100122  interactive SSH login by a service account (svc-*)
+    100131  service-account login after the brute-force correlation (40112)
     100123  gpasswd adds an account to a privileged group
     100124  adduser adds an account to a privileged group
     100125  useradd creates an account directly in a privileged group
@@ -120,8 +121,6 @@
 
 <group name="local,syslog,sshd,">
 
-  <!-- A service account should not open an interactive shell. The regex covers
-       the svc-* naming convention used in this lab. -->
   <rule id="100122" level="10">
     <if_sid>5715</if_sid>
     <match>for svc-</match>
@@ -132,8 +131,18 @@
     <group>authentication_success,</group>
   </rule>
 
-</group>
+  <rule id="100131" level="12">
+    <if_sid>40112</if_sid>
+    <match>for svc-</match>
+    <description>SSH: service-account login after brute-force correlation</description>
+    <mitre>
+      <id>T1078</id>
+      <id>T1110</id>
+    </mitre>
+    <group>authentication_success,brute_force,</group>
+  </rule>
 
+</group>
 
 <group name="local,web,">
 

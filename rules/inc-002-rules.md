@@ -38,6 +38,7 @@ They are intentionally local rules in the `100100`–`100199` range.
 | **100120** | FIM: `authorized_keys` added or modified | 12 | T1098.004, T1078 |
 | **100121** | `usermod` with group argument `sudo`/`wheel`/`admin` | 12 | T1098, T1548.003 |
 | **100122** | SSH login by an account named `svc-*` | 10 | T1078 |
+| **100131** | Service-account login after the 40112 brute-force correlation | 12 | T1078, T1110 |
 | **100123** | `gpasswd -a` to `sudo`/`wheel`/`admin` | 12 | T1098, T1548.003 |
 | **100124** | Debian `adduser <user> <group>` to a privileged group | 12 | T1098, T1548.003 |
 | **100125** | `useradd -G <privileged-group> <user>` | 12 | T1136.001, T1098 |
@@ -144,6 +145,17 @@ They are intentionally local rules in the `100100`–`100199` range.
     <group>authentication_success,</group>
   </rule>
 
+  <rule id="100131" level="12">
+    <if_sid>40112</if_sid>
+    <match>for svc-</match>
+    <description>SSH: service-account login after brute-force correlation</description>
+    <mitre>
+      <id>T1078</id>
+      <id>T1110</id>
+    </mitre>
+    <group>authentication_success,brute_force,</group>
+  </rule>
+
 </group>
 ```
 
@@ -214,6 +226,18 @@ They are intentionally local rules in the `100100`–`100199` range.
   needs the pattern extended.
 - **False positives:** a service that legitimately uses SSH. Allow-list it explicitly
   rather than removing the rule.
+
+### 100131 — precedence fix for 100122
+
+- **Problem:** stock 40112 matches the successful login after a brute-force burst and
+  wins rule evaluation, so the sibling 100122 never fires. The service-account login is
+  hidden behind the brute-force alert.
+- **Fix:** 100131 is a child of 40112 with the same `for svc-` match. It fires when the
+  success follows failures, and names the account.
+- **Tested:** 8 failures + `Accepted password for svc-test` → **100131**; a normal
+  `svc-test` login → **100122**.
+- **Limitation:** two rules express one intent. This is preferable to suppressing 40112
+  or accepting a blind spot.
 
 ### 100120 — persistence context
 
