@@ -38,7 +38,7 @@
   <rule id="100121" level="12">
     <if_sid>80792</if_sid>
     <field name="audit.exe">/usr/sbin/usermod</field>
-    <field name="audit.execve.a2">sudo|wheel|admin</field>
+    <field name="audit.execve.a2" type="pcre2">^(sudo|wheel|admin)$</field>
     <description>Privilege assignment: user $(audit.execve.a3) added to privileged group $(audit.execve.a2) via usermod</description>
     <mitre>
       <id>T1098</id>
@@ -55,7 +55,7 @@
     <field name="audit.exe">/usr/sbin/usermod</field>
     <field name="audit.execve.a1">-a</field>
     <field name="audit.execve.a2">-G</field>
-    <field name="audit.execve.a3">sudo|wheel|admin</field>
+    <field name="audit.execve.a3" type="pcre2">^(sudo|wheel|admin)$</field>
     <description>Privilege assignment: user $(audit.execve.a4) added to privileged group $(audit.execve.a3) via usermod -a -G</description>
     <mitre>
       <id>T1098</id>
@@ -69,7 +69,7 @@
     <if_sid>80792</if_sid>
     <field name="audit.exe">/usr/bin/gpasswd</field>
     <field name="audit.execve.a1">-a</field>
-    <field name="audit.execve.a3">sudo|wheel|admin</field>
+    <field name="audit.execve.a3" type="pcre2">^(sudo|wheel|admin)$</field>
     <description>Privilege assignment: user $(audit.execve.a2) added to privileged group $(audit.execve.a3) via gpasswd</description>
     <mitre>
       <id>T1098</id>
@@ -83,7 +83,7 @@
     <if_sid>80792</if_sid>
     <field name="audit.exe">/usr/bin/perl</field>
     <field name="audit.execve.a1">/usr/sbin/adduser</field>
-    <field name="audit.execve.a3">sudo|wheel|admin</field>
+    <field name="audit.execve.a3" type="pcre2">^(sudo|wheel|admin)$</field>
     <description>Privilege assignment: user $(audit.execve.a2) added to privileged group $(audit.execve.a3) via adduser</description>
     <mitre>
       <id>T1098</id>
@@ -99,7 +99,7 @@
     <if_sid>80792</if_sid>
     <field name="audit.exe">/usr/sbin/useradd</field>
     <field name="audit.execve.a1">-G</field>
-    <field name="audit.execve.a2">sudo|wheel|admin</field>
+    <field name="audit.execve.a2" type="pcre2">^(sudo|wheel|admin)$</field>
     <description>Privilege assignment: new account $(audit.execve.a3) created in privileged group $(audit.execve.a2)</description>
     <mitre>
       <id>T1136.001</id>

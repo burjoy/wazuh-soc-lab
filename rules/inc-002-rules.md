@@ -68,7 +68,7 @@ They are intentionally local rules in the `100100`–`100199` range.
   <rule id="100121" level="12">
     <if_sid>80792</if_sid>
     <field name="audit.exe">/usr/sbin/usermod</field>
-    <field name="audit.execve.a2">sudo|wheel|admin</field>
+    <field name="audit.execve.a2" type="pcre2">^(sudo|wheel|admin)$</field>
     <description>Privilege assignment: user $(audit.execve.a3) added to privileged group $(audit.execve.a2) via usermod</description>
     <mitre>
       <id>T1098</id>
@@ -82,7 +82,7 @@ They are intentionally local rules in the `100100`–`100199` range.
     <field name="audit.exe">/usr/sbin/usermod</field>
     <field name="audit.execve.a1">-a</field>
     <field name="audit.execve.a2">-G</field>
-    <field name="audit.execve.a3">sudo|wheel|admin</field>
+    <field name="audit.execve.a3" type="pcre2">^(sudo|wheel|admin)$</field>
     <description>Privilege assignment: user $(audit.execve.a4) added to privileged group $(audit.execve.a3) via usermod -a -G</description>
     <mitre>
       <id>T1098</id>
@@ -95,7 +95,7 @@ They are intentionally local rules in the `100100`–`100199` range.
     <if_sid>80792</if_sid>
     <field name="audit.exe">/usr/bin/gpasswd</field>
     <field name="audit.execve.a1">-a</field>
-    <field name="audit.execve.a3">sudo|wheel|admin</field>
+    <field name="audit.execve.a3" type="pcre2">^(sudo|wheel|admin)$</field>
     <description>Privilege assignment: user $(audit.execve.a2) added to privileged group $(audit.execve.a3) via gpasswd</description>
     <mitre>
       <id>T1098</id>
@@ -108,7 +108,7 @@ They are intentionally local rules in the `100100`–`100199` range.
     <if_sid>80792</if_sid>
     <field name="audit.exe">/usr/bin/perl</field>
     <field name="audit.execve.a1">/usr/sbin/adduser</field>
-    <field name="audit.execve.a3">sudo|wheel|admin</field>
+    <field name="audit.execve.a3" type="pcre2">^(sudo|wheel|admin)$</field>
     <description>Privilege assignment: user $(audit.execve.a2) added to privileged group $(audit.execve.a3) via adduser</description>
     <mitre>
       <id>T1098</id>
@@ -121,7 +121,7 @@ They are intentionally local rules in the `100100`–`100199` range.
     <if_sid>80792</if_sid>
     <field name="audit.exe">/usr/sbin/useradd</field>
     <field name="audit.execve.a1">-G</field>
-    <field name="audit.execve.a2">sudo|wheel|admin</field>
+    <field name="audit.execve.a2" type="pcre2">^(sudo|wheel|admin)$</field>
     <description>Privilege assignment: new account $(audit.execve.a3) created in privileged group $(audit.execve.a2)</description>
     <mitre>
       <id>T1136.001</id>
@@ -268,6 +268,39 @@ Expected counts in the test window: one each of 100121, 100123, 100124, 100125,
 100122; two of 100126 (manual plus the `adduser` internal call); 100120 when the key
 is written.
 
+### 5.1 False-positive validation
+
+The first version used an unanchored alternation, `sudo|wheel|admin`. Wazuh treats a
+`<field>` value as a regular expression, so that pattern matched any value containing
+the substring. Legitimate groups named `sudo-audit`, `admin-tools`, and `wheelhouse`
+produced privilege-assignment alerts.
+
+| Test group | Unanchored `sudo|wheel|admin` | Anchored PCRE2 |
+|---|---|---|
+| `appusers` (non-privileged) | silent | silent |
+| `sudo-audit` | **100121 fired** | silent |
+| `admin-tools` | **100121, 100124, 100126 fired** | silent |
+| `wheelhouse` | **100121 fired** | silent |
+| `sudo` (exact) | 100121 fired | 100121 fired |
+
+The same trap affected each path: `gpasswd -a testuser sudo-audit` fired 100123,
+`adduser testuser admin-tools` fired 100124 and 100126, and
+`useradd -G sudo-audit testuser5` fired 100125.
+
+The fix is an exact match:
+
+```xml
+<field name="audit.execve.a3" type="pcre2">^(sudo|wheel|admin)$</field>
+```
+
+Wazuh rejects `^...$` without `type="pcre2"` (syntax error on the tag), which is why the
+first version omitted the anchors. After the change, the substring groups were silent
+and the exact `sudo` operation still fired.
+
+This is the value of running legitimate activity through the rules: a rule that never
+false-positives in a demo can still be wrong in a real estate with `sudo-audit` or
+`admin-tools`.
+
 ---
 
 ## 6. Coverage and gaps
@@ -303,7 +336,9 @@ getent group sudo | diff -u /var/lib/soc/sudo-group.baseline -
 
 ### 7.1 Privileged groups
 
-The rules use `sudo|wheel|admin`. For a different group, either:
+The rules use anchored PCRE2, `^(sudo|wheel|admin)$`. Keep the anchors: an unanchored
+alternation matches `sudo-audit`, `admin-tools`, and `wheelhouse`. For a different
+group, either:
 
 - change the alternation in 100121/100123/100124/100125/100126, or
 - move the list into a CDB lookup, as the stock audit rules do with

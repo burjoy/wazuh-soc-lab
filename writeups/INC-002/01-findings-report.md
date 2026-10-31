@@ -298,8 +298,8 @@ waits behind 160 audit commands.
 <rule id="100121" level="12">
   <if_sid>80792</if_sid>
   <field name="audit.exe">/usr/sbin/usermod</field>
-  <field name="audit.execve.a2">sudo</field>
-  <description>Privilege assignment: user added to the sudo group ($(audit.execve.a3))</description>
+  <field name="audit.execve.a2" type="pcre2">^(sudo|wheel|admin)$</field>
+  <description>Privilege assignment: user $(audit.execve.a3) added to privileged group $(audit.execve.a2) via usermod</description>
   <mitre>
     <id>T1098</id>
     <id>T1548.003</id>
@@ -309,15 +309,31 @@ waits behind 160 audit commands.
 ```
 
 - It keys on the **binary** (`usermod`), not on a file diff.
-- It keys on the **group argument** (`a2=sudo`), which covers both `-aG` (append) and
-  `-G` (replace).
+- It keys on the **group argument** (`a2`, matched with anchored PCRE2), which covers
+  both `-aG` (append) and `-G` (replace).
 - It puts the affected account (`a3`) in the description.
 
 The repository also carries rules **100123–100126** for the other common paths:
 `gpasswd -a`, Debian `adduser`, `useradd -G`, and the `usermod -a -G` argument shape.
 The full family, its test matrix, and its gaps are in `rules/inc-002-rules.md`.
 
-### 7.4 What did not fire
+### 7.4 False-positive validation
+
+The rule family was re-run against legitimate group administration, including group
+names that contain a privileged name as a substring. The first version used an
+unanchored alternation (`sudo|wheel|admin`) and produced false positives on
+`sudo-audit`, `admin-tools`, and `wheelhouse`.
+
+The fix was an anchored PCRE2 field:
+
+```xml
+<field name="audit.execve.a2" type="pcre2">^(sudo|wheel|admin)$</field>
+```
+
+After the change, the legitimate groups were silent and an exact `sudo` assignment still
+fired. The full test matrix is in `rules/inc-002-rules.md` §5.1.
+
+### 7.5 What did not fire
 
 | Gap | Consequence |
 |---|---|
@@ -454,8 +470,8 @@ Critical.
 <rule id="100121" level="12">
   <if_sid>80792</if_sid>
   <field name="audit.exe">/usr/sbin/usermod</field>
-  <field name="audit.execve.a2">sudo</field>
-  <description>Privilege assignment: user added to the sudo group ($(audit.execve.a3))</description>
+  <field name="audit.execve.a2" type="pcre2">^(sudo|wheel|admin)$</field>
+  <description>Privilege assignment: user $(audit.execve.a3) added to privileged group $(audit.execve.a2) via usermod</description>
   <mitre>
     <id>T1098</id>
     <id>T1548.003</id>

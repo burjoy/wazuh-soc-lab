@@ -92,8 +92,8 @@ INC-001 dropped `a2`; short, conventional commands retain it.
 <rule id="100121" level="12">
   <if_sid>80792</if_sid>
   <field name="audit.exe">/usr/sbin/usermod</field>
-  <field name="audit.execve.a2">sudo</field>
-  <description>Privilege assignment: user added to the sudo group ($(audit.execve.a3))</description>
+  <field name="audit.execve.a2" type="pcre2">^(sudo|wheel|admin)$</field>
+  <description>Privilege assignment: user $(audit.execve.a3) added to privileged group $(audit.execve.a2) via usermod</description>
   <mitre>
     <id>T1098</id>
     <id>T1548.003</id>
@@ -107,7 +107,9 @@ INC-001 dropped `a2`; short, conventional commands retain it.
 - **False positives:** legitimate onboarding and automated provisioning. Match them to a
   change ticket; do not suppress the rule.
 - **Limitations:** hard-codes the group `sudo`; depends on auditd; does not catch a direct
-  `/etc/group` edit.
+  `/etc/group` edit. The field uses `type="pcre2"` with anchors: an unanchored
+  `sudo|wheel|admin` matches `sudo-audit` and similar legitimate groups (see
+  `rules/inc-002-rules.md` §5.1).
 
 Test:
 

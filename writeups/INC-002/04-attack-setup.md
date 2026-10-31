@@ -293,7 +293,8 @@ The other spellings have their own rules: `usermod -a -G` → 100126, `gpasswd -
 ### 12.2 A custom privileged group
 
 On a RHEL-family host, the group is often `wheel`. The family (100121–100126) uses
-`sudo|wheel|admin`; a different group needs the alternation changed or a CDB list. This is the most important variant to test;
+anchored PCRE2, `^(sudo|wheel|admin)$`; a different group needs the alternation changed
+or a CDB list. Keep the anchors: an unanchored list also matches `sudo-audit`. This is the most important variant to test;
 it is the difference between a portable rule and a Debian-only rule.
 
 ```bash
