@@ -360,3 +360,22 @@ Files removed; webroot returned to `index.nginx-debian.html` only.
 
 Evidence: `docs/evidence/INC-003-alerts.json` (67 alerts),
 `INC-003-web.log`, `INC-003-commands.txt`.
+
+### 2026-11-01 — INC-003 package and false-positive test
+
+Legitimate PHP deployment and parameter usage were run against 100127/100128:
+
+- A legitimate `index.php` deploy and update fired **100128** (expected; needs a change
+  ticket).
+- `GET /index.php?cmd=status` fired **100127** (false positive for a legitimate `cmd`
+  parameter).
+- `GET /index.php?foo=1&cmd=id` did **not** fire (parameter-order gap).
+- `app.phtml` did **not** fire (extension gap); `legacy.php5` did fire because it
+  contains `.php`.
+- `/home/analyst/notes/app.php` fired 100128 outside the webroot.
+- Static assets and `/index.php?page=1` were silent.
+
+Recorded in the INC-003 findings report §8, detection guide §5, and the package README.
+
+Four-document package generated in `writeups/INC-003/` with covers and PDFs:
+findings (13 pages), reproduction (8), detection/triage (9), attack setup (8).

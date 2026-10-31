@@ -70,7 +70,8 @@ and escalation note, plus the runbook used.
 - [INC-002 document package](writeups/INC-002/README.md) — findings, reproduction, detection/triage, attack setup (Markdown + PDF)
 - [INC-002 narrative](writeups/INC-002-rogue-account.md) — [ticket](tickets/INC-002-rogue-account.md)
 - [INC-002 detection rules](rules/inc-002-rules.md) · [PDF](rules/inc-002-rules.pdf) — seven rules, test matrix, coverage gaps
-- [INC-003 — web shell](writeups/INC-003-web-shell.md) — [ticket](tickets/INC-003-web-shell.md)
+- [INC-003 document package](writeups/INC-003/README.md) — findings, reproduction, detection/triage, attack setup (Markdown + PDF)
+- [INC-003 narrative](writeups/INC-003-web-shell.md) — [ticket](tickets/INC-003-web-shell.md)
 - [INC-003 detection rules](rules/inc-003-rules.md) — 100127/100128, test matrix, gaps
 - [INC-001 ticket](tickets/INC-001-ssh-brute-force.md)
 - [Evidence](docs/evidence/) — alerts, auth log, audit records, decoded commands
