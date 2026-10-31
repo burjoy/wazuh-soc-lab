@@ -1,0 +1,1 @@
+alert tcp $HOME_NET any -> $EXTERNAL_NET any (msg:"LAB SCAN outbound SYN sweep"; flags:S; detection_filter: track by_src, count 50, seconds 5; classtype:attempted-recon; sid:1000001; rev:1;)

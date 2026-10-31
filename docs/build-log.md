@@ -417,3 +417,36 @@ cron remains installed and active. Webroot clean.
 
 Evidence: `docs/evidence/INC-004-*`; package `writeups/INC-004/`; rules paper
 `rules/inc-004-rules.md`.
+
+## 2026-11-01 — INC-005 scenario run
+
+Scenario: outbound SYN sweep from the victim to the QEMU gateway. The direction is a lab
+constraint; the host cannot scan the guest's full port range without the tap/bridge
+upgrade.
+
+### Rule
+
+Local Suricata rule, sid 1000001:
+
+```text
+alert tcp $HOME_NET any -> $EXTERNAL_NET any (msg:"LAB SCAN outbound SYN sweep"; flags:S; detection_filter: track by_src, count 50, seconds 5; classtype:attempted-recon; sid:1000001; rev:1;)
+```
+
+Added to `/var/lib/suricata/rules/local.rules` and `rule-files` in `suricata.yaml`.
+
+### False-positive baseline
+
+- Normal `apt` + `curl`: 0 alerts.
+- 40-request legitimate burst: 0 alerts.
+- 60-request legitimate burst: **10 alerts** (23:26:28), dest_port 8080. Threshold
+  boundary; documented.
+
+### Scan
+
+- `nmap -sS --top-ports 200 --min-rate 500 10.0.2.2`.
+- 144 alerts: 5 at 23:26:35, 139 at 23:26:36.
+- Wazuh 86601 ingested all of them.
+- No follow-on authentication, FIM, process, or egress activity.
+
+Evidence: `docs/evidence/INC-005-*`; package `writeups/INC-005/`; rules paper
+`rules/inc-005-rules.md`.
