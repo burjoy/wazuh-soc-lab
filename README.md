@@ -1,130 +1,186 @@
-# SOC L1 Lab — Wazuh Triage Portfolio
+# Wazuh SOC Lab
 
-A small, reproducible detection-and-triage lab built to demonstrate entry-level SOC
-Analyst work: alerts generated, investigated, ticketed, escalated, and documented.
+Six investigations, twelve custom Wazuh rules, one Suricata rule, and a full regression.
+A single Debian VM built to practise first-line SOC work: detect, triage, contain or
+escalate, then write the ticket the next analyst can act on.
 
-**Status:** Days 0–1 complete — see [`docs/build-report.md`](docs/build-report.md)
-for the readable summary, and `docs/build-log.md` for the raw command history.
-
----
-
-## What this is
+**Last full run:** 2026-11-01, all six scenarios replayed under legitimate load. The run
+found a real detection gap and fixed it. See [REGRESSION-001](writeups/REGRESSION-001-all-scenarios.md).
 
 | | |
 |---|---|
-| **Role target** | SOC Analyst Level 1 — monitoring, first-line triage, ticketing, escalation |
-| **SIEM** | Wazuh 4.14.7, single-node, Docker |
+| **Role target** | SOC Analyst Level 1: monitoring, first-line triage, ticketing, escalation |
+| **SIEM** | Wazuh 4.14.7, single node, Docker |
 | **Endpoint** | Debian 12 VM, Wazuh agent, `auditd`, nginx, `sshd` |
-| **Network sensor** | Suricata, inside the endpoint VM, trimmed ET Open ruleset |
-| **Ticketing** | Jira (free tier) |
-| **Attacker** | Host shell — `nmap`, `hydra`, `curl`, `ssh` |
+| **Network sensor** | Suricata 7.0.10, inside the endpoint VM, trimmed ET Open ruleset |
+| **Attacker** | Host shell: `nmap`, `hydra`, `curl`, `ssh` |
+| **Scope** | RFC1918 only, one laptop, no external targets, no real malware |
 
-Everything runs on one laptop, on an isolated host-only network. No internet-facing
-targets, no real malware, no employer data.
+---
+
+## Start here
+
+Three links, in the order a reviewer should read them.
+
+1. [**INC-001, SSH brute force to key persistence**](writeups/INC-001/README.md).
+   The full package: findings, reproduction, detection and triage guide, attack setup.
+   Four documents, Markdown and PDF.
+2. [**Detection rules for cron and systemd persistence**](rules/inc-004-rules.md).
+   The detection engineering behind INC-004: rule rationale, test matrix, coverage gaps.
+3. [**REGRESSION-001, all scenarios under legitimate load**](writeups/REGRESSION-001-all-scenarios.md).
+   Package installs, PHP deploys, key rotation, and real SSH traffic in the same window.
+   It exposed a rule that never fired and documents the fix.
+
+---
+
+## By the numbers
+
+| 6 | 12 | 1 | 1 |
+|---|---|---|---|
+| investigations | Wazuh rules | Suricata rule | full regression |
 
 ---
 
 ## Architecture
 
-```
-Host (CachyOS, 7.5 GB RAM)
-┌──────────────────────────────────────────────────────────┐
-│  Docker: wazuh-manager / indexer / dashboard              │
-│  Attacker shell                                            │
-└───────────────┬──────────────────────────────────────────┘
-                │ isolated host-only network
-┌───────────────┴──────────────────────────────────────────┐
-│  Victim VM — Debian 12, 1.5 GB                  │
-│  sshd · nginx · auditd · wazuh-agent · suricata           │
-│  suricata -i eth0 → /var/log/suricata/eve.json            │
-└──────────────────────────────────────────────────────────┘
-```
+![Lab architecture](docs/architecture.svg)
 
-The Wazuh agent forwards three streams from the victim: authentication logs,
-`auditd` execve records, and file-integrity events. Suricata's `eve.json` is
-forwarded through the same agent.
+Attacks run from the host over QEMU user networking. The victim VM runs `sshd`, nginx,
+`auditd`, Suricata, and the Wazuh agent. The agent forwards authentication logs, `execve`
+records, file integrity events, and Suricata alerts to the manager. Full detail is in
+[docs/architecture.md](docs/architecture.md).
+
+Every incident was driven from the host shell. No traffic leaves the machine.
 
 ---
 
-## Scenarios
+## Investigations
 
-| # | Scenario | MITRE | Primary telemetry |
-|---|---|---|---|
-| 1 | SSH brute force → successful login | T1110.001, T1078 | sshd, auditd |
-| 2 | Rogue local account + sudo group | T1136.001, T1548.003 | auditd, FIM |
-| 3 | Web shell dropped and used | T1505.003, T1105 | FIM, nginx, Suricata |
-| 4 | Cron persistence | T1053.003 | FIM, auditd |
-| 5 | Port scan + service enumeration | T1046, T1595 | Suricata |
-| 6 | Benign change closed as false positive | — | FIM, auditd |
+| ID | Scenario | MITRE | Severity | Outcome |
+|---|---|---|---|---|
+| [INC-001](writeups/INC-001/README.md) | SSH brute force to `authorized_keys` persistence | T1110, T1078 | High | Key hashed and removed, account disabled, escalation note filed |
+| [INC-002](writeups/INC-002/README.md) | Rogue `svc-ops` account added to sudo | T1136.001, T1098, T1548.003 | High | Account and group membership removed, host rechecked |
+| [INC-003](writeups/INC-003/README.md) | PHP web shell, command execution as `www-data` | T1505.003, T1059.004 | High | Shell removed, webroot restored, detection added |
+| [INC-004](writeups/INC-004/README.md) | Cron and systemd persistence running as root | T1053.003, T1543.002 | Critical | Units and cron file removed, `daemon-reload`, verified |
+| [INC-005](writeups/INC-005/README.md) | Outbound SYN sweep, 200 ports in under a second | T1046 | Medium | Recon only, no follow-on activity, threshold boundary documented |
+| [INC-006](writeups/INC-006/README.md) | Approved maintenance change tripped the rules | none | Closed | Benign true positive, closed with matching hashes |
 
-Each case has a ticket in `tickets/` with severity, timeline, evidence, containment
-and escalation note, plus the runbook used.
+Each package contains a findings report, a reproduction guide, a detection and mitigation
+guide, and the attack setup. Each incident also has a [ticket](tickets/) with severity,
+UTC timeline, SHA-256 evidence, containment, and escalation note.
 
 ---
 
+## Detection rules
 
-## Write-ups and evidence
+Custom rules live in [rules/local_rules.xml](rules/local_rules.xml). Each one names the gap
+it closes, and each has a test matrix in its paper.
 
-- [INC-001 document package](writeups/INC-001/README.md) — findings report, reproduction guide, detection/mitigation/triage guide, attack setup (Markdown + PDF)
-- [INC-001 narrative version](writeups/INC-001-ssh-brute-force.md)
-- [INC-002 document package](writeups/INC-002/README.md) — findings, reproduction, detection/triage, attack setup (Markdown + PDF)
-- [INC-002 narrative](writeups/INC-002-rogue-account.md) — [ticket](tickets/INC-002-rogue-account.md)
-- [INC-002 detection rules](rules/inc-002-rules.md) · [PDF](rules/inc-002-rules.pdf) — seven rules, test matrix, coverage gaps
-- [INC-003 document package](writeups/INC-003/README.md) — findings, reproduction, detection/triage, attack setup (Markdown + PDF)
-- [INC-003 narrative](writeups/INC-003-web-shell.md) — [ticket](tickets/INC-003-web-shell.md)
-- [INC-003 detection rules](rules/inc-003-rules.md) — 100127/100128, test matrix, gaps
-- [INC-004 document package](writeups/INC-004/README.md) — cron/systemd persistence (Markdown + PDF)
-- [INC-004 ticket](tickets/INC-004-cron-systemd.md) — [rules paper](rules/inc-004-rules.md)
-- [INC-005 document package](writeups/INC-005/README.md) — outbound port scan (Markdown + PDF)
-- [INC-005 ticket](tickets/INC-005-port-scan.md) — [rules paper](rules/inc-005-rules.md)
-- [INC-006 document package](writeups/INC-006/README.md) — authorized-change closure (Markdown + PDF)
-- [INC-006 ticket](tickets/INC-006-authorized-change.md) — benign true positive, no incident
-- [REGRESSION-001 — all scenarios under legitimate load](writeups/REGRESSION-001-all-scenarios.md) · [PDF](writeups/REGRESSION-001-all-scenarios.pdf) — found and fixed the 100122/40112 precedence gap
-- [INC-001 ticket](tickets/INC-001-ssh-brute-force.md)
-- [Evidence](docs/evidence/) — alerts, auth log, audit records, decoded commands
-- [Detection tuning notes](rules/tuning-notes.md)
+| Rule | Level | Detects |
+|---|---|---|
+| **100120** | 12 | `authorized_keys` added or modified, possible SSH persistence |
+| **100121** | 12 | `usermod` adds a user to a privileged group |
+| **100122** | 10 | Interactive SSH login by a service account (`svc-*`) |
+| **100123** | 12 | `gpasswd` adds a user to a privileged group |
+| **100124** | 12 | `adduser` adds a user to a privileged group |
+| **100125** | 12 | New account created directly inside a privileged group |
+| **100126** | 12 | `usermod -a -G` adds a user to a privileged group |
+| **100127** | 12 | `.php?cmd=` request, possible web shell use |
+| **100128** | 12 | PHP file added under a monitored path |
+| **100129** | 12 | Cron file added or modified |
+| **100130** | 10 | systemd unit or enable link changed |
+| **100131** | 12 | Service-account login after the 40112 brute-force correlation |
 
-## Repository layout
+One Suricata rule, sid **1000001**, fires on an outbound SYN sweep above 50 packets in
+5 seconds. Rationale and threshold testing are in
+[INC-005 rules](rules/inc-005-rules.md).
+
+Rule papers: [INC-002](rules/inc-002-rules.md) ·
+[INC-003](rules/inc-003-rules.md) ·
+[INC-004](rules/inc-004-rules.md) ·
+[INC-005](rules/inc-005-rules.md) ·
+[tuning notes](rules/tuning-notes.md).
+
+---
+
+## How a ticket is worked
+
+1. **Validate.** Read the raw event, not the rule description. Confirm the log line exists.
+2. **Scope.** Account, host, source address, first and last event.
+3. **Correlate.** Join identity, process, file, and network activity on a UTC timeline.
+4. **Decide.** Contain or escalate, and say which, with the evidence attached.
+
+Every ticket carries the same evidence standard: UTC timeline from the real logs, SHA-256
+of any artifact, the alert ID and raw log line, a stated decision, and time to triage.
+
+This is the part I would defend in an interview. A rule that fires is not an incident. The
+ticket is the product.
+
+---
+
+## What this lab does not catch
+
+Naming the gaps is part of the work, so they are listed here rather than buried.
+
+- **100127 only matches `cmd` in the first parameter position.** A shell called as
+  `?x=1&cmd=id` is missed. A broader rule was rejected because it fired on normal pages.
+- **100128 matches any `.php` substring.** Every deployment, backup, and temp copy alerts.
+  Kept for coverage, routed as deployment noise.
+- **Package installs produce noise.** `100129` fires on `.dpkg-new` staging files, and
+  `100130` fires on enable symlinks created by `apt`. Documented, not suppressed.
+- **100120 matches by filename.** A key written to `authorized_keys.bak` also alerts. The
+  exact path is not reachable with the stock FIM decoder and `<match>`.
+- **Inbound scanning is not covered.** The VM sits behind QEMU user networking, so only
+  outbound sweeps are visible. A tap or bridge is noted as future work.
+- **Linux only.** Windows event mapping is written but not built. See
+  [windows-parity.md](windows-parity.md).
+- **One host.** No AD, no cloud telemetry, no email gateway. Those are the next three
+  builds, not claims made here.
+
+---
+
+## Repository map
 
 ```
 .
 ├── README.md
-├── SCOPE.md                  # what this lab may and may not touch
-├── windows-parity.md         # Windows event IDs ↔ Linux telemetry
+├── SCOPE.md                  rules of engagement for the lab
+├── windows-parity.md         Windows event IDs mapped to this telemetry
 ├── docs/
-│   ├── architecture.md
-│   ├── build-log.md          # command history, including failures
-│   └── screenshots/
+│   ├── architecture.md       components, data flow, constraints
+│   ├── architecture.svg      diagram used above
+│   ├── build-log.md          command history, including failures
+│   ├── build-report.md       readable build narrative
+│   └── evidence/             alert JSON, logs, hashes per incident
 ├── lab/
-│   ├── wazuh/                # pinned stack setup
-│   ├── vm/                   # cloud-init and launch scripts
-│   └── suricata/             # config, rules, tuning notes
-├── rules/                    # custom Wazuh rules + suppressions
-├── runbooks/                 # analyst procedures
-└── tickets/                  # incident write-ups
+│   ├── wazuh/                pinned single-node stack setup
+│   ├── vm/                   launch, snapshot, and agent provisioning
+│   └── suricata/             config notes and local rule
+├── rules/                    custom Wazuh rules, per-incident papers
+├── runbooks/                 analyst procedures
+├── tickets/                  one ticket per incident
+└── writeups/                 four-document packages per incident
 ```
 
 ---
 
-## Evidence standard
+## Reproduce it
 
-Every ticket must contain:
+1. Docker with 4 GB free for the Wazuh stack. The version is pinned at 4.14.7.
+2. `lab/vm/launch.sh` builds the Debian 12 VM from cloud-init. `lab/vm/provision-agent.sh`
+   enrolls the agent. `lab/vm/snapshot.sh` returns to the clean baseline.
+3. Run any attack from `writeups/INC-00x/04-attack-setup.md`, then follow the reproduction
+   guide in the same package.
 
-- severity and the reason for it
-- UTC timeline with timestamps from the actual logs
-- SHA-256 of any file artifact
-- screenshots of the alert, the raw log line, and the ticket
-- a containment or escalation decision, stated as an action
-- time-to-triage
+VM images and keys are excluded from the repository. The build log records every command
+used, including the ones that failed.
 
 ---
 
-## Scope
+## Scope and disclaimer
 
-See `SCOPE.md`. In short: RFC1918 addresses only, local VM only, no scanning of
-external hosts, no real malicious binaries.
+Independent lab. Not affiliated with any employer. No production, government, or client
+data is included, and no findings from authorized assessment work appear here. All
+addresses are RFC1918. There is no real malware in the repository, only commands and logs.
 
-## Disclaimer
-
-Independent lab. Not affiliated with any employer. No production or government data
-is included; work history is described generically and under NDA.
+Lab rules of engagement: [SCOPE.md](SCOPE.md).

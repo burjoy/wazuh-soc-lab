@@ -5,12 +5,16 @@ Custom rules and suppressions, each with a written reason.
 
 ## Current rules
 
-- [`local_rules.xml`](local_rules.xml) — deployed rules (100120–100126)
+- [`local_rules.xml`](local_rules.xml) — deployed rules (100120–100131)
 - [INC-002 rules paper](inc-002-rules.md) · [PDF](inc-002-rules.pdf) — rationale, test matrix, coverage gaps
 - [INC-003 rules paper](inc-003-rules.md) · [PDF](inc-003-rules.pdf) — web shell detection, test matrix, gaps
 - [INC-004 rules paper](inc-004-rules.md) · [PDF](inc-004-rules.pdf) — cron/systemd persistence, test matrix, gaps
 - [INC-005 rules paper](inc-005-rules.md) · [PDF](inc-005-rules.pdf) — outbound scan detection, threshold, gaps
 - [`tuning-notes.md`](tuning-notes.md) — known false positives and narrowest conditions
+
+`100131` is the precedence fix found in [REGRESSION-001](../writeups/REGRESSION-001-all-scenarios.md):
+stock rule 40112 matches the successful login after a brute-force burst and outranks the
+sibling service-account rule, so 100131 is a child of 40112 with the same match.
 
 ## What belongs here
 

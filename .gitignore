@@ -22,3 +22,10 @@ lab/vm/keys/
 .DS_Store
 *.swp
 lab/vm/seed/user-data
+
+# Private material: never publish
+VDP Reports/
+cv/
+portfolio/
+*resume*.pdf
+*Resume*.pdf
