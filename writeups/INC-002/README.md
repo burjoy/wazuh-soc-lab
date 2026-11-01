@@ -1,6 +1,6 @@
 # INC-002 Document Package
 
-Four documents covering the rogue-account incident: what happened, how to rebuild the
+Five documents covering the rogue-account incident: what happened, how to rebuild the
 lab, how to detect and triage the change, and how the action was staged.
 
 All activity was local, against a VM created for the exercise. No production systems,
@@ -16,6 +16,7 @@ client data, or real credentials are included.
 | 2 | [Reproduction guide](02-reproduction-guide.md) · [PDF](02-reproduction-guide.pdf) | You, rebuilding the run | How to deploy the rule, validate it, and reproduce the evidence |
 | 3 | [Detection, mitigation, triage](03-detection-mitigation-triage.md) · [PDF](03-detection-mitigation-triage.pdf) | L1/L2 analysts | How the rules behave, how to triage the change, how to contain and harden |
 | 4 | [Attack setup](04-attack-setup.md) · [PDF](04-attack-setup.pdf) | Detection testers | How the action was staged, phase by phase, with variations |
+| 5 | [Evidence walkthrough](05-evidence-walkthrough.pdf) | Interviewer or reviewer | Annotated screenshots of the dashboard, the evidence, the capture steps, and the investigation guide |
 
 The shorter narrative is [../INC-002-rogue-account.md](../INC-002-rogue-account.md).
 The ticket is [../../tickets/INC-002-rogue-account.md](../../tickets/INC-002-rogue-account.md).

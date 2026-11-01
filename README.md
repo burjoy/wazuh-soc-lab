@@ -24,7 +24,7 @@ found a real detection gap and fixed it. See [REGRESSION-001](writeups/REGRESSIO
 
 Three links, in the order a reviewer should read them.
 
-1. [INC-001, SSH brute force to key persistence](writeups/INC-001/README.md).
+1. [INC-001, SSH brute force to key persistence](writeups/INC-001/README.md) · [walkthrough](writeups/INC-001/05-evidence-walkthrough.pdf).
    The full package: findings, reproduction, detection and triage guide, attack setup.
    Four documents, Markdown and PDF.
 2. [Detection rules for cron and systemd persistence](rules/inc-004-rules.md).
@@ -61,11 +61,11 @@ Every incident was driven from the host shell. No traffic leaves the machine.
 | ID | Scenario | MITRE | Severity | Outcome |
 |---|---|---|---|---|
 | [INC-001](writeups/INC-001/README.md) | SSH brute force to `authorized_keys` persistence | T1110, T1078 | High | Key hashed and removed, account disabled, escalation note filed |
-| [INC-002](writeups/INC-002/README.md) | Rogue `svc-ops` account added to sudo | T1136.001, T1098, T1548.003 | High | Account and group membership removed, host rechecked |
-| [INC-003](writeups/INC-003/README.md) | PHP web shell, command execution as `www-data` | T1505.003, T1059.004 | High | Shell removed, webroot restored, detection added |
-| [INC-004](writeups/INC-004/README.md) | Cron and systemd persistence running as root | T1053.003, T1543.002 | Critical | Units and cron file removed, `daemon-reload`, verified |
-| [INC-005](writeups/INC-005/README.md) | Outbound SYN sweep, 200 ports in under a second | T1046 | Medium | Recon only, no follow-on activity, threshold boundary documented |
-| [INC-006](writeups/INC-006/README.md) | Approved maintenance change tripped the rules | none | Closed | Benign true positive, closed with matching hashes |
+| [INC-002](writeups/INC-002/README.md) · [walkthrough](writeups/INC-002/05-evidence-walkthrough.pdf) | Rogue `svc-ops` account added to sudo | T1136.001, T1098, T1548.003 | High | Account and group membership removed, host rechecked |
+| [INC-003](writeups/INC-003/README.md) · [walkthrough](writeups/INC-003/05-evidence-walkthrough.pdf) | PHP web shell, command execution as `www-data` | T1505.003, T1059.004 | High | Shell removed, webroot restored, detection added |
+| [INC-004](writeups/INC-004/README.md) · [walkthrough](writeups/INC-004/05-evidence-walkthrough.pdf) | Cron and systemd persistence running as root | T1053.003, T1543.002 | Critical | Units and cron file removed, `daemon-reload`, verified |
+| [INC-005](writeups/INC-005/README.md) · [walkthrough](writeups/INC-005/05-evidence-walkthrough.pdf) | Outbound SYN sweep, 200 ports in under a second | T1046 | Medium | Recon only, no follow-on activity, threshold boundary documented |
+| [INC-006](writeups/INC-006/README.md) · [walkthrough](writeups/INC-006/05-evidence-walkthrough.pdf) | Approved maintenance change tripped the rules | none | Closed | Benign true positive, closed with matching hashes |
 
 Each package contains a findings report, a reproduction guide, a detection and mitigation
 guide, and the attack setup. Each incident also has a [ticket](tickets/) with severity,

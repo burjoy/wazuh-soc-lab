@@ -1,6 +1,6 @@
 # INC-003 Document Package
 
-Four documents covering the web-shell incident: what happened, how to rebuild the run,
+Five documents covering the web-shell incident: what happened, how to rebuild the run,
 how to detect and triage it, and how the action was staged.
 
 All activity was local, against a VM created for the exercise. No production systems,
@@ -16,6 +16,7 @@ client data, or real credentials are included.
 | 2 | [Reproduction guide](02-reproduction-guide.md) · [PDF](02-reproduction-guide.pdf) | You, rebuilding the run | How to configure PHP, deploy the rules, reproduce the evidence |
 | 3 | [Detection, mitigation, triage](03-detection-mitigation-triage.md) · [PDF](03-detection-mitigation-triage.pdf) | L1/L2 analysts | How the rules behave, how to triage a web shell, how to contain and harden |
 | 4 | [Attack setup](04-attack-setup.md) · [PDF](04-attack-setup.pdf) | Detection testers | How the shell was dropped and used, with variations |
+| 5 | [Evidence walkthrough](05-evidence-walkthrough.pdf) | Interviewer or reviewer | Annotated screenshots of the dashboard, the evidence, the capture steps, and the investigation guide |
 
 The shorter narrative is [../INC-003-web-shell.md](../INC-003-web-shell.md).
 The ticket is [../../tickets/INC-003-web-shell.md](../../tickets/INC-003-web-shell.md).

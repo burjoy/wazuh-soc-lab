@@ -1,6 +1,6 @@
 # INC-001 Document Package
 
-Four documents covering one incident from four angles: what happened, how to rebuild the
+Five documents covering one incident from four angles: what happened, how to rebuild the
 lab, how to detect and triage it, and how the attack was staged.
 
 All activity was local, against a VM created for the exercise. No production systems,
@@ -16,6 +16,7 @@ client data, or real credentials are included.
 | 2 | [Reproduction guide](02-reproduction-guide.md) · [PDF](02-reproduction-guide.pdf) | You, rebuilding the lab | How to go from a bare host to a working Wazuh + VM + rule setup |
 | 3 | [Detection, mitigation, triage](03-detection-mitigation-triage.md) · [PDF](03-detection-mitigation-triage.pdf) | L1/L2 analysts | How the rules behave, how to triage this alert, how to contain and harden |
 | 4 | [Attack setup](04-attack-setup.md) · [PDF](04-attack-setup.pdf) | Detection testers | How the incident was staged, phase by phase, safely |
+| 5 | [Evidence walkthrough](05-evidence-walkthrough.pdf) | Interviewer or reviewer | Annotated screenshots of the dashboard, the evidence, the capture steps, and the investigation guide |
 
 The shorter narrative version is [../INC-001-ssh-brute-force.md](../INC-001-ssh-brute-force.md).
 The ticket is [../../tickets/INC-001-ssh-brute-force.md](../../tickets/INC-001-ssh-brute-force.md).

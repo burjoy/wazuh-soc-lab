@@ -1,6 +1,6 @@
 # INC-005 Document Package
 
-Four documents covering the outbound port scan: what happened, how to rebuild the run,
+Five documents covering the outbound port scan: what happened, how to rebuild the run,
 how to detect and triage it, and how the scan was staged.
 
 All activity was local, against a VM created for the exercise. No production systems,
@@ -16,6 +16,7 @@ client data, or real targets are included.
 | 2 | [Reproduction guide](02-reproduction-guide.md) · [PDF](02-reproduction-guide.pdf) | You, rebuilding the run | How to add the Suricata rule, measure false positives, and run the scan |
 | 3 | [Detection, mitigation, triage](03-detection-mitigation-triage.md) · [PDF](03-detection-mitigation-triage.pdf) | L1/L2 analysts | How the rule behaves, how to triage a scan, how to contain and harden |
 | 4 | [Attack setup](04-attack-setup.md) · [PDF](04-attack-setup.pdf) | Detection testers | How the scan and the false-positive bursts were staged |
+| 5 | [Evidence walkthrough](05-evidence-walkthrough.pdf) | Interviewer or reviewer | Annotated screenshots of the dashboard, the evidence, the capture steps, and the investigation guide |
 
 The ticket is [../../tickets/INC-005-port-scan.md](../../tickets/INC-005-port-scan.md).
 The rules paper is [../../rules/inc-005-rules.md](../../rules/inc-005-rules.md).

@@ -1,6 +1,6 @@
 # INC-006 Document Package
 
-Four documents covering the authorized-change triage: what happened, how to rebuild the
+Five documents covering the authorized-change triage: what happened, how to rebuild the
 change, how to verify and close it, and how the change was staged.
 
 The scenario is deliberately benign. The skill being demonstrated is the closure,
@@ -16,6 +16,7 @@ not an attack.
 | 2 | [Reproduction guide](02-reproduction-guide.md) · [PDF](02-reproduction-guide.pdf) | You, rebuilding the case | How to create the change package, deploy, triage, and close |
 | 3 | [Detection, mitigation, triage](03-detection-mitigation-triage.md) · [PDF](03-detection-mitigation-triage.pdf) | L1/L2 analysts | How to verify authorization, integrity, behaviour, and follow-on activity |
 | 4 | [Change setup](04-change-setup.md) · [PDF](04-change-setup.pdf) | Detection testers | How the legitimate change was staged, with variations |
+| 5 | [Evidence walkthrough](05-evidence-walkthrough.pdf) | Interviewer or reviewer | Annotated screenshots of the dashboard, the evidence, the capture steps, and the investigation guide |
 
 The ticket is [../../tickets/INC-006-authorized-change.md](../../tickets/INC-006-authorized-change.md).
 

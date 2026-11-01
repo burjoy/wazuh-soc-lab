@@ -1,6 +1,6 @@
 # INC-004 Document Package
 
-Four documents covering the root-persistence incident: what happened, how to rebuild the
+Five documents covering the root-persistence incident: what happened, how to rebuild the
 run, how to detect and triage the change, and how the action was staged.
 
 All activity was local, against a VM created for the exercise. No production systems,
@@ -16,6 +16,7 @@ client data, or real credentials are included.
 | 2 | [Reproduction guide](02-reproduction-guide.md) · [PDF](02-reproduction-guide.pdf) | You, rebuilding the run | How to install cron, deploy the rules, run the baseline, and reproduce the evidence |
 | 3 | [Detection, mitigation, triage](03-detection-mitigation-triage.md) · [PDF](03-detection-mitigation-triage.pdf) | L1/L2 analysts | How the rules behave, how to triage persistence, how to contain and harden |
 | 4 | [Attack setup](04-attack-setup.md) · [PDF](04-attack-setup.pdf) | Detection testers | How the cron and systemd payloads were staged, with variations |
+| 5 | [Evidence walkthrough](05-evidence-walkthrough.pdf) | Interviewer or reviewer | Annotated screenshots of the dashboard, the evidence, the capture steps, and the investigation guide |
 
 The ticket is [../../tickets/INC-004-cron-systemd.md](../../tickets/INC-004-cron-systemd.md).
 The rules paper is [../../rules/inc-004-rules.md](../../rules/inc-004-rules.md).
