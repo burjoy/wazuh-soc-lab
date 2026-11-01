@@ -25,15 +25,19 @@ The ticket is [../../tickets/INC-002-rogue-account.md](../../tickets/INC-002-rog
 
 ## Detection rules
 
-- [Rules paper](../../rules/inc-002-rules.md) · [PDF](../../rules/inc-002-rules.pdf) — 100121 and the variant rules (100122–100126), with the test matrix
+- [Rules paper](../../rules/inc-002-rules.md) · [PDF](../../rules/inc-002-rules.pdf), 100121 and the variant rules (100122–100126), with the test matrix
 - [Deployed rules](../../rules/local_rules.xml)
 
 ## Reading order
 
-- **Hiring manager / interviewer:** document 1, then the narrative.
-- **Analyst:** document 3, then document 1 §6–7.
-- **Rebuilding it:** document 2, then 4.
-- **Detection engineering:** document 3 §2–3, plus `../../rules/tuning-notes.md`.
+- **Hiring manager / interviewer**  
+  Document 1, then the narrative.
+- **Analyst**  
+  Document 3, then document 1 §6–7.
+- **Rebuilding it**  
+  Document 2, then 4.
+- **Detection engineering**  
+  Document 3 §2–3, plus `../../rules/tuning-notes.md`.
 
 ---
 
@@ -45,11 +49,11 @@ The ticket is [../../tickets/INC-002-rogue-account.md](../../tickets/INC-002-rog
 | Host | Debian 12 VM `soc-victim`, 10.0.2.15 |
 | Account | `svc-ops` (uid 1003), `/bin/bash`, password, group `sudo` |
 | Actor | `analyst` (uid 1000) via `sudo`, source 10.0.2.2 |
-| Detection | **100121** (custom, level 12), 5901/5902, FIM 550 |
+| Detection | 100121 (custom, level 12), 5901/5902, FIM 550 |
 | Noise | 237 alerts in the window, 160 audit command events |
 | Containment | Removed from `sudo`, account deleted at 04:32:07 |
 | Privileged use | None observed |
-| Custom rule | 100121 — `usermod` with `a2=sudo` |
+| Custom rule | 100121, `usermod` with `a2=sudo` |
 
 ---
 

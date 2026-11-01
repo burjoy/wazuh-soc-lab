@@ -1,6 +1,6 @@
 False-positive baseline, custom Suricata rule (count 50 / 5 s):
 - normal apt + curl traffic: 0 alerts
 - 40-request legitimate burst: 0 alerts
-- 60-request legitimate burst: 10 alerts (23:26:28) -> false positive boundary
+- 60-request legitimate burst: 10 alerts (23:26:28) to false positive boundary
 Attack:
 - nmap -sS --top-ports 200: 144 alerts (23:26:35-36) across many destination ports

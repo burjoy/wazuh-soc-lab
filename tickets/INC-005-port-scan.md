@@ -1,10 +1,10 @@
-# INC-005 — Outbound port scan
+# INC-005: Outbound port scan
 
 | Field | Value |
 |---|---|
 | Severity | Medium (reconnaissance) |
-| Status | Closed — escalated for verification |
-| Source | Suricata sid 1000001 → Wazuh 86601 |
+| Status | Closed, escalated for verification |
+| Source | Suricata sid 1000001 to Wazuh 86601 |
 | Source host | `soc-victim` 10.0.2.15 |
 | Destination | QEMU gateway 10.0.2.2 |
 | Scan | `nmap -sS --top-ports 200 --min-rate 500` |
@@ -14,8 +14,8 @@
 
 ## What fired
 
-- **Suricata sid 1000001** — `LAB SCAN outbound SYN sweep`.
-- **Wazuh 86601** — `Suricata: Alert - LAB SCAN outbound SYN sweep`.
+- Suricata sid 1000001, `LAB SCAN outbound SYN sweep`.
+- Wazuh 86601, `Suricata: Alert - LAB SCAN outbound SYN sweep`.
 - 144 alerts in two seconds: 5 at 23:26:35, 139 at 23:26:36.
 - Destination ports included 1074, 808, 2121, and many others.
 
@@ -32,7 +32,7 @@ Run before the scan:
 | 60 requests in a burst | 10 |
 
 The rule counts 50 SYNs per 5 seconds from one source. The 60-request burst crosses the
-threshold; that is a documented false-positive boundary, not a hidden bug.
+threshold. That is a documented false-positive boundary, not a hidden bug.
 
 ## Timeline
 
@@ -55,9 +55,11 @@ threshold; that is a documented false-positive boundary, not a hidden bug.
 
 ## Severity rationale
 
-**Medium.** Reconnaissance only, one source, one destination, no exploitation or
+**Medium**
+
+Reconnaissance only, one source, one destination, no exploitation or
 session. Raise to High if authentication failures or exploit attempts follow within the
-hour; Critical if a session or payload follows.
+hour. Critical if a session or payload follows.
 
 ## Action taken
 
@@ -71,7 +73,7 @@ hour; Critical if a session or payload follows.
 | Gap | Consequence |
 |---|---|
 | Outbound-only rule | An inbound scan of the VM is not covered |
-| Packet-count threshold | Legit bursts false-positive; slow scans evade |
+| Packet-count threshold | Legit bursts false-positive. Slow scans evade |
 | One destination | A subnet sweep is not represented |
 | No follow-on correlation | Scan and exploit are separate alerts |
 
@@ -81,7 +83,7 @@ hour; Critical if a session or payload follows.
 |---|---|
 | 1 | Maintain a scanner inventory and schedule |
 | 2 | Baseline load tests/monitoring bursts |
-| 3 | Correlate scan → auth failures → exploit attempts |
+| 3 | Correlate scan to auth failures to exploit attempts |
 | 4 | Add the inbound rule if the sensor sees inbound traffic |
 | 5 | Deploy the bridge upgrade if an inbound lab scenario is needed |
 | 6 | Review the 50/5 s threshold against the estate |
@@ -95,10 +97,10 @@ hour; Critical if a session or payload follows.
 
 ## Evidence
 
-- `docs/evidence/INC-005-alerts.json` — Wazuh alerts in the window
-- `docs/evidence/INC-005-suricata.json` — Suricata `LAB SCAN` events
-- `docs/evidence/INC-005-scan.txt` — nmap output
-- `docs/evidence/INC-005-fp.txt` — false-positive baseline
-- `docs/evidence/INC-005-rule.txt` — the local Suricata rule
-- `writeups/INC-005/` — four-document package
-- `rules/inc-005-rules.md` — rule rationale and test matrix
+- `docs/evidence/INC-005-alerts.json`, Wazuh alerts in the window
+- `docs/evidence/INC-005-suricata.json`, Suricata `LAB SCAN` events
+- `docs/evidence/INC-005-scan.txt`, nmap output
+- `docs/evidence/INC-005-fp.txt`, false-positive baseline
+- `docs/evidence/INC-005-rule.txt`, the local Suricata rule
+- `writeups/INC-005/`, four-document package
+- `rules/inc-005-rules.md`, rule rationale and test matrix

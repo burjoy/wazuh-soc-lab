@@ -3,7 +3,7 @@
 <!-- subtitle: Two rules for the gap between a file landing and a command running -->
 <!--meta
 id: INC-003
-incident: INC-003 — Web shell detection rules
+incident: INC-003, Web shell detection rules
 severity: High
 -->
 
@@ -18,8 +18,8 @@ The deployed file is `rules/local_rules.xml`.
 
 | ID | Trigger | Level | MITRE |
 |---|---|---|---|
-| **100127** | `.php?cmd=` in an access-log request | 12 | T1505.003, T1059.004 |
-| **100128** | `.php` file added or modified in a FIM path | 12 | T1505.003 |
+| 100127 | `.php?cmd=` in an access-log request | 12 | T1505.003, T1059.004 |
+| 100128 | `.php` file added or modified in a FIM path | 12 | T1505.003 |
 
 ---
 
@@ -60,34 +60,45 @@ The deployed file is `rules/local_rules.xml`.
 
 ## 3. Rule-by-rule
 
-### 100127 — `.php?cmd=` request
+### 100127: `.php?cmd=` request
 
-- **Parent:** stock **31100**, the level-0 "access log messages grouped" rule. Without a
+- **Parent**  
+  Stock **31100**, the level-0 "access log messages grouped" rule. Without a
   parent, the rule would fire on the raw log before the web decoder runs.
-- **Match:** the literal substring `.php?cmd=`.
-- **Tested:** 22:12:25 on `GET /updates2.php?cmd=id`; 22:12:28 on the same request with
+- **Match**  
+  The literal substring `.php?cmd=`.
+- **Tested**  
+  22:12:25 on `GET /updates2.php?cmd=id`. 22:12:28 on the same request with
   a `sqlmap/1.7` user-agent.
-- **Why literal:** Wazuh uses one `<match>` per rule; two `<match>` tags are not ANDed.
+- **Why literal**  
+  Wazuh uses one `<match>` per rule. Two `<match>` tags are not ANDed.
   `\.php.*cmd=` via `<regex>` did not match the access log. The literal is the reliable
   form.
-- **False positives:** a legitimate PHP application that uses `cmd` as the first query
+- **False positives**  
+  A legitimate PHP application that uses `cmd` as the first query
   parameter. Allow-list the path or the parameter name if that is normal for the app.
-  Referer and User-Agent text containing `.php?cmd=` does **not** trigger it; the match
+  Referer and User-Agent text containing `.php?cmd=` does not trigger it. The match
   is scoped to the request path.
-- **Gaps:** `?foo=1&cmd=id` does not match; POST bodies are not in the access log;
+- **Gaps**  
+  `?foo=1&cmd=id` does not match. POST bodies are not in the access log.
   `.phtml`, `.php5`, and framework routes are not covered.
 
-### 100128 — PHP file added or modified
+### 100128: PHP file added or modified
 
-- **Parents:** **550** (checksum changed) and **554** (file added).
-- **Match:** `.php` in the FIM log.
-- **Tested:** 22:12:20.956 (`updates2.php` added) and 22:14:11.305
+- **Parents**  
+  **550** (checksum changed) and **554** (file added).
+- **Match**  
+  `.php` in the FIM log.
+- **Tested**  
+  22:12:20.956 (`updates2.php` added) and 22:14:11.305
   (`test.php` modified). Both fired.
-- **False positives:** legitimate PHP deployments and updates, **staging copies**, and
+- **False positives**  
+  Legitimate PHP deployments and updates, **staging copies**, and
   backup/temp files (`index.php.bak`, `index.php.tmp`) because `.php` is a substring.
-  Match them to a change ticket; do not suppress the rule. If backups are routine,
+  Match them to a change ticket. Do not suppress the rule. If backups are routine,
   exclude `*.php.bak` and `*.php.tmp` in the FIM configuration.
-- **Gaps:** `.phtml`, `.php5`, `.phar`, and files added outside FIM-monitored paths. It
+- **Gaps**  
+  `.phtml`, `.php5`, `.phar`, and files added outside FIM-monitored paths. It
   also fires for a PHP file added anywhere under `/etc`, `/home`, or the webroot, not
   just the webroot.
 
@@ -99,10 +110,10 @@ The deployed file is `rules/local_rules.xml`.
 |---|---|
 | `GET /index.html` | 31100 only |
 | `GET /updates.php?page=1` | 31100 only |
-| `GET /updates.php?cmd=id` | **100127** |
+| `GET /updates.php?cmd=id` | 100127 |
 | `GET /index.html?cmd=view` | 31100 only |
-| FIM add `/var/www/html/updates2.php` | **100128** |
-| FIM modify `/var/www/html/test.php` | **100128** |
+| FIM add `/var/www/html/updates2.php` | 100128 |
+| FIM modify `/var/www/html/test.php` | 100128 |
 | FIM add `/var/www/html/index.html` | no 100128 |
 
 Logged tests:
@@ -120,10 +131,10 @@ Logged tests:
 
 The rules catch the common `cmd=` shell and any new PHP file. They do not catch:
 
-- a shell using `exec=`, `command=`, `shell=`, or a cookie/header parameter;
-- a shell with a `.phtml` or `.php5` extension;
-- a POST-only shell, because the access log has no request body;
-- a framework route that dispatches to a shell without a `.php` path;
+- a shell using `exec=`, `command=`, `shell=`, or a cookie/header parameter.
+- a shell with a `.phtml` or `.php5` extension.
+- a POST-only shell, because the access log has no request body.
+- a framework route that dispatches to a shell without a `.php` path.
 - an obfuscated payload with no readable parameter name.
 
 Those need application logs, a WAF, or a decoder that inspects the request body. State
@@ -133,11 +144,11 @@ this in the ticket rather than implying the rules are complete.
 
 ## 6. Tuning
 
-- Add literals for other common parameters and extensions as separate rules; do not
+- Add literals for other common parameters and extensions as separate rules. Do not
   attempt to combine them in one `<match>`.
 - Keep the level at 12. A web shell is remote code execution as the web user.
 - Match legitimate deployments to a change ticket. A pipeline that writes PHP should
-  produce an expected FIM event; the analyst needs the ticket ID, not a suppression.
+  produce an expected FIM event. The analyst needs the ticket ID, not a suppression.
 - Pair with a read-only webroot and `disable_functions` so the detection is not the only
   control.
 
@@ -184,7 +195,7 @@ Test 100128 by creating a `.php` file under `/var/www/html` and checking the ale
 
 - Tested on nginx 1.22.1 with PHP-FPM 8.2 on Debian 12. A different web server may need
   a different parent rule than 31100.
-- The access log must be collected with a web log format; the lab uses the `apache`
+- The access log must be collected with a web log format. The lab uses the `apache`
   format for nginx.
 - A `200` response is not evidence of benign activity. That is the whole lesson of
   INC-003.

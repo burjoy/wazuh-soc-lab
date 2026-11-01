@@ -4,17 +4,19 @@ Six investigations, twelve custom Wazuh rules, one Suricata rule, and a full reg
 A single Debian VM built to practise first-line SOC work: detect, triage, contain or
 escalate, then write the ticket the next analyst can act on.
 
-**Last full run:** 2026-11-01, all six scenarios replayed under legitimate load. The run
+**Last full run**
+
+2026-11-01, all six scenarios replayed under legitimate load. The run
 found a real detection gap and fixed it. See [REGRESSION-001](writeups/REGRESSION-001-all-scenarios.md).
 
 | | |
 |---|---|
-| **Role target** | SOC Analyst Level 1: monitoring, first-line triage, ticketing, escalation |
-| **SIEM** | Wazuh 4.14.7, single node, Docker |
-| **Endpoint** | Debian 12 VM, Wazuh agent, `auditd`, nginx, `sshd` |
-| **Network sensor** | Suricata 7.0.10, inside the endpoint VM, trimmed ET Open ruleset |
-| **Attacker** | Host shell: `nmap`, `hydra`, `curl`, `ssh` |
-| **Scope** | RFC1918 only, one laptop, no external targets, no real malware |
+| Role target | SOC Analyst Level 1: monitoring, first-line triage, ticketing, escalation |
+| SIEM | Wazuh 4.14.7, single node, Docker |
+| Endpoint | Debian 12 VM, Wazuh agent, `auditd`, nginx, `sshd` |
+| Network sensor | Suricata 7.0.10, inside the endpoint VM, trimmed ET Open ruleset |
+| Attacker | Host shell: `nmap`, `hydra`, `curl`, `ssh` |
+| Scope | RFC1918 only, one laptop, no external targets, no real malware |
 
 ---
 
@@ -22,12 +24,12 @@ found a real detection gap and fixed it. See [REGRESSION-001](writeups/REGRESSIO
 
 Three links, in the order a reviewer should read them.
 
-1. [**INC-001, SSH brute force to key persistence**](writeups/INC-001/README.md).
+1. [INC-001, SSH brute force to key persistence](writeups/INC-001/README.md).
    The full package: findings, reproduction, detection and triage guide, attack setup.
    Four documents, Markdown and PDF.
-2. [**Detection rules for cron and systemd persistence**](rules/inc-004-rules.md).
+2. [Detection rules for cron and systemd persistence](rules/inc-004-rules.md).
    The detection engineering behind INC-004: rule rationale, test matrix, coverage gaps.
-3. [**REGRESSION-001, all scenarios under legitimate load**](writeups/REGRESSION-001-all-scenarios.md).
+3. [REGRESSION-001, all scenarios under legitimate load](writeups/REGRESSION-001-all-scenarios.md).
    Package installs, PHP deploys, key rotation, and real SSH traffic in the same window.
    It exposed a rule that never fired and documents the fix.
 
@@ -78,20 +80,20 @@ it closes, and each has a test matrix in its paper.
 
 | Rule | Level | Detects |
 |---|---|---|
-| **100120** | 12 | `authorized_keys` added or modified, possible SSH persistence |
-| **100121** | 12 | `usermod` adds a user to a privileged group |
-| **100122** | 10 | Interactive SSH login by a service account (`svc-*`) |
-| **100123** | 12 | `gpasswd` adds a user to a privileged group |
-| **100124** | 12 | `adduser` adds a user to a privileged group |
-| **100125** | 12 | New account created directly inside a privileged group |
-| **100126** | 12 | `usermod -a -G` adds a user to a privileged group |
-| **100127** | 12 | `.php?cmd=` request, possible web shell use |
-| **100128** | 12 | PHP file added under a monitored path |
-| **100129** | 12 | Cron file added or modified |
-| **100130** | 10 | systemd unit or enable link changed |
-| **100131** | 12 | Service-account login after the 40112 brute-force correlation |
+| 100120 | 12 | `authorized_keys` added or modified, possible SSH persistence |
+| 100121 | 12 | `usermod` adds a user to a privileged group |
+| 100122 | 10 | Interactive SSH login by a service account (`svc-*`) |
+| 100123 | 12 | `gpasswd` adds a user to a privileged group |
+| 100124 | 12 | `adduser` adds a user to a privileged group |
+| 100125 | 12 | New account created directly inside a privileged group |
+| 100126 | 12 | `usermod -a -G` adds a user to a privileged group |
+| 100127 | 12 | `.php?cmd=` request, possible web shell use |
+| 100128 | 12 | PHP file added under a monitored path |
+| 100129 | 12 | Cron file added or modified |
+| 100130 | 10 | systemd unit or enable link changed |
+| 100131 | 12 | Service-account login after the 40112 brute-force correlation |
 
-One Suricata rule, sid **1000001**, fires on an outbound SYN sweep above 50 packets in
+One Suricata rule, sid 1000001, fires on an outbound SYN sweep above 50 packets in
 5 seconds. Rationale and threshold testing are in
 [INC-005 rules](rules/inc-005-rules.md).
 
@@ -105,10 +107,14 @@ Rule papers: [INC-002](rules/inc-002-rules.md) ·
 
 ## How a ticket is worked
 
-1. **Validate.** Read the raw event, not the rule description. Confirm the log line exists.
-2. **Scope.** Account, host, source address, first and last event.
-3. **Correlate.** Join identity, process, file, and network activity on a UTC timeline.
-4. **Decide.** Contain or escalate, and say which, with the evidence attached.
+1. **Validate**  
+  Read the raw event, not the rule description. Confirm the log line exists.
+2. **Scope**  
+  Account, host, source address, first and last event.
+3. **Correlate**  
+  Join identity, process, file, and network activity on a UTC timeline.
+4. **Decide**  
+  Contain or escalate, and say which, with the evidence attached.
 
 Every ticket carries the same evidence standard: UTC timeline from the real logs, SHA-256
 of any artifact, the alert ID and raw log line, a stated decision, and time to triage.
@@ -122,19 +128,26 @@ ticket is the product.
 
 Naming the gaps is part of the work, so they are listed here rather than buried.
 
-- **100127 only matches `cmd` in the first parameter position.** A shell called as
+- **100127 only matches `cmd` in the first parameter position**  
+  A shell called as
   `?x=1&cmd=id` is missed. A broader rule was rejected because it fired on normal pages.
-- **100128 matches any `.php` substring.** Every deployment, backup, and temp copy alerts.
+- **100128 matches any `.php` substring**  
+  Every deployment, backup, and temp copy alerts.
   Kept for coverage, routed as deployment noise.
-- **Package installs produce noise.** `100129` fires on `.dpkg-new` staging files, and
+- **Package installs produce noise**  
+  `100129` fires on `.dpkg-new` staging files, and
   `100130` fires on enable symlinks created by `apt`. Documented, not suppressed.
-- **100120 matches by filename.** A key written to `authorized_keys.bak` also alerts. The
+- **100120 matches by filename**  
+  A key written to `authorized_keys.bak` also alerts. The
   exact path is not reachable with the stock FIM decoder and `<match>`.
-- **Inbound scanning is not covered.** The VM sits behind QEMU user networking, so only
+- **Inbound scanning is not covered**  
+  The VM sits behind QEMU user networking, so only
   outbound sweeps are visible. A tap or bridge is noted as future work.
-- **Linux only.** Windows event mapping is written but not built. See
+- **Linux only**  
+  Windows event mapping is written but not built. See
   [windows-parity.md](windows-parity.md).
-- **One host.** No AD, no cloud telemetry, no email gateway. Those are the next three
+- **One host**  
+  No AD, no cloud telemetry, no email gateway. Those are the next three
   builds, not claims made here.
 
 ---

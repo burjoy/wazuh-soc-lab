@@ -1,9 +1,9 @@
-# Reproduction Guide — INC-004 Lab
+# Reproduction Guide: INC-004 Lab
 
 <!-- subtitle: Rebuilding cron and systemd persistence, and testing the rules against real admin work -->
 <!--meta
 id: INC-004
-incident: INC-004 — Cron and systemd persistence
+incident: INC-004, Cron and systemd persistence
 severity: Critical
 -->
 
@@ -11,8 +11,12 @@ This guide rebuilds the scenario on the existing lab. It assumes the Wazuh stack
 the Debian endpoint from INC-001 are running. cron is installed during the exercise
 because the cloud image ships cron files but no daemon.
 
-**Time:** 20–30 minutes.
-**Result:** two root persistence paths, four FIM alerts, a full command trail, and a
+**Time**
+
+20–30 minutes.
+**Result**
+
+Two root persistence paths, four FIM alerts, a full command trail, and a
 false-positive baseline from legitimate cron/systemd administration.
 
 ---
@@ -37,7 +41,7 @@ export VMPORT=2222
 
 ---
 
-## 2. Part A — Install cron (if absent)
+## 2. Part A: Install cron (if absent)
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -54,10 +58,10 @@ activity and will create a 100130 event if the rule is already deployed.
 
 ---
 
-## 3. Part B — Deploy the rules
+## 3. Part B: Deploy the rules
 
 `rules/local_rules.xml` contains 100129 and 100130. The manager mounts the `rules/`
-directory; do not use a single-file mount.
+directory. Do not use a single-file mount.
 
 ```bash
 cd "$HOME/wazuh-docker/single-node"
@@ -102,7 +106,7 @@ Expected: a symlink path under `/etc/systemd/system/multi-user.target.wants/`.
 
 ---
 
-## 4. Part C — False-positive baseline
+## 4. Part C: False-positive baseline
 
 This is required before the attack. Run it on an otherwise clean host.
 
@@ -119,8 +123,8 @@ sudo systemctl enable cron >/dev/null'
 
 Expected:
 
-- **100129** twice: the legitimate cron file added and modified.
-- **100130** once: the legitimate enable symlink.
+- 100129 twice: the legitimate cron file added and modified.
+- 100130 once: the legitimate enable symlink.
 - No other 100129/100130.
 
 Record the counts. These are the false-positive baseline for this host. Remove the test
@@ -132,7 +136,7 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" 'sudo rm -f /etc/cron.d/apt-maintenance'
 
 ---
 
-## 5. Part D — Clean state
+## 5. Part D: Clean state
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -152,7 +156,7 @@ cd "$LAB/lab/vm"
 
 ---
 
-## 6. Part E — Run the attack
+## 6. Part E: Run the attack
 
 Follow `04-attack-setup.md`. Summary:
 
@@ -195,7 +199,7 @@ Expected: `uid=0(root)` twice.
 
 ---
 
-## 7. Part F — Verify and export
+## 7. Part F: Verify and export
 
 ### 7.1 Expected detections
 
@@ -252,7 +256,7 @@ sudo cat /tmp/cron-proof /tmp/systemd-proof' \
 
 ---
 
-## 8. Part G — Cleanup
+## 8. Part G: Cleanup
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -280,14 +284,14 @@ cd "$LAB/lab/vm"
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `cron: inactive` | Package not installed | `apt-get install -y cron`; `systemctl enable --now cron` |
-| 100129 does not fire | FIM not realtime on `/etc`, or parent SID wrong | Use `if_sid 550,554`; verify `/etc` realtime |
-| 100130 fires on every enable | Symlink under `/etc/systemd/system/*.wants/` | Expected; route to change-aware triage |
+| `cron: inactive` | Package not installed | `apt-get install -y cron`. `systemctl enable --now cron` |
+| 100129 does not fire | FIM not realtime on `/etc`, or parent SID wrong | Use `if_sid 550,554`. Verify `/etc` realtime |
+| 100130 fires on every enable | Symlink under `/etc/systemd/system/*.wants/` | Expected. Route to change-aware triage |
 | 100130 does not fire on disable | Deletion is 553, not 550/554 | Add a separate deletion rule if needed |
 | Timer does not run | `daemon-reload` missing, or timer not enabled | `systemctl daemon-reload && systemctl enable --now updates.timer` |
-| Cron does not run | cron inactive or file permissions wrong | `systemctl is-active cron`; cron files must be 0644 |
-| Proof file missing | Wait less than a minute | Cron runs at the next minute; timer waits 30 s |
-| User crontab not detected | `/var/spool/cron/crontabs` is not watched | Add FIM/audit coverage; documented gap |
+| Cron does not run | cron inactive or file permissions wrong | `systemctl is-active cron`. Cron files must be 0644 |
+| Proof file missing | Wait less than a minute | Cron runs at the next minute. Timer waits 30 s |
+| User crontab not detected | `/var/spool/cron/crontabs` is not watched | Add FIM/audit coverage. Documented gap |
 | Large alert volume | motd/audit noise on login | Use a narrow evidence window |
 
 ---

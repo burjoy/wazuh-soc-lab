@@ -1,17 +1,21 @@
-# Reproduction Guide — INC-005 Lab
+# Reproduction Guide: INC-005 Lab
 
 <!-- subtitle: Adding an outbound scan rule, measuring its false positives, then running the scan -->
 <!--meta
 id: INC-005
-incident: INC-005 — Outbound port scan
+incident: INC-005, Outbound port scan
 severity: Medium
 -->
 
 This guide reproduces the outbound scan on the existing lab. It assumes the Wazuh stack,
 the Debian endpoint, and Suricata from INC-001 are running.
 
-**Time:** 20–30 minutes.
-**Result:** a local Suricata rule, a measured false-positive boundary, 144 scan alerts,
+**Time**
+
+20–30 minutes.
+**Result**
+
+A local Suricata rule, a measured false-positive boundary, 144 scan alerts,
 and a clean evidence set.
 
 ---
@@ -36,7 +40,7 @@ export VMPORT=2222
 
 ---
 
-## 2. Part A — Add the local Suricata rule
+## 2. Part A: Add the local Suricata rule
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -72,7 +76,7 @@ Expected: `1`.
 
 ---
 
-## 3. Part B — False-positive baseline
+## 3. Part B: False-positive baseline
 
 Do this before the scan. It defines the threshold boundary.
 
@@ -110,13 +114,13 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" \
   'sudo grep -c "LAB SCAN" /var/log/suricata/wazuh.json 2>/dev/null || echo 0'
 ```
 
-Expected: **10**. That is the false-positive boundary: 50 SYNs in 5 seconds.
+Expected: 10. That is the false-positive boundary: 50 SYNs in 5 seconds.
 
 Record the counts. They are part of the evidence, not a failure.
 
 ---
 
-## 4. Part C — Run the scan
+## 4. Part C: Run the scan
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" \
@@ -125,7 +129,7 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" \
 cat /tmp/nmap-inc005.txt 2>/dev/null || true
 ```
 
-Expected: the scan completes in under a second; port 8080 is open; the rest are closed
+Expected: the scan completes in under a second. Port 8080 is open. The rest are closed
 or filtered.
 
 Check Suricata:
@@ -146,11 +150,11 @@ docker exec single-node-wazuh.manager-1 sh -c \
   | jq -r '[.timestamp,.rule.id,.rule.description] | @tsv'
 ```
 
-Expected: rule **86601**, `Suricata: Alert - LAB SCAN outbound SYN sweep`.
+Expected: rule 86601, `Suricata: Alert - LAB SCAN outbound SYN sweep`.
 
 ---
 
-## 5. Part D — Export evidence
+## 5. Part D: Export evidence
 
 ```bash
 docker exec single-node-wazuh.manager-1 cat /var/ossec/logs/alerts/alerts.json \
@@ -199,9 +203,9 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" 'sudo cat /tmp/nmap-inc005.txt' \
 
 ---
 
-## 6. Part E — Cleanup
+## 6. Part E: Cleanup
 
-There are no persistence artifacts. The local Suricata rule can stay as part of the lab;
+There are no persistence artifacts. The local Suricata rule can stay as part of the lab.
 it is not an attack artifact. To remove it:
 
 ```bash
@@ -219,13 +223,13 @@ If you want to keep the detection, leave it in place.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Rule does not load | `local.rules` missing from `rule-files` | Add `- local.rules`; `suricata -T` |
-| No alerts on the scan | `HOME_NET` is wrong, or the scan is inbound | Check `HOME_NET`; this rule is outbound |
-| `wazuh.json` contains invalid JSON | A non-alert event or a truncated line | Parse line by line; do not use `jq` on the whole file |
+| Rule does not load | `local.rules` missing from `rule-files` | Add `- local.rules`. `suricata -T` |
+| No alerts on the scan | `HOME_NET` is wrong, or the scan is inbound | Check `HOME_NET`. This rule is outbound |
+| `wazuh.json` contains invalid JSON | A non-alert event or a truncated line | Parse line by line. Do not use `jq` on the whole file |
 | 60-request burst does not fire | Fewer than 50 SYNs in 5 s | Increase the burst or lower the threshold |
-| Legit load test fires | Threshold is packet-count based | Raise count/seconds; baseline the load generator |
+| Legit load test fires | Threshold is packet-count based | Raise count/seconds. Baseline the load generator |
 | No Wazuh 86601 | Filter/service stopped, or manager queue | Check `suricata-wazuh-filter`, agent, manager |
-| Scan reports every port closed | The gateway has few services | That is expected; the alert is about the sweep |
+| Scan reports every port closed | The gateway has few services | That is expected. The alert is about the sweep |
 
 ---
 

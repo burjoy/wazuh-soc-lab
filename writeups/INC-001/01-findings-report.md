@@ -1,17 +1,17 @@
-# INC-001 — Detailed Findings Report
+# INC-001: Detailed Findings Report
 
 <!-- subtitle: Evidence, analysis, and response for an SSH brute-force compromise -->
 
 | | |
 |---|---|
-| **Incident** | INC-001 — SSH brute force leading to account compromise and persistence |
-| **Classification** | Lab exercise, sanitized for publication |
-| **Activity date** | 2026-10-30 |
-| **Report date** | 2026-10-31 |
-| **Author** | SOC L1 portfolio lab |
-| **Status** | Closed — escalated |
-| **Severity** | High |
-| **Related** | `writeups/INC-001-ssh-brute-force.md` (narrative), `tickets/INC-001-ssh-brute-force.md` (ticket), `docs/evidence/` |
+| Incident | INC-001, SSH brute force leading to account compromise and persistence |
+| Classification | Lab exercise, sanitized for publication |
+| Activity date | 2026-10-30 |
+| Report date | 2026-10-31 |
+| Author | SOC L1 portfolio lab |
+| Status | Closed, escalated |
+| Severity | High |
+| Related | `writeups/INC-001-ssh-brute-force.md` (narrative), `tickets/INC-001-ssh-brute-force.md` (ticket), `docs/evidence/` |
 
 ---
 
@@ -24,20 +24,20 @@ tool began submitting passwords for the same account. Twenty attempts later, at
 `~/.ssh/authorized_keys` file was created, giving the attacker a way back in that would
 survive a password reset. Discovery commands followed immediately.
 
-The full sequence, from launching the tool to a working login, took **34 seconds**. From
-the first failed password to persistence took **32 seconds**.
+The full sequence, from launching the tool to a working login, took 34 seconds. From
+the first failed password to persistence took 32 seconds.
 
 Wazuh detected the activity at three stages:
 
 | Time (UTC) | Rule | Meaning |
 |---|---|---|
-| 15:22:01 | **5763** (level 10) | sshd brute force |
-| 15:22:21 | **40112** (level 12) | Multiple auth failures followed by a success |
-| 15:22:22 | **100120** (level 12) | FIM: `authorized_keys` added or modified |
+| 15:22:01 | 5763 (level 10) | sshd brute force |
+| 15:22:21 | 40112 (level 12) | Multiple auth failures followed by a success |
+| 15:22:22 | 100120 (level 12) | FIM: `authorized_keys` added or modified |
 
-The detection was not the difficult part. The environment produced **400 alerts in 150
-seconds**, 292 of them audit command events. Stock rule 40112 also fired on **six alerts from four routine
-analyst sessions**, because every session in the lab shares the virtual gateway
+The detection was not the difficult part. The environment produced 400 alerts in 150
+seconds, 292 of them audit command events. Stock rule 40112 also fired on six alerts from four routine
+analyst sessions, because every session in the lab shares the virtual gateway
 address `10.0.2.2`. Separating the real compromise from the noise is the core of this
 report.
 
@@ -72,13 +72,17 @@ lockout, and permission to open an interactive shell.
 
 ### 2.3 Limitations
 
-- **Source attribution.** QEMU user networking presents every connection as the gateway
+- **Source attribution**  
+  QEMU user networking presents every connection as the gateway
   `10.0.2.2`. Legitimate and malicious sessions share one address. A real estate would
   not have this exact problem, but shared NAT and jump hosts produce a milder version
   of it.
-- **Scale.** One endpoint. No domain controller, no cloud telemetry, no email gateway.
-- **Synthetic data.** The account, password, and key were created for the exercise.
-- **Timing.** FIM events are batched; the alert timestamp (15:22:22.000) is the batch
+- **Scale**  
+  One endpoint. No domain controller, no cloud telemetry, no email gateway.
+- **Synthetic data**  
+  The account, password, and key were created for the exercise.
+- **Timing**  
+  FIM events are batched. The alert timestamp (15:22:22.000) is the batch
   time, not the exact write time (15:22:21).
 
 ---
@@ -90,7 +94,7 @@ lockout, and permission to open an interactive shell.
 | SIEM | Wazuh 4.14.7, single-node Docker (`wazuh.manager`, `wazuh.indexer`, `wazuh.dashboard`) |
 | Endpoint | Debian 12 genericcloud, 1.5 GB RAM, 2 vCPU |
 | Agent | Wazuh agent 4.14.7, ID 001, name `soc-victim` |
-| Auth telemetry | sshd → journald, forwarded to the manager |
+| Auth telemetry | sshd to journald, forwarded to the manager |
 | Process telemetry | auditd, key `audit-wazuh-c` (execve) |
 | File telemetry | FIM realtime on `/etc`, `/home`, `/var/www/html` |
 | File watches | auditd `audit-wazuh-w` on identity files, `cron.d`, webroot |
@@ -98,7 +102,7 @@ lockout, and permission to open an interactive shell.
 | Attacker | `hydra` on the host, 20-password list, 2 threads |
 | Clock | All systems UTC |
 
-Network path: host `10.0.2.2` → forwarded port `2222` → guest `10.0.2.15:22`.
+Network path: host `10.0.2.2` to forwarded port `2222` to guest `10.0.2.15:22`.
 
 ---
 
@@ -127,7 +131,7 @@ This is the misconfiguration being tested. Everything that follows is a conseque
 | Initial access | Password `Summer2026!` accepted at 15:22:21 |
 | Discovery | `id`, `whoami`, `uname -a`, `head -1`, `sudo -n -l` |
 | Persistence | Append an SSH public key to `~/.ssh/authorized_keys` |
-| Egress check | `curl http://10.0.2.2:8080/` → HTTP 200 |
+| Egress check | `curl http://10.0.2.2:8080/` to HTTP 200 |
 
 ### 4.3 Kill chain (MITRE ATT&CK)
 
@@ -155,17 +159,17 @@ was observed.
 | 15:21:49 | Wazuh 5715 | Alert for that login (ingest delay) |
 | 15:21:50 | auth.log | First failed password |
 | 15:21:51 | Wazuh 5760 | First failure alert |
-| 15:22:01 | Wazuh **5763** | Brute force recognised (8 failures / 120 s threshold) |
-| 15:22:03 | Wazuh 40112 | **False positive** — analyst login |
-| 15:22:05 | Wazuh 40112 | **False positive** — analyst login |
+| 15:22:01 | Wazuh 5763 | Brute force recognised (8 failures / 120 s threshold) |
+| 15:22:03 | Wazuh 40112 | False positive, analyst login |
+| 15:22:05 | Wazuh 40112 | False positive, analyst login |
 | 15:22:19 | auth.log | 20th failure |
 | 15:22:21 | auth.log | `Accepted password for svc-backup` |
-| 15:22:21 | Wazuh **40112** | Success after failures, `svc-backup` |
-| 15:22:22 | Wazuh **100120** | `authorized_keys` added (FIM, realtime) |
+| 15:22:21 | Wazuh 40112 | Success after failures, `svc-backup` |
+| 15:22:22 | Wazuh 100120 | `authorized_keys` added (FIM, realtime) |
 | 15:22:23 | auditd | `bash -c` script, `id`, `whoami`, `uname`, `head`, `sudo -n -l`, `mkdir`, `curl` |
 | 15:22:23 | auth.log | Two in-flight guesses still arriving |
-| 15:22:35 | Wazuh 40112 | False positive — analyst login |
-| 15:23:05 | Wazuh 40112 | False positive — analyst login |
+| 15:22:35 | Wazuh 40112 | False positive, analyst login |
+| 15:23:05 | Wazuh 40112 | False positive, analyst login |
 
 The 32-second window from first failure to persistence is the number that matters. An
 account lockout, a key-only policy, or a five-minute triage SLA would each have changed
@@ -188,8 +192,8 @@ Window: 15:21:00–15:23:30 UTC, agent `soc-victim`.
 | 40112 | Multiple auth failures followed by a success | 8 |
 | 5715 | sshd: authentication success | 6 |
 | 5763 | sshd: brute force | 1 |
-| **100120** | **FIM: authorized_keys added or modified** | **1** |
-| | **Total** | **400** |
+| 100120 | FIM: authorized_keys added or modified | 1 |
+| | Total | 400 |
 
 The signal-to-noise ratio is roughly 1 in 400 by alert count. The practical filter is
 account and time, not severity alone.
@@ -206,7 +210,7 @@ Oct 30 15:22:21 soc-victim sshd[10819]: Failed password for svc-backup from 10.0
 Oct 30 15:22:21 soc-victim sshd[10847]: Accepted password for svc-backup from 10.0.2.2 port 52318 ssh2
 ```
 
-The `Accepted` at 15:22:19 in the journal is the login shell for the earlier probe; the
+The `Accepted` at 15:22:19 in the journal is the login shell for the earlier probe. The
 successful interactive session is 15:22:21. Two workers were still guessing after the
 first success, which is normal for parallelised tools.
 
@@ -258,7 +262,7 @@ Full evidence: `docs/evidence/INC-001-{alerts.json,auth.log,audit.log,postex-com
 
 | Rule | Trigger | Latency | Value |
 |---|---|---|---|
-| 5760 | One failed password | <1 s | Volume; not actionable alone |
+| 5760 | One failed password | <1 s | Volume. Not actionable alone |
 | 5763 | 8 failures / 120 s | 11 s after first failure | Good early warning |
 | 40112 | Any auth failure + success, same IP | Immediate on success | Right idea, too broad |
 | 100120 | FIM add/modify of `authorized_keys` | <1 s after write | High-fidelity persistence signal |
@@ -276,7 +280,7 @@ Stock 40112 correlates:
 </rule>
 ```
 
-It does not require the success to be for the same **account**, and it does not
+It does not require the success to be for the same account, and it does not
 distinguish key-based from password-based authentication. With every session arriving
 from `10.0.2.2`, any analyst login after the spray matched. Six of the eight 40112
 alerts in the window came from four routine analyst sessions.
@@ -288,7 +292,7 @@ A narrower rule would require:
 - a minimum failure count,
 - a source address that is not a known jump host.
 
-The first two are the hard part in Wazuh. Failures expose `srcuser`; successes expose
+The first two are the hard part in Wazuh. Failures expose `srcuser`. Successes expose
 `dstuser`, and `<same_user />` does not bridge them. This is documented in
 `03-detection-mitigation-triage.md` and `rules/tuning-notes.md`.
 
@@ -310,7 +314,7 @@ change-control context. Details: `rules/inc-002-rules.md` §5.2.
 |---|---|
 | No alert for interactive login by a service account | The account should never open a shell |
 | No lockout event | 20 attempts were allowed |
-| No Suricata alert | SSH is encrypted; network IDS cannot see the guesses |
+| No Suricata alert | SSH is encrypted. Network IDS cannot see the guesses |
 | No rule for a new SSH key | Closed by custom rule 100120 |
 | No correlation between key write and the preceding login | The analyst had to join them manually |
 
@@ -322,11 +326,11 @@ change-control context. Details: `rules/inc-002-rules.md` §5.2.
 
 A service account was configured with:
 
-- **password authentication enabled**, contrary to the principle that non-human
-  accounts use keys only;
-- **a weak, guessable password** (`Summer2026!`) present in a 20-entry list;
-- **an interactive shell** (`/bin/bash`) and a home directory it did not need;
-- **no account lockout**, so 20 attempts were free.
+- password authentication enabled, contrary to the principle that non-human
+  accounts use keys only.
+- a weak, guessable password (`Summer2026!`) present in a 20-entry list.
+- an interactive shell (`/bin/bash`) and a home directory it did not need.
+- no account lockout, so 20 attempts were free.
 
 ### 8.2 Contributing factors
 
@@ -341,13 +345,13 @@ A service account was configured with:
 
 ### 8.3 Five whys
 
-1. **Why was the host compromised?** A password was guessed for a valid account.
-2. **Why was guessing possible?** Password authentication was enabled, with no lockout.
-3. **Why was the account exposed?** A service account had an interactive shell and a
+1. Why was the host compromised? A password was guessed for a valid account.
+2. Why was guessing possible? Password authentication was enabled, with no lockout.
+3. Why was the account exposed? A service account had an interactive shell and a
    password, and no policy prevented it.
-4. **Why did nobody stop it?** The detection that fired (40112) also fired on benign
+4. Why did nobody stop it? The detection that fired (40112) also fired on benign
    logins, and the environment was noisy.
-5. **Why was the noise tolerated?** Auditing was enabled without tuning, and the lab
+5. Why was the noise tolerated? Auditing was enabled without tuning, and the lab
    accepted the default rule behaviour. The fix is a policy and tuning problem, not a
    tool problem.
 
@@ -357,24 +361,26 @@ A service account was configured with:
 
 | Dimension | Assessment |
 |---|---|
-| **Confidentiality** | Account-level access; discovery commands. No evidence of data exfiltration. |
-| **Integrity** | `authorized_keys` modified; an attacker-controlled credential was installed. |
-| **Availability** | None observed. |
-| **Blast radius** | One host in the lab. In production, the account's reachable systems determine this. |
-| **Persistence** | High: the key survives a password reset and account re-enablement. |
+| Confidentiality | Account-level access. Discovery commands. No evidence of data exfiltration. |
+| Integrity | `authorized_keys` modified. An attacker-controlled credential was installed. |
+| Availability | None observed. |
+| Blast radius | One host in the lab. In production, the account's reachable systems determine this. |
+| Persistence | High: the key survives a password reset and account re-enablement. |
 
-The most important impact is not the initial access; it is the **persistence**. A
+The most important impact is not the initial access. It is the persistence. A
 response that only resets the password leaves the attacker a working key.
 
 ---
 
 ## 10. Severity
 
-**High.**
+**High**
 
-- **Not Critical:** the account was unprivileged, `sudo` failed, no new accounts, no
+- **Not Critical**  
+  The account was unprivileged, `sudo` failed, no new accounts, no
   lateral movement, one host.
-- **Not Medium:** a valid credential and a persistent key were established. The attacker
+- **Not Medium**  
+  A valid credential and a persistent key were established. The attacker
   can return after a password reset if the key is missed.
 
 I deliberately did not assign a CVSS base score. A base vector treats all unauthenticated
@@ -388,9 +394,9 @@ response.
 
 Performed as part of the exercise:
 
-1. Isolated the host (the lab network is host-only; snapshot preserved).
+1. Isolated the host (the lab network is host-only. Snapshot preserved).
 2. Disabled `svc-backup` and expired the password.
-3. Removed the unauthorised key **after** recording its SHA-256.
+3. Removed the unauthorised key after recording its SHA-256.
 4. Preserved alerts, journal, audit records, and the decoded command list.
 5. Escalated with a timeline, the hash, and the failed-escalation note.
 6. Verified no new accounts, no sudoers change, no cron persistence (the `crontab`
@@ -434,17 +440,21 @@ Performed as part of the exercise:
 
 ## 13. Lessons learned
 
-- **Persistence changes the response.** The password is not the incident; the key is.
-- **A noisy rule is worse than no rule** when it trains analysts to ignore it.
-- **Source IP is not identity.** Shared NAT, jump hosts, and proxies break IP-only
+- **Persistence changes the response**  
+  The password is not the incident. The key is.
+- A noisy rule is worse than no rule when it trains analysts to ignore it.
+- **Source IP is not identity**  
+  Shared NAT, jump hosts, and proxies break IP-only
   correlation.
-- **Detection latency was fine.** The failure was policy and triage, not tooling.
-- **Audit everything is not monitoring.** 292 command alerts in 150 seconds is
+- **Detection latency was fine**  
+  The failure was policy and triage, not tooling.
+- **Audit everything is not monitoring**  
+  292 command alerts in 150 seconds is
   collection, not detection.
 
 ---
 
-## Appendix A — Custom rule
+## Appendix A: Custom rule
 
 ```xml
 <rule id="100120" level="12">
@@ -466,7 +476,7 @@ sudo -u svc-backup bash -c 'echo "ssh-ed25519 AAAA... lab" >> ~/.ssh/authorized_
 # expect rule 100120 within seconds, with syscheck.path and sha256_after
 ```
 
-## Appendix B — Evidence index
+## Appendix B: Evidence index
 
 | File | Contents |
 |---|---|
@@ -475,7 +485,7 @@ sudo -u svc-backup bash -c 'echo "ssh-ed25519 AAAA... lab" >> ~/.ssh/authorized_
 | `docs/evidence/INC-001-audit.log` | audit execve records for the compromised session |
 | `docs/evidence/INC-001-postex-commands.txt` | Decoded command line with timestamps |
 
-## Appendix C — Glossary
+## Appendix C: Glossary
 
 | Term | Meaning |
 |---|---|

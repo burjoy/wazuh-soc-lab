@@ -26,8 +26,8 @@ wazuh-agent ── reads auth.log, audit.log, eve.json, syscheck
 ## Network
 
 - QEMU user-mode networking, no bridge, no tap, no route to the LAN.
-- Guest sees the host as `10.0.2.2`; the host reaches the guest through forwarded
-  ports (`127.0.0.1:2222` → `22`, `127.0.0.1:8080` → `80`).
+- Guest sees the host as `10.0.2.2`. The host reaches the guest through forwarded
+  ports (`127.0.0.1:2222` to `22`, `127.0.0.1:8080` to `80`).
 - The manager listens on `1514/1515`, published by Docker on the host.
 
 ## Log sources
@@ -42,7 +42,7 @@ wazuh-agent ── reads auth.log, audit.log, eve.json, syscheck
 
 ## Constraints
 
-- 1.5 GB for the VM, ~3 GB for the Wazuh stack; browser closed during attack windows.
+- 1.5 GB for the VM, ~3 GB for the Wazuh stack. Browser closed during attack windows.
 - Suricata runs ~8,200 ET Open rules (scan, web, dns), which keeps it under ~150 MB.
   The full 53k set needs ~1.1 GB and OOM-kills the agent in this VM.
 - Wazuh version pinned at 4.14.7. No upgrades during the build.

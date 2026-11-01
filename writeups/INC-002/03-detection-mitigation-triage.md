@@ -1,9 +1,9 @@
-# Detection, Mitigation, and Triage Guide — INC-002
+# Detection, Mitigation, and Triage Guide: INC-002
 
 <!-- subtitle: Catching privilege assignment, not just account creation -->
 <!--meta
 id: INC-002
-incident: INC-002 — Rogue local account added to sudo
+incident: INC-002, Rogue local account added to sudo
 severity: High
 -->
 
@@ -25,7 +25,7 @@ Account creation produces three independent signals. Each answers a different qu
 | Process | auditd execve | Which command created it? | 80792 `useradd`, `chpasswd`, `usermod` |
 | File | FIM + audit watches | Which files changed? | 550 on `/etc/passwd`, `/etc/group`, `/etc/shadow`, `/etc/gshadow` |
 
-None of them, alone, says **the account was given root capability**. That is what the
+None of them, alone, says the account was given root capability. That is what the
 custom rule adds.
 
 ### 1.1 Signal hierarchy
@@ -49,34 +49,46 @@ High    100121 account added to sudo
 
 ## 2. Rule-by-rule
 
-### 2.1 Rule 5902 — new user
+### 2.1 Rule 5902: new user
 
-- **Level:** 8
-- **Data:** `dstuser`, `uid`, `gid`, `home`, `shell`
-- **INC-002:** fired at 04:30:48.947 for `svc-ops`, uid 1003.
-- **Use:** confirms the object. It does not grade the privilege.
+- **Level**  
+  8
+- **Data**  
+  `dstuser`, `uid`, `gid`, `home`, `shell`
+- **INC-002**  
+  Fired at 04:30:48.947 for `svc-ops`, uid 1003.
+- **Use**  
+  Confirms the object. It does not grade the privilege.
 
-### 2.2 Rule 5901 — new group
+### 2.2 Rule 5901: new group
 
-- **Level:** 8
-- **INC-002:** fired at 04:30:48.942.
-- **Use:** supporting context for the account's private group. A new privileged group is a
+- **Level**  
+  8
+- **INC-002**  
+  Fired at 04:30:48.942.
+- **Use**  
+  Supporting context for the account's private group. A new privileged group is a
   different finding and should be treated as such.
 
-### 2.3 Rules 550 / 554 — FIM on identity files
+### 2.3 Rules 550 / 554: FIM on identity files
 
-- **Levels:** 7 (checksum changed), 5 (file added)
-- **INC-002:** `/etc/passwd`, `/etc/group`, `/etc/shadow`, `/etc/gshadow` modified within
-  one second; lock files added.
-- **Use:** proves the identity database changed and gives hashes. It does not say which
+- **Levels**  
+  7 (checksum changed), 5 (file added)
+- **INC-002**  
+  `/etc/passwd`, `/etc/group`, `/etc/shadow`, `/etc/gshadow` modified within
+  one second. Lock files added.
+- **Use**  
+  Proves the identity database changed and gives hashes. It does not say which
   account or group changed, unless `report_changes` diff output is enabled.
-- **Limitation:** noisy on any account or package change; do not alert on every 550.
+- **Limitation**  
+  Noisy on any account or package change. Do not alert on every 550.
 
-### 2.4 Rules 80781 / 80792 — audit watches and commands
+### 2.4 Rules 80781 / 80792: audit watches and commands
 
-- **Level:** 3
-- **80781** reports write access to `/etc/group` or `/etc/passwd` with the executable.
-- **80792** reports the command. INC-002 captured the full argument vector:
+- **Level**  
+  3
+- 80781 reports write access to `/etc/group` or `/etc/passwd` with the executable.
+- 80792 reports the command. INC-002 captured the full argument vector:
 
 ```json
 { "exe": "/usr/sbin/usermod",
@@ -84,9 +96,9 @@ High    100121 account added to sudo
 ```
 
 This is the field that makes a precise rule possible. The earlier `bash -c` event in
-INC-001 dropped `a2`; short, conventional commands retain it.
+INC-001 dropped `a2`. Short, conventional commands retain it.
 
-### 2.5 Rule 100121 — custom, privilege assignment
+### 2.5 Rule 100121: custom, privilege assignment
 
 ```xml
 <rule id="100121" level="12">
@@ -102,11 +114,15 @@ INC-001 dropped `a2`; short, conventional commands retain it.
 </rule>
 ```
 
-- **Fires on:** `usermod -aG sudo <user>` and `usermod -G sudo <user>`.
-- **INC-002:** 04:30:48.390, naming `svc-ops`.
-- **False positives:** legitimate onboarding and automated provisioning. Match them to a
-  change ticket; do not suppress the rule.
-- **Limitations:** hard-codes the group `sudo`; depends on auditd; does not catch a direct
+- **Fires on**  
+  `usermod -aG sudo <user>` and `usermod -G sudo <user>`.
+- **INC-002**  
+  04:30:48.390, naming `svc-ops`.
+- **False positives**  
+  Legitimate onboarding and automated provisioning. Match them to a
+  change ticket. Do not suppress the rule.
+- **Limitations**  
+  Hard-codes the group `sudo`. Depends on auditd. Does not catch a direct
   `/etc/group` edit. The field uses `type="pcre2"` with anchors: an unanchored
   `sudo|wheel|admin` matches `sudo-audit` and similar legitimate groups (see
   `rules/inc-002-rules.md` §5.1).
@@ -179,19 +195,19 @@ Without one of these, every legitimate onboarding becomes a manual review.
 
 ### 3.4 Service-account policy
 
-Detection is the backstop; the policy is the control:
+Detection is the backstop. The policy is the control:
 
-- service accounts get `/usr/sbin/nologin`, not `/bin/bash`;
-- no password, keys only, and only where the service needs to authenticate;
-- never in `sudo`;
-- no home directory unless the service requires one;
+- service accounts get `/usr/sbin/nologin`, not `/bin/bash`.
+- no password, keys only, and only where the service needs to authenticate.
+- never in `sudo`.
+- no home directory unless the service requires one.
 - a naming convention that is enforced, not just suggested.
 
 ### 3.5 Audit coverage
 
-- Keep `audit-wazuh-c` for execve; it is what captures the argument vector.
+- Keep `audit-wazuh-c` for execve. It is what captures the argument vector.
 - Keep `audit-wazuh-w` on `/etc/passwd`, `/etc/group`, `/etc/shadow`, `/etc/sudoers`.
-- Do not enable every syscall; 160 command alerts in 80 seconds is already a lot.
+- Do not enable every syscall. 160 command alerts in 80 seconds is already a lot.
 
 ---
 
@@ -199,11 +215,11 @@ Detection is the backstop; the policy is the control:
 
 ### 4.1 The five questions
 
-1. **Who created or changed it?** `auid`, `uid`, session, source.
-2. **Was it authorised?** Change ticket, window, naming convention, owner.
-3. **What privilege did it get?** `sudo`, `wheel`, `admin`, sudoers entry.
-4. **Has it been used?** `sudo` events, SSH logins, `su`, cron.
-5. **What else came with it?** SSH keys, cron, systemd units, shell profile changes.
+1. Who created or changed it? `auid`, `uid`, session, source.
+2. Was it authorised? Change ticket, window, naming convention, owner.
+3. What privilege did it get? `sudo`, `wheel`, `admin`, sudoers entry.
+4. Has it been used? `sudo` events, SSH logins, `su`, cron.
+5. What else came with it? SSH keys, cron, systemd units, shell profile changes.
 
 ### 4.2 Decision tree
 
@@ -214,32 +230,37 @@ Account/group change
 │   └─ Close with the ticket ID and the group baseline updated
 │
 └─ No approval
-    ├─ Privileged group (sudo/wheel/admin)? → High; contain now
-    ├─ Interactive shell + password?        → raise severity
-    ├─ Account used (sudo/login)?           → Critical; scope the use
-    └─ Persistence (key/cron/unit)?         → Critical; full response
+    ├─ Privileged group (sudo/wheel/admin): High. Contain now
+    ├─ Interactive shell + password: raise severity
+    ├─ Account used (sudo/login): Critical. Scope the use
+    └─ Persistence (key/cron/unit): Critical. Full response
 ```
 
 ### 4.3 Step by step
 
-1. **Read the raw audit record.** Confirm the command, the target, and the group.
-2. **Pull the identity files.** Note the hashes and the exact group line.
-3. **Check the actor.** `auid` is the human; `uid=0` is expected after `sudo`.
-4. **Check for use.** `journalctl` and the 5402/5715 alerts for the account.
-5. **Check persistence before deletion.** Keys, cron, systemd, shell profiles.
-6. **Assign severity** with the matrix in §5.
-7. **Contain** in the right order: remove privilege, lock, kill sessions, delete.
-8. **Preserve evidence** before deleting the home directory.
-9. **Escalate** with the template in §7.
+1. **Read the raw audit record**  
+  Confirm the command, the target, and the group.
+2. **Pull the identity files**  
+  Note the hashes and the exact group line.
+3. **Check the actor**  
+  `auid` is the human. `uid=0` is expected after `sudo`.
+4. **Check for use**  
+  `journalctl` and the 5402/5715 alerts for the account.
+5. **Check persistence before deletion**  
+  Keys, cron, systemd, shell profiles.
+6. Assign severity with the matrix in §5.
+7. Contain in the right order: remove privilege, lock, kill sessions, delete.
+8. Preserve evidence before deleting the home directory.
+9. Escalate with the template in §7.
 
 ### 4.4 What a good ticket contains
 
-- the account, UID, group, and shell;
-- the exact commands and their timestamps;
-- whether a change request exists;
-- whether the account was used;
-- the group membership before and after;
-- the containment actions and times;
+- the account, UID, group, and shell.
+- the exact commands and their timestamps.
+- whether a change request exists.
+- whether the account was used.
+- the group membership before and after.
+- the containment actions and times.
 - the specific question for L2 or the change owner.
 
 ---
@@ -249,11 +270,11 @@ Account/group change
 | Event | No use observed | Privileged use | Persistence |
 |---|---|---|---|
 | New account, no privileged group | Low | Medium | High |
-| New account + `sudo`/`wheel` | **High** | Critical | Critical |
+| New account + `sudo`/`wheel` | High | Critical | Critical |
 | Existing account added to privileged group | High | Critical | Critical |
 | Privileged group membership changed by unknown actor | High | Critical | Critical |
 
-INC-002: new account + `sudo`, no use observed → **High**.
+INC-002: new account + `sudo`, no use observed to High.
 
 Raise one level if the account can authenticate remotely, if the host is a domain
 controller or jump host, or if the actor's session is suspected compromised.
@@ -313,7 +334,7 @@ direct `/etc/group` edit without relying on a specific binary.
 ## 7. Escalation template
 
 ```text
-INC-002 — Rogue local account added to sudo
+INC-002: Rogue local account added to sudo
 
 What:  At 04:30:46 UTC, `analyst` created local account `svc-ops` (uid 1003) with
        /bin/bash and a password, then added it to the `sudo` group at 04:30:47.
@@ -357,7 +378,7 @@ Ask:   (1) Confirm whether `analyst` was authorised. (2) Check other hosts for t
 | Technique | ID | Covered by | Gap |
 |---|---|---|---|
 | Create local account | T1136.001 | 5902, 80792 | No change-window context |
-| Account manipulation | T1098 | 100121, FIM 550 | Direct file edits; custom groups |
+| Account manipulation | T1098 | 100121, FIM 550 | Direct file edits. Custom groups |
 | Abuse elevation control: sudo | T1548.003 | 100121, 5402 | Use of an existing sudo account |
 | Valid accounts | T1078 | 5715, 5402 | Admin vs attacker indistinguishable by IP |
 

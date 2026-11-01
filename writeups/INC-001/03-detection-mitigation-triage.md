@@ -19,9 +19,9 @@ The incident produced four kinds of evidence. Each answers a different question.
 | Identity | sshd / journald | Who tried to log in, and did it work? | 5760, 5763, 5715, 40112 |
 | Process | auditd execve | What ran after the login? | 80792 + decoded argv |
 | File | FIM realtime | What changed on disk? | 100120, `authorized_keys` |
-| Network | Suricata | What left the host? | None for SSH; a `curl` in process logs |
+| Network | Suricata | What left the host? | None for SSH. A `curl` in process logs |
 
-A single layer is never enough. The identity layer says "maybe"; the process and file
+A single layer is never enough. The identity layer says "maybe". The process and file
 layers say "confirmed".
 
 ### 1.1 Signal hierarchy
@@ -44,37 +44,52 @@ High             100120 authorized_keys added
 
 ## 2. Rule-by-rule
 
-### 2.1 Rule 5760 — `sshd: authentication failed`
+### 2.1 Rule 5760: `sshd: authentication failed`
 
-- **Level:** 5
-- **Fires:** one failed password or keyboard-interactive attempt.
-- **Fields:** `srcip`, `srcport`, `srcuser`.
-- **Use:** volume and account context. A single one is a typo. Twenty in 30 seconds is
+- **Level**  
+  5
+- **Fires**  
+  One failed password or keyboard-interactive attempt.
+- **Fields**  
+  `srcip`, `srcport`, `srcuser`.
+- **Use**  
+  Volume and account context. A single one is a typo. Twenty in 30 seconds is
   an attack.
-- **Limitation:** no notion of the account's importance, and no threshold.
+- **Limitation**  
+  No notion of the account's importance, and no threshold.
 
-### 2.2 Rule 5763 — `sshd: brute force trying to get access to the system`
+### 2.2 Rule 5763: `sshd: brute force trying to get access to the system`
 
-- **Level:** 10
-- **Fires:** 8 failures in 120 seconds from the same source (`frequency`/`timeframe`).
-- **INC-001:** fired at 15:22:01, 11 seconds after the first failure.
-- **Use:** the first genuinely actionable alert. It is the anchor for the rest of the
+- **Level**  
+  10
+- **Fires**  
+  8 failures in 120 seconds from the same source (`frequency`/`timeframe`).
+- **INC-001**  
+  Fired at 15:22:01, 11 seconds after the first failure.
+- **Use**  
+  The first genuinely actionable alert. It is the anchor for the rest of the
   investigation.
-- **Limitation:** source-IP based. Slow sprays below 8/120 s, or distributed sources,
+- **Limitation**  
+  Source-IP based. Slow sprays below 8/120 s, or distributed sources,
   evade it.
 
-### 2.3 Rule 40112 — `Multiple authentication failures followed by a success`
+### 2.3 Rule 40112: `Multiple authentication failures followed by a success`
 
-- **Level:** 12
-- **Fires:** any `authentication_success` after any `authentication_failures` from the
+- **Level**  
+  12
+- **Fires**  
+  Any `authentication_success` after any `authentication_failures` from the
   same source, within 240 seconds.
-- **INC-001:** fired twice on the attacker (15:22:21, 15:22:23) and six times on four
+- **INC-001**  
+  Fired twice on the attacker (15:22:21, 15:22:23) and six times on four
   routine analyst sessions.
-- **Why the false positives:** the rule is account-blind and authentication-method-blind.
+- **Why the false positives**  
+  The rule is account-blind and authentication-method-blind.
   Every session shared `10.0.2.2`.
-- **Use:** a candidate, not a verdict. Always confirm the account and the method.
+- **Use**  
+  A candidate, not a verdict. Always confirm the account and the method.
 
-### 2.4 Rule 100120 — custom, FIM persistence
+### 2.4 Rule 100120: custom, FIM persistence
 
 ```xml
 <rule id="100120" level="12">
@@ -89,11 +104,16 @@ High             100120 authorized_keys added
 </rule>
 ```
 
-- **Parent rules:** 550 (checksum changed), 554 (file added). Both are FIM events.
-- **Match:** the literal file name, so it covers every user's key file.
-- **INC-001:** fired one second after the write, with path, owner, and SHA-256.
-- **False positive:** legitimate key rotation, onboarding, a user adding a second device.
-- **Limitation:** name-based. An attacker who writes the file under a different name, or
+- **Parent rules**  
+  550 (checksum changed), 554 (file added). Both are FIM events.
+- **Match**  
+  The literal file name, so it covers every user's key file.
+- **INC-001**  
+  Fired one second after the write, with path, owner, and SHA-256.
+- **False positive**  
+  Legitimate key rotation, onboarding, a user adding a second device.
+- **Limitation**  
+  Name-based. An attacker who writes the file under a different name, or
   a tool that bypasses FIM, is not covered. Pair with authentication logs and key
   fingerprint inventory.
 
@@ -124,9 +144,9 @@ Stock definition (Wazuh 4.14.7, `0280-attack_rules.xml`):
 
 Target behaviour:
 
-- only SSH authentication events, not every PAM/sudo failure;
-- a minimum of 10 failures, not one;
-- the success must be password-based;
+- only SSH authentication events, not every PAM/sudo failure.
+- a minimum of 10 failures, not one.
+- the success must be password-based.
 - ideally, the same account as the failures.
 
 The account condition is the difficult one. Wazuh exposes `srcuser` on the failure
@@ -135,12 +155,13 @@ ship a rule that silently never fires (see `rules/tuning-notes.md`).
 
 Options, in order of preference:
 
-1. **Tune 40112 itself** with `overwrite="yes"` in `local_rules.xml`, narrowing groups
+1. Tune 40112 itself with `overwrite="yes"` in `local_rules.xml`, narrowing groups
    and raising the threshold. Change-controlled and tested in the lab.
-2. **Add an enrichment step**: a small decoder or script that copies `srcuser` into a
+2. **Add an enrichment step**  
+  A small decoder or script that copies `srcuser` into a
    common field, then correlate on that field.
-3. **Accept source-IP correlation** and rely on the analyst to check the account. This is
-   what the stock rule does; document the false-positive rate.
+3. Accept source-IP correlation and rely on the analyst to check the account. This is
+   what the stock rule does. Document the false-positive rate.
 
 ### 3.2 Reduce auditd noise
 
@@ -176,7 +197,7 @@ The account should never open a shell. A high-value, low-noise rule:
 </rule>
 ```
 
-Test the field matching before deploying; Wazuh's field matching is exact by default in
+Test the field matching before deploying. Wazuh's field matching is exact by default in
 some versions and regex in others. If regex is unsupported, enumerate the accounts.
 
 ---
@@ -187,11 +208,11 @@ Target: reach a defensible verdict in five minutes.
 
 ### 4.1 The five questions
 
-1. **Did it succeed?** Look for 5715, 40112, or `Accepted` in the auth log.
-2. **Which account?** Is it human, service, privileged, shared?
-3. **What ran after?** auditd execve around the success time, filtered by `uid`.
-4. **What changed?** FIM events for that user: `authorized_keys`, cron, systemd, sudoers.
-5. **Where else?** Same account, key, or source on other hosts.
+1. Did it succeed? Look for 5715, 40112, or `Accepted` in the auth log.
+2. Which account? Is it human, service, privileged, shared?
+3. What ran after? auditd execve around the success time, filtered by `uid`.
+4. What changed? FIM events for that user: `authorized_keys`, cron, systemd, sudoers.
+5. Where else? Same account, key, or source on other hosts.
 
 ### 4.2 Decision tree
 
@@ -199,46 +220,53 @@ Target: reach a defensible verdict in five minutes.
 Alert: brute force or failures followed by success
 │
 ├─ No success found
-│   ├─ Failures only, one account, low volume → close as attempted, tune threshold
-│   └─ High volume or many accounts → block source, watch for success, ticket Low/Medium
+│   ├─ Failures only, one account, low volume: close as attempted, tune threshold
+│   └─ High volume or many accounts: block source, watch for success, ticket Low/Medium
 │
 └─ Success found
-    ├─ Same account, password auth, preceded by failures → likely compromise
-    │   ├─ Post-login commands present → confirm scope, escalate High
-    │   ├─ FIM key/cron/systemd change → persistence, escalate High/Critical
-    │   └─ sudo/root obtained → Critical
-    └─ Different account, key auth, known admin → false positive; document why
+    ├─ Same account, password auth, preceded by failures: likely compromise
+    │   ├─ Post-login commands present: confirm scope, escalate High
+    │   ├─ FIM key/cron/systemd change: persistence, escalate High/Critical
+    │   └─ sudo/root obtained: Critical
+    └─ Different account, key auth, known admin: false positive. Document why
 ```
 
 ### 4.3 Step by step
 
-1. **Read the rule and the raw line.** Do not trust the description alone.
-2. **Establish the timeline.** First failure, last failure, first success.
-3. **Confirm the method.** `Accepted password` is very different from
+1. **Read the rule and the raw line**  
+  Do not trust the description alone.
+2. **Establish the timeline**  
+  First failure, last failure, first success.
+3. **Confirm the method**  
+  `Accepted password` is very different from
    `Accepted publickey`.
-4. **Pivot to process telemetry.** Filter auditd by the account or session, not the
+4. **Pivot to process telemetry**  
+  Filter auditd by the account or session, not the
    whole host.
-5. **Check persistence, in this order:** `authorized_keys`, `cron`/`systemd` timers,
+5. **Check persistence, in this order**  
+  `authorized_keys`, `cron`/`systemd` timers,
    new local accounts, `sudoers`, shell profile files.
-6. **Check egress.** A `curl`/`wget` after login is a data-flow question, not a
+6. **Check egress**  
+  A `curl`/`wget` after login is a data-flow question, not a
    curiosity.
-7. **Assign severity** with the matrix in §5.
-8. **Preserve before remediating.** Hash the key file, export the alerts, keep the audit
+7. Assign severity with the matrix in §5.
+8. **Preserve before remediating**  
+  Hash the key file, export the alerts, keep the audit
    records.
-9. **Contain** with the least destructive action that stops the access.
-10. **Escalate** with the template in §7.
+9. Contain with the least destructive action that stops the access.
+10. Escalate with the template in §7.
 
 ### 4.4 What "good" looks like
 
 A ticket that lets L2 act without re-investigating:
 
-- exact timestamps, UTC;
-- account, source, host;
-- method (password/key);
-- post-login commands, preferably decoded;
-- persistence artefacts with hashes;
-- whether privilege escalation succeeded;
-- the containment already taken;
+- exact timestamps, UTC.
+- account, source, host.
+- method (password/key).
+- post-login commands, preferably decoded.
+- persistence artefacts with hashes.
+- whether privilege escalation succeeded.
+- the containment already taken.
 - the specific question for L2.
 
 ---
@@ -253,7 +281,7 @@ A ticket that lets L2 act without re-investigating:
 | Privileged account | High | Critical | Critical |
 | Lateral movement observed | Critical | Critical | Critical |
 
-INC-001: unprivileged account, discovery, persistence, no root → **High**.
+INC-001: unprivileged account, discovery, persistence, no root to High.
 
 Adjust for asset criticality and data sensitivity. A domain controller raises every cell
 by one level.
@@ -289,7 +317,7 @@ sudo sed -i 's/^#\?LoginGraceTime.*/LoginGraceTime 20/' /etc/ssh/sshd_config
 sudo sshd -t && sudo systemctl reload ssh
 ```
 
-Lockout with `pam_faillock` (Debian path shown; verify before deploying):
+Lockout with `pam_faillock` (Debian path shown. Verify before deploying):
 
 ```bash
 sudo apt-get install -y libpam-modules
@@ -302,12 +330,15 @@ sudo faillock --user svc-backup
 
 ### 6.3 Policy controls
 
-- **Keys only** for non-human accounts; no password, no interactive shell.
-- **MFA** for interactive SSH, or a bastion that enforces it.
-- **Key inventory**: fingerprint, owner, purpose, expiry.
-- **Least privilege**: service accounts should not be in `sudo` groups.
-- **Management network**: SSH reachable only from a jump host, not the general estate.
-- **Change control** for `authorized_keys`; legitimate rotation is the main false
+- Keys only for non-human accounts. No password, no interactive shell.
+- MFA for interactive SSH, or a bastion that enforces it.
+- **Key inventory**  
+  Fingerprint, owner, purpose, expiry.
+- **Least privilege**  
+  Service accounts should not be in `sudo` groups.
+- **Management network**  
+  SSH reachable only from a jump host, not the general estate.
+- Change control for `authorized_keys`. Legitimate rotation is the main false
   positive.
 
 ### 6.4 Detection controls
@@ -317,7 +348,7 @@ sudo faillock --user svc-backup
 | 100120 + key hash baseline | Catch unauthorised persistence |
 | Service-account login rule | Catch policy violation at first login |
 | 40112 tuning | Reduce false positives |
-| Auditd sequence rules | Catch discovery → persistence → egress |
+| Auditd sequence rules | Catch discovery to persistence to egress |
 | Weekly key inventory diff | Catch slow, low-volume additions |
 
 ---
@@ -325,7 +356,7 @@ sudo faillock --user svc-backup
 ## 7. Escalation template
 
 ```text
-INC-001 — SSH brute force, successful login, persistence
+INC-001: SSH brute force, successful login, persistence
 
 What:  20 failed passwords for svc-backup between 15:21:50 and 15:22:19 UTC,
        followed by a successful password login at 15:22:21.
@@ -360,10 +391,10 @@ Ask:   (1) estate-wide search for the key fingerprint; (2) confirm no other host
 | Closing 40112 as a false positive because the user is known | The account, not the user, is the unit of analysis |
 | Resetting the password and stopping | The key remains valid |
 | Blocking the source IP | Shared NAT or a jump host makes this harmful and ineffective |
-| Treating 5760 volume as the incident | The success is the incident; failures are precursor |
-| Trusting the rule description without the raw log | Rule text is generic; the account and method decide |
+| Treating 5760 volume as the incident | The success is the incident. Failures are precursor |
+| Trusting the rule description without the raw log | Rule text is generic. The account and method decide |
 | Remediating before hashing | Evidence is destroyed |
-| Alerting on every execve | 292 alerts in 150 seconds; the real one is buried |
+| Alerting on every execve | 292 alerts in 150 seconds. The real one is buried |
 
 ---
 
@@ -373,11 +404,11 @@ Ask:   (1) estate-wide search for the key fingerprint; (2) confirm no other host
 |---|---|---|---|
 | Password guessing | T1110.001 | 5760, 5763 | Slow/distributed sprays |
 | Valid accounts | T1078 | 5715, 40112 | Method/account context |
-| SSH authorized keys | T1098.004 | 100120 | Non-standard paths; FIM bypass |
-| Unix shell | T1059.004 | 80792 | Noise; argv truncation |
+| SSH authorized keys | T1098.004 | 100120 | Non-standard paths. FIM bypass |
+| Unix shell | T1059.004 | 80792 | Noise. Argv truncation |
 | System discovery | T1082, T1033 | 80792 | Needs sequence logic |
 | Remote services | T1021.004 | 5715 | Cannot distinguish admin from attacker |
-| Exfiltration over HTTP | T1041 | Suricata (if enabled) | Encrypted egress; no proxy logs |
+| Exfiltration over HTTP | T1041 | Suricata (if enabled) | Encrypted egress. No proxy logs |
 
 ---
 
@@ -385,8 +416,8 @@ Ask:   (1) estate-wide search for the key fingerprint; (2) confirm no other host
 
 | Metric | INC-001 value |
 |---|---|
-| First failure → brute-force alert (5763) | 11 s |
-| Success → persistence alert (100120) | <1 s |
+| First failure to brute-force alert (5763) | 11 s |
+| Success to persistence alert (100120) | <1 s |
 | Alerts in window | 400 |
 | Signal-to-noise | 1 true compromise / 8 high-level auth alerts |
 | Time to triage (exercise) | ~4 minutes |

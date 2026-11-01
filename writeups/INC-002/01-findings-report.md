@@ -1,22 +1,22 @@
-# INC-002 — Rogue Local Account Findings Report
+# INC-002: Rogue Local Account Findings Report
 
 <!-- subtitle: Identity creation, privilege assignment, and the rule that named it -->
 <!--meta
 id: INC-002
-incident: INC-002 — Rogue local account added to sudo
+incident: INC-002, Rogue local account added to sudo
 severity: High
 -->
 
 | | |
 |---|---|
-| **Incident** | INC-002 — Rogue local account added to the `sudo` group |
-| **Classification** | Lab exercise, sanitized for publication |
-| **Activity date** | 2026-10-31 |
-| **Report date** | 2026-10-31 |
-| **Author** | SOC L1 portfolio lab |
-| **Status** | Closed — escalated |
-| **Severity** | High |
-| **Related** | `tickets/INC-002-rogue-account.md`, `writeups/INC-002-rogue-account.md`, `docs/evidence/INC-002-*` |
+| Incident | INC-002, Rogue local account added to the `sudo` group |
+| Classification | Lab exercise, sanitized for publication |
+| Activity date | 2026-10-31 |
+| Report date | 2026-10-31 |
+| Author | SOC L1 portfolio lab |
+| Status | Closed, escalated |
+| Severity | High |
+| Related | `tickets/INC-002-rogue-account.md`, `writeups/INC-002-rogue-account.md`, `docs/evidence/INC-002-*` |
 
 ---
 
@@ -34,13 +34,13 @@ Wazuh detected the sequence in three layers:
 
 | Time (UTC) | Rule | Meaning |
 |---|---|---|
-| 04:30:46 | FIM **550** | `/etc/passwd`, `/etc/group`, `/etc/shadow`, `/etc/gshadow` modified |
-| 04:30:48 | **100121** (custom, level 12) | `Privilege assignment: user added to the sudo group (svc-ops)` |
-| 04:30:48 | **5902** / **5901** (level 8) | New user and new group |
+| 04:30:46 | FIM 550 | `/etc/passwd`, `/etc/group`, `/etc/shadow`, `/etc/gshadow` modified |
+| 04:30:48 | 100121 (custom, level 12) | `Privilege assignment: user added to the sudo group (svc-ops)` |
+| 04:30:48 | 5902 / 5901 (level 8) | New user and new group |
 
-The important difference is between the last two rows. Stock rules reported **that** an
-account appeared. The custom rule reported **that it was given root capability**, and
-named the account in the alert title. In a window that produced **237 alerts**, that
+The important difference is between the last two rows. Stock rules reported that an
+account appeared. The custom rule reported that it was given root capability, and
+named the account in the alert title. In a window that produced 237 alerts, that
 distinction is the difference between a deferred identity event and a same-shift
 escalation.
 
@@ -75,13 +75,17 @@ executed by the account before containment.
 
 ### 2.3 Limitations
 
-- **Actor.** The creator is the lab administrator. This models two real cases that look
+- **Actor**  
+  The creator is the lab administrator. This models two real cases that look
   identical in logs: a compromised admin session and an insider creating a backdoor
   account. Only change-control evidence can separate them.
-- **Source address.** All sessions arrive from the QEMU gateway `10.0.2.2`, so source IP
+- **Source address**  
+  All sessions arrive from the QEMU gateway `10.0.2.2`, so source IP
   does not distinguish the actor from routine admin activity.
-- **Scale.** One host; no directory service, no IAM approval workflow.
-- **Synthetic data.** The account, UID, and password were created for the exercise.
+- **Scale**  
+  One host. No directory service, no IAM approval workflow.
+- **Synthetic data**  
+  The account, UID, and password were created for the exercise.
 
 ---
 
@@ -189,10 +193,10 @@ home removed
 | 04:30:46.987 | FIM 550 | `/etc/gshadow` modified |
 | 04:30:47.003 | FIM 550 | `/etc/shadow` modified |
 | 04:30:47 | audit / journal | `sudo usermod -aG sudo svc-ops` |
-| 04:30:47 | audit | `id svc-ops` → groups include `sudo` |
-| 04:30:48.390 | Wazuh **100121** | Privilege assignment, `svc-ops` |
-| 04:30:48.942 | Wazuh **5901** | New group added |
-| 04:30:48.947 | Wazuh **5902** | New user added, uid 1003 |
+| 04:30:47 | audit | `id svc-ops` to groups include `sudo` |
+| 04:30:48.390 | Wazuh 100121 | Privilege assignment, `svc-ops` |
+| 04:30:48.942 | Wazuh 5901 | New group added |
+| 04:30:48.947 | Wazuh 5902 | New user added, uid 1003 |
 | 04:32:07 | admin action | Removed from `sudo`, account deleted |
 
 The audit alerts appear about 1.5 seconds after the journal because Wazuh groups the
@@ -217,10 +221,10 @@ Window: 04:30:40–04:32:00 UTC, agent `soc-victim`.
 | 553 | FIM: file deleted | 7 |
 | 5402 | Successful sudo to root | 5 |
 | 5715 | sshd authentication success | 5 |
-| **5902** | **New user added** | **1** |
-| **5901** | **New group added** | **1** |
-| **100121** | **Privilege assignment** | **1** |
-| | **Total** | **237** |
+| 5902 | New user added | 1 |
+| 5901 | New group added | 1 |
+| 100121 | Privilege assignment | 1 |
+| | Total | 237 |
 
 ### 6.2 File integrity
 
@@ -308,12 +312,12 @@ waits behind 160 audit commands.
 </rule>
 ```
 
-- It keys on the **binary** (`usermod`), not on a file diff.
-- It keys on the **group argument** (`a2`, matched with anchored PCRE2), which covers
+- It keys on the binary (`usermod`), not on a file diff.
+- It keys on the group argument (`a2`, matched with anchored PCRE2), which covers
   both `-aG` (append) and `-G` (replace).
 - It puts the affected account (`a3`) in the description.
 
-The repository also carries rules **100123–100126** for the other common paths:
+The repository also carries rules 100123–100126 for the other common paths:
 `gpasswd -a`, Debian `adduser`, `useradd -G`, and the `usermod -a -G` argument shape.
 The full family, its test matrix, and its gaps are in `rules/inc-002-rules.md`.
 
@@ -365,12 +369,12 @@ request or business justification.
 
 ### 8.3 Five whys
 
-1. **Why was there a rogue sudo account?** An admin created it and added it to `sudo`.
-2. **Why was that possible?** Local account and group management had no approval gate.
-3. **Why did it look legitimate?** The `svc-` name and a routine admin session.
-4. **Why was it not caught immediately?** Stock detection reported a new user at level 8,
+1. Why was there a rogue sudo account? An admin created it and added it to `sudo`.
+2. Why was that possible? Local account and group management had no approval gate.
+3. Why did it look legitimate? The `svc-` name and a routine admin session.
+4. Why was it not caught immediately? Stock detection reported a new user at level 8,
    not a privilege assignment.
-5. **Why was the privilege not modelled?** The detection set treated identity objects
+5. Why was the privilege not modelled? The detection set treated identity objects
    (users, groups) as inventory events, not as privilege changes.
 
 ---
@@ -379,11 +383,11 @@ request or business justification.
 
 | Dimension | Assessment |
 |---|---|
-| **Confidentiality** | Root-capable account existed with a known password; no data access observed |
-| **Integrity** | Local identity database modified; `sudo` group membership changed |
-| **Availability** | None |
-| **Blast radius** | One host in the lab; in production, the account's reachable systems |
-| **Persistence** | Account and password would survive a reboot; removed during containment |
+| Confidentiality | Root-capable account existed with a known password. No data access observed |
+| Integrity | Local identity database modified. `sudo` group membership changed |
+| Availability | None |
+| Blast radius | One host in the lab. In production, the account's reachable systems |
+| Persistence | Account and password would survive a reboot. Removed during containment |
 
 The risk is not the account creation itself. It is that a known password plus `sudo`
 membership gives an attacker a durable path to root, and the account looks plausible
@@ -393,11 +397,13 @@ enough to survive a casual review.
 
 ## 10. Severity
 
-**High.**
+**High**
 
-- **Not Critical:** no privileged command was executed by the account, no persistence was
+- **Not Critical**  
+  No privileged command was executed by the account, no persistence was
   installed, and the actor was an authenticated administrator.
-- **Not Medium:** `sudo` membership is root capability, the password was known, and the
+- **Not Medium**  
+  `sudo` membership is root capability, the password was known, and the
   account had an interactive shell. A casual review that missed the group line would have
   left a backdoor.
 
@@ -422,7 +428,7 @@ Critical.
 
 | # | Action |
 |---|---|
-| 1 | Confirm whether `analyst` was authorised; if not, treat the session as compromised |
+| 1 | Confirm whether `analyst` was authorised. If not, treat the session as compromised |
 | 2 | Search other hosts for `svc-ops` and for the same creation pattern |
 | 3 | Review `sudo` group membership and `sudoers` files across the estate |
 | 4 | Check the account for SSH keys, cron, systemd units, and shell profiles before deletion |
@@ -432,10 +438,10 @@ Critical.
 
 | # | Action |
 |---|---|
-| 6 | Deploy 100121–100126; extend the group alternation (`sudo|wheel|admin`) to your estate or a CDB list |
+| 6 | Deploy 100121–100126. Extend the group alternation (`sudo|wheel|admin`) to your estate or a CDB list |
 | 7 | Baseline `sudo` group membership and alert on drift |
 | 8 | Require `nologin` and no `sudo` for service accounts |
-| 9 | Integrate identity changes with change control; include the ticket ID in the audit trail |
+| 9 | Integrate identity changes with change control. Include the ticket ID in the audit trail |
 | 10 | Raise new-account alerts outside approved windows |
 
 ### Long term
@@ -452,19 +458,23 @@ Critical.
 
 ## 13. Lessons learned
 
-- **A new user is not the finding; the privilege assignment is.**
-- **Detection should name the capability, not just the object.** "New user" and "new sudo
+- **A new user is not the finding. The privilege assignment is**
+- **Detection should name the capability, not just the object**  
+  "New user" and "new sudo
   user" are different risks.
-- **Naming is not a control.** `svc-ops` looked like a service account and was still an
+- **Naming is not a control**  
+  `svc-ops` looked like a service account and was still an
   interactive, password-authenticated, root-capable user.
-- **FIM and audit answer different questions.** FIM says `/etc/group` changed; audit says
+- **FIM and audit answer different questions**  
+  FIM says `/etc/group` changed. Audit says
   who changed it and to which group.
-- **The response order matters.** Remove the privilege before deleting the account, and
+- **The response order matters**  
+  Remove the privilege before deleting the account, and
   check for persistence before deleting the home directory.
 
 ---
 
-## Appendix A — Custom rule
+## Appendix A: Custom rule
 
 ```xml
 <rule id="100121" level="12">
@@ -489,7 +499,7 @@ sudo usermod -aG sudo svc-test
 sudo gpasswd -d svc-test sudo && sudo userdel -r svc-test
 ```
 
-## Appendix B — MITRE ATT&CK
+## Appendix B: MITRE ATT&CK
 
 | Technique | ID | Evidence |
 |---|---|---|
@@ -498,7 +508,7 @@ sudo gpasswd -d svc-test sudo && sudo userdel -r svc-test
 | Abuse elevation control: sudo | T1548.003 | Membership in group `sudo` |
 | Valid accounts | T1078 | Actor `analyst` using sudo |
 
-## Appendix C — Evidence index
+## Appendix C: Evidence index
 
 | File | Contents |
 |---|---|
@@ -507,7 +517,7 @@ sudo gpasswd -d svc-test sudo && sudo userdel -r svc-test
 | `docs/evidence/INC-002-account-commands.txt` | Decoded command trail |
 | `docs/evidence/INC-002-membership.txt` | `sudo` group and account record before cleanup |
 
-## Appendix D — Glossary
+## Appendix D: Glossary
 
 | Term | Meaning |
 |---|---|

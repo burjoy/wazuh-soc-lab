@@ -1,13 +1,13 @@
-# Attack Setup Guide — INC-002
+# Attack Setup Guide: INC-002
 
 <!-- subtitle: Creating a rogue sudo account, phase by phase, inside the lab -->
 <!--meta
 id: INC-002
-incident: INC-002 — Rogue local account added to sudo
+incident: INC-002, Rogue local account added to sudo
 severity: High
 -->
 
-A step-by-step script for reproducing INC-002 **inside the isolated lab**. It is for
+A step-by-step script for reproducing INC-002 inside the isolated lab. It is for
 testing detection, not for use against systems you do not own.
 
 ---
@@ -16,12 +16,12 @@ testing detection, not for use against systems you do not own.
 
 | Rule | Detail |
 |---|---|
-| **Scope** | Only the `soc-victim` VM on `10.0.2.0/24` |
-| **Never** | Touch any other host, network, or account |
-| **Never** | Use real credentials or employer systems |
-| **Authorization** | You own the host and the VM |
-| **Reversibility** | Snapshot before the run; revert or clean up after |
-| **Data** | Synthetic accounts and passwords only |
+| Scope | Only the `soc-victim` VM on `10.0.2.0/24` |
+| Never | Touch any other host, network, or account |
+| Never | Use real credentials or employer systems |
+| Authorization | You own the host and the VM |
+| Reversibility | Snapshot before the run. Revert or clean up after |
+| Data | Synthetic accounts and passwords only |
 
 The scenario models an insider or a compromised administrator session. It is deliberately
 an authorised admin action, because that is the case logs cannot distinguish from abuse
@@ -34,7 +34,7 @@ without change-control evidence.
 ```text
 Host 10.0.2.2
   ├── Wazuh manager / indexer / dashboard
-  ├── analyst SSH session (key) → 127.0.0.1:2222
+  ├── analyst SSH session (key): 127.0.0.1:2222
   └── QEMU user network
         └── soc-victim 10.0.2.15
               sshd, auditd, FIM, wazuh-agent
@@ -58,7 +58,7 @@ export VMPORT=2222
 
 ---
 
-## 3. Phase 0 — Clean state
+## 3. Phase 0: Clean state
 
 ```bash
 cd "$LAB/lab/vm"
@@ -87,7 +87,7 @@ sudo userdel -r svc-test 2>/dev/null || true'
 
 ---
 
-## 4. Phase 1 — Start legitimate noise
+## 4. Phase 1: Start legitimate noise
 
 ```bash
 END=$(( $(date +%s) + 180 ))
@@ -118,7 +118,7 @@ chmod +x /tmp/noise.sh
 
 ---
 
-## 5. Phase 2 — Create the account
+## 5. Phase 2: Create the account
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" -o StrictHostKeyChecking=no "$VM" '
@@ -141,7 +141,7 @@ Why these flags:
 
 ---
 
-## 6. Phase 3 — Set a password
+## 6. Phase 3: Set a password
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -156,7 +156,7 @@ credentials at all if they are not interactive.
 
 ---
 
-## 7. Phase 4 — Grant sudo
+## 7. Phase 4: Grant sudo
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -176,14 +176,14 @@ This is the action the custom rule is designed to catch.
 
 ---
 
-## 8. Phase 5 — Verify
+## 8. Phase 5: Verify
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
 sudo -l -U svc-ops 2>&1 | tail -5'
 ```
 
-If `sudo -l -U` requires a TTY, run it interactively or skip it; the group line from
+If `sudo -l -U` requires a TTY, run it interactively or skip it. The group line from
 `getent` is sufficient evidence.
 
 Record the time:
@@ -197,7 +197,7 @@ Wait 60–90 seconds before extracting alerts.
 
 ---
 
-## 9. Phase 6 — Capture evidence
+## 9. Phase 6: Capture evidence
 
 ```bash
 docker exec single-node-wazuh.manager-1 cat /var/ossec/logs/alerts/alerts.json \
@@ -241,7 +241,7 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" \
 | `useradd` | 80792 | `Audit: Command: /usr/sbin/useradd` |
 | `useradd` | 5901 / 5902 | New group and new user, level 8 |
 | `chpasswd` | 80792 | `Audit: Command: /usr/sbin/chpasswd` |
-| `usermod -aG sudo` | **100121** | Privilege assignment, level 12, names `svc-ops` |
+| `usermod -aG sudo` | 100121 | Privilege assignment, level 12, names `svc-ops` |
 | File writes | 550 | `/etc/passwd`, `/etc/group`, `/etc/shadow`, `/etc/gshadow` |
 | File writes | 80781 | Write access to `/etc/passwd` and `/etc/group` |
 | Noise | 5715 / 5402 / 80792 | Routine logins, sudo, commands |
@@ -250,7 +250,7 @@ Expected window volume: roughly 200–250 alerts, most of them audit command eve
 
 ---
 
-## 11. Phase 7 — Clean up
+## 11. Phase 7: Clean up
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -287,14 +287,14 @@ sudo usermod -G sudo svc-ops
 This replaces the account's supplementary groups. Rule 100121 still matches, because
 `a2` is still `sudo`. Verify it fires, then restore the account's groups if needed.
 
-The other spellings have their own rules: `usermod -a -G` → 100126, `gpasswd -a` →
-100123, Debian `adduser` → 100124 (plus 100126 internally), and `useradd -G` → 100125.
+The other spellings have their own rules: `usermod -a -G` to 100126, `gpasswd -a`  to 
+100123, Debian `adduser` to 100124 (plus 100126 internally), and `useradd -G` to 100125.
 
 ### 12.2 A custom privileged group
 
 On a RHEL-family host, the group is often `wheel`. The family (100121–100126) uses
-anchored PCRE2, `^(sudo|wheel|admin)$`; a different group needs the alternation changed
-or a CDB list. Keep the anchors: an unanchored list also matches `sudo-audit`. This is the most important variant to test;
+anchored PCRE2, `^(sudo|wheel|admin)$`. A different group needs the alternation changed
+or a CDB list. Keep the anchors: an unanchored list also matches `sudo-audit`. This is the most important variant to test.
 it is the difference between a portable rule and a Debian-only rule.
 
 ```bash
@@ -312,7 +312,7 @@ sudo cp /etc/group /etc/group.bak
 sudo sed -i 's/^\(sudo:x:27:.*\)$/\1,svc-ops/' /etc/group
 ```
 
-Expected: FIM **550** on `/etc/group`, **no alert from 100121–100126**. This is the
+Expected: FIM 550 on `/etc/group`, no alert from 100121–100126. This is the
 documented gap. A
 membership baseline or a FIM-diff rule is required to catch it. Restore the file
 afterwards:
@@ -338,20 +338,25 @@ sudo -u svc-ops bash -c \
   'mkdir -p ~/.ssh; echo "ssh-ed25519 AAAATEST" >> ~/.ssh/authorized_keys'
 ```
 
-Expected: rule **100120** from INC-001 fires on the key file, in addition to 100121. The
+Expected: rule 100120 from INC-001 fires on the key file, in addition to 100121. The
 combination is a strong signal: a new privileged account with a persistence mechanism.
 
 ---
 
 ## 13. Why this is realistic
 
-- **The actor is an authenticated administrator.** That is how most rogue local accounts
+- **The actor is an authenticated administrator**  
+  That is how most rogue local accounts
   are created, and why source IP alone cannot decide the case.
-- **The name looks legitimate.** `svc-ops` follows a service-account pattern.
-- **The change is small.** Two commands, under two seconds, in a queue of 237 alerts.
-- **The privilege is implicit.** Nothing in 5902 says "root"; the analyst has to read the
+- **The name looks legitimate**  
+  `svc-ops` follows a service-account pattern.
+- **The change is small**  
+  Two commands, under two seconds, in a queue of 237 alerts.
+- **The privilege is implicit**  
+  Nothing in 5902 says "root". The analyst has to read the
   group membership.
-- **The evidence is split.** FIM shows the file change, audit shows the command, and the
+- **The evidence is split**  
+  FIM shows the file change, audit shows the command, and the
   rule connects them.
 
 ---
@@ -362,5 +367,5 @@ combination is a strong signal: a new privileged account with a persistence mech
 - The account, password, and UID are synthetic.
 - Do not use these commands on an employer's system without written authorisation and a
   scoped engagement.
-- Publishing the detection logic is fine; publishing a real credential or a real hostname
+- Publishing the detection logic is fine. Publishing a real credential or a real hostname
   is not.

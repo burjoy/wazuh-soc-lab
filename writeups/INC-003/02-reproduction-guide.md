@@ -1,9 +1,9 @@
-# Reproduction Guide — INC-003 Lab
+# Reproduction Guide: INC-003 Lab
 
 <!-- subtitle: From a clean webroot to an executed PHP web shell, with the detections in place -->
 <!--meta
 id: INC-003
-incident: INC-003 — Web shell dropped and executed
+incident: INC-003, Web shell dropped and executed
 severity: High
 -->
 
@@ -11,8 +11,12 @@ This guide reproduces INC-003 on the existing lab. It assumes the Wazuh stack an
 Debian endpoint from INC-001 are running, with nginx and PHP-FPM available. If PHP-FPM
 is missing, §2 covers the install and the nginx block.
 
-**Time:** 30–45 minutes.
-**Result:** a web shell dropped in the docroot, executed as `www-data`, and detected by
+**Time**
+
+30–45 minutes.
+**Result**
+
+A web shell dropped in the docroot, executed as `www-data`, and detected by
 FIM, audit, and the two custom web rules.
 
 ---
@@ -37,7 +41,7 @@ export VMPORT=2222
 
 ---
 
-## 2. Part A — Make PHP execute
+## 2. Part A: Make PHP execute
 
 If a `.php` file is served as source, PHP is not configured. Check:
 
@@ -87,10 +91,10 @@ evidence window narrow.
 
 ---
 
-## 3. Part B — Deploy the rules
+## 3. Part B: Deploy the rules
 
 `rules/local_rules.xml` contains 100127 and 100128. The manager mounts the `rules/`
-directory; do not use a single-file mount (inode replacement breaks it).
+directory. Do not use a single-file mount (inode replacement breaks it).
 
 ```bash
 cd "$HOME/wazuh-docker/single-node"
@@ -141,7 +145,7 @@ Expected: a row with `/var/www/html/rule-test.php` and `added`. Remove the file.
 
 ---
 
-## 4. Part C — Clean state
+## 4. Part C: Clean state
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -160,7 +164,7 @@ cd "$LAB/lab/vm"
 
 ---
 
-## 5. Part D — Legitimate background traffic
+## 5. Part D: Legitimate background traffic
 
 ```bash
 END=$(( $(date +%s) + 180 ))
@@ -177,7 +181,7 @@ analyst has to filter.
 
 ---
 
-## 6. Part E — Run the incident
+## 6. Part E: Run the incident
 
 Follow `04-attack-setup.md`. In short:
 
@@ -196,7 +200,7 @@ curl -s -A 'sqlmap/1.7' -o /dev/null 'http://127.0.0.1:8080/updates2.php?cmd=id'
 
 ---
 
-## 7. Part F — Verify and export
+## 7. Part F: Verify and export
 
 ### 7.1 Expected detections
 
@@ -258,7 +262,7 @@ Decode the relevant `uid=33` commands with the helper in
 
 ---
 
-## 8. Part G — Cleanup
+## 8. Part G: Cleanup
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -284,14 +288,14 @@ cd "$LAB/lab/vm"
 |---|---|---|
 | PHP file served as source | No active `location ~ \.php$` block, or FPM down | Add the block, check the socket, `nginx -t` |
 | `nginx` says config OK but source returns | The block is inside a comment or the wrong server block | Check `nginx -T` for the active location |
-| 100127 does not fire | Parent is not 31100, or the literal is wrong | Test with `wazuh-logtest`; use `.php?cmd=` |
+| 100127 does not fire | Parent is not 31100, or the literal is wrong | Test with `wazuh-logtest`. Use `.php?cmd=` |
 | 100127 fires on `?cmd=` in a non-PHP path | The literal was shortened to `cmd=` | Restore the `.php?cmd=` literal |
 | Two `<match>` tags do not AND | Wazuh uses one match per rule | Use one literal, or separate rules |
 | 100128 does not fire | FIM not realtime on the webroot, or rule parent is only 554 | Use `if_sid 550,554` and verify `/var/www/html` is monitored |
-| 100128 fires on a legit deploy | It matches any `.php` in monitored paths | Attach a change ticket; do not suppress |
+| 100128 fires on a legit deploy | It matches any `.php` in monitored paths | Attach a change ticket. Do not suppress |
 | `.phtml` not detected | `.phtml` does not contain `.php` | Add a separate rule or a WAF |
 | `?foo=1&cmd=id` not detected | 100127 is a first-position literal | Add variants or inspect the app log |
-| Huge alert volume after install | `php-fpm`/dpkg execve noise | Use a narrow evidence window; do not disable audit |
+| Huge alert volume after install | `php-fpm`/dpkg execve noise | Use a narrow evidence window. Do not disable audit |
 
 ---
 

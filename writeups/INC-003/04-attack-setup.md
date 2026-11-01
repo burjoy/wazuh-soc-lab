@@ -1,13 +1,13 @@
-# Attack Setup Guide — INC-003
+# Attack Setup Guide: INC-003
 
 <!-- subtitle: Dropping and using a PHP web shell, inside the isolated lab -->
 <!--meta
 id: INC-003
-incident: INC-003 — Web shell dropped and executed
+incident: INC-003, Web shell dropped and executed
 severity: High
 -->
 
-A step-by-step script for reproducing INC-003 **inside the lab**. It is for testing
+A step-by-step script for reproducing INC-003 inside the lab. It is for testing
 detection and response, not for use against systems you do not own.
 
 ---
@@ -16,12 +16,12 @@ detection and response, not for use against systems you do not own.
 
 | Rule | Detail |
 |---|---|
-| **Scope** | Only the `soc-victim` VM on `10.0.2.0/24` |
-| **Never** | Scan or attack any other host or network |
-| **Never** | Use real credentials, malware, or employer data |
-| **Authorization** | You own the host and the VM |
-| **Reversibility** | Snapshot before the run; remove every file after |
-| **Payload** | A three-line PHP test shell, no external C2 |
+| Scope | Only the `soc-victim` VM on `10.0.2.0/24` |
+| Never | Scan or attack any other host or network |
+| Never | Use real credentials, malware, or employer data |
+| Authorization | You own the host and the VM |
+| Reversibility | Snapshot before the run. Remove every file after |
+| Payload | A three-line PHP test shell, no external C2 |
 
 The scenario models an attacker who can write a file into the webroot. In a real
 incident that write might come from an upload form, a vulnerable plugin, a compromised
@@ -38,7 +38,7 @@ Host 10.0.2.2
   ├── HTTP client (curl)
   └── QEMU user network
         └── soc-victim 10.0.2.15
-              nginx :80  ← forwarded from 127.0.0.1:8080
+              nginx :80  from forwarded from 127.0.0.1:8080
               PHP-FPM 8.2
               FIM: /var/www/html
               auditd: execve + file watches
@@ -61,7 +61,7 @@ export VMPORT=2222
 
 ---
 
-## 3. Phase 0 — Clean state
+## 3. Phase 0: Clean state
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -69,7 +69,7 @@ ls -la /var/www/html
 systemctl is-active nginx php8.2-fpm'
 ```
 
-Expected: no `.php` shell; both services active.
+Expected: no `.php` shell. Both services active.
 
 Snapshot:
 
@@ -89,7 +89,7 @@ sudo rm -f /var/www/html/updates.php /var/www/html/updates2.php \
 
 ---
 
-## 4. Phase 1 — Legitimate traffic
+## 4. Phase 1: Legitimate traffic
 
 Start the routine SSH/sudo noise if it is not already running, then generate normal web
 requests:
@@ -110,7 +110,7 @@ distinguish from the shell traffic.
 
 ---
 
-## 5. Phase 2 — Drop the shell
+## 5. Phase 2: Drop the shell
 
 ```bash
 cat > /tmp/updates2.php <<'PHP'
@@ -133,14 +133,14 @@ Expected hash:
 
 Expected detections:
 
-- **100128** within a second: `.php` added;
-- **80790** audit created the file;
-- **80792** `cp`;
-- **5402** `sudo cp`.
+- 100128 within a second: `.php` added.
+- 80790 audit created the file.
+- 80792 `cp`.
+- 5402 `sudo cp`.
 
 ---
 
-## 6. Phase 3 — Execute
+## 6. Phase 3: Execute
 
 ```bash
 curl -s 'http://127.0.0.1:8080/updates2.php?cmd=id'
@@ -163,13 +163,13 @@ curl -s -A 'sqlmap/1.7' -o /dev/null -w '%{http_code}\n' \
 
 Expected detections:
 
-- **100127** on each `.php?cmd=` request;
-- **80792** `sh -c id`, `id`, `sh -c uname -a`, `uname -a`;
-- **86601** `ET SCAN Sqlmap SQL Injection Scan` (may depend on flow/thresholds).
+- 100127 on each `.php?cmd=` request.
+- 80792 `sh -c id`, `id`, `sh -c uname -a`, `uname -a`.
+- 86601 `ET SCAN Sqlmap SQL Injection Scan` (may depend on flow/thresholds).
 
 ---
 
-## 7. Phase 4 — Capture evidence
+## 7. Phase 4: Capture evidence
 
 ```bash
 date -u +%FT%TZ > /tmp/inc003_end
@@ -199,7 +199,7 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" \
 
 ---
 
-## 8. Phase 5 — Cleanup
+## 8. Phase 5: Cleanup
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -241,8 +241,8 @@ printf '<?php echo 1; ?>\n' | sudo tee /var/www/html/app.phtml
 printf '<?php echo 1; ?>\n' | sudo tee /var/www/html/legacy.php5
 ```
 
-- `legacy.php5` contains `.php`, so **100128 fires**.
-- `app.phtml` does not, so **100128 misses it**. That is a documented gap; add a
+- `legacy.php5` contains `.php`, so 100128 fires.
+- `app.phtml` does not, so 100128 misses it. That is a documented gap. Add a
   separate rule or rely on a WAF.
 
 ### 10.2 Parameter order
@@ -251,7 +251,8 @@ printf '<?php echo 1; ?>\n' | sudo tee /var/www/html/legacy.php5
 curl -s 'http://127.0.0.1:8080/updates2.php?foo=1&cmd=id'
 ```
 
-- **100127 does not fire.** The literal requires `.php?cmd=` at the first parameter.
+- **100127 does not fire**  
+  The literal requires `.php?cmd=` at the first parameter.
   This is the most important gap to know about.
 
 ### 10.3 Legitimate `cmd` parameter
@@ -261,14 +262,14 @@ printf '<?php echo "ok"; ?>\n' | sudo tee /var/www/html/index.php
 curl -s 'http://127.0.0.1:8080/index.php?cmd=status'
 ```
 
-- **100128 fires** on the deploy (expected; attach the change ticket).
-- **100127 fires** on the request (false positive if `cmd=status` is legitimate).
+- 100128 fires on the deploy (expected. Attach the change ticket).
+- 100127 fires on the request (false positive if `cmd=status` is legitimate).
   Allow-list the path, do not remove the rule.
 
 ### 10.4 POST-only shell
 
 A shell that reads `$_POST['cmd']` will not appear in the access log body. Neither rule
-sees the command. That requires application logging or a WAF; document it as a gap.
+sees the command. That requires application logging or a WAF. Document it as a gap.
 
 ### 10.5 Shell outside the webroot
 
@@ -276,7 +277,7 @@ sees the command. That requires application logging or a WAF; document it as a g
 printf '<?php echo 1; ?>\n' | sudo tee /home/analyst/notes/app.php
 ```
 
-- **100128 fires**, because the match is not restricted to `/var/www/html`. That is a
+- 100128 fires, because the match is not restricted to `/var/www/html`. That is a
   false positive for a developer's notes and a real signal if PHP should never exist
   under `/home`.
 
@@ -284,19 +285,24 @@ printf '<?php echo 1; ?>\n' | sudo tee /home/analyst/notes/app.php
 
 ## 11. Why this is realistic
 
-- **The file is trivial.** A web shell does not need a sophisticated payload.
-- **The 200 is the point.** Most web monitoring is tuned to errors and known tools; a
+- **The file is trivial**  
+  A web shell does not need a sophisticated payload.
+- **The 200 is the point**  
+  Most web monitoring is tuned to errors and known tools. A
   successful shell request looks normal.
-- **The web user is not root.** The incident is still serious: configs, credentials,
+- **The web user is not root**  
+  The incident is still serious: configs, credentials,
   and internal reachability are one step away.
-- **Deployment noise is real.** Legitimate PHP releases trigger the same FIM rule.
-- **The detection is layered.** File, process, and request each contribute.
+- **Deployment noise is real**  
+  Legitimate PHP releases trigger the same FIM rule.
+- **The detection is layered**  
+  File, process, and request each contribute.
 
 ---
 
 ## 12. Legal and ethical notes
 
 - Run this only on the VM you created.
-- The shell is a test file; do not use it against a real web server.
+- The shell is a test file. Do not use it against a real web server.
 - Do not publish real hashes of production files or real internal hostnames.
 - If you adapt this for an engagement, use written authorization and a scope document.

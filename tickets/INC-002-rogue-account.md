@@ -1,10 +1,10 @@
-# INC-002 — Rogue local account added to the sudo group
+# INC-002: Rogue local account added to the sudo group
 
 | Field | Value |
 |---|---|
 | Severity | High |
-| Status | Closed — escalated |
-| Source | Custom 100121; stock 5901/5902; FIM 550; audit 80792 |
+| Status | Closed, escalated |
+| Source | Custom 100121. Stock 5901/5902. FIM 550. Audit 80792 |
 | Host | soc-victim (Debian 12) |
 | Account created | `svc-ops` (uid 1003, gid 1003) |
 | Actor | `analyst` (uid 1000) via `sudo`, from 10.0.2.2 |
@@ -14,12 +14,12 @@
 
 ## What fired
 
-1. **100121** (custom, level 12) — `Privilege assignment: user added to the sudo group (svc-ops)`
+1. 100121 (custom, level 12), `Privilege assignment: user added to the sudo group (svc-ops)`
    at 04:30:48.390. Audit execve: `usermod -aG sudo svc-ops`.
-2. **5902** (level 8) — `New user added to the system`, `dstuser=svc-ops`, uid 1003.
-3. **5901** (level 8) — `New group added to the system`.
-4. **FIM 550** — `/etc/passwd`, `/etc/group`, `/etc/shadow`, `/etc/gshadow` modified.
-5. **Audit 80792** — `useradd`, `chpasswd`, `usermod`; **80781** write access to
+2. 5902 (level 8), `New user added to the system`, `dstuser=svc-ops`, uid 1003.
+3. 5901 (level 8), `New group added to the system`.
+4. FIM 550, `/etc/passwd`, `/etc/group`, `/etc/shadow`, `/etc/gshadow` modified.
+5. Audit 80792, `useradd`, `chpasswd`, `usermod`. 80781 write access to
    `/etc/passwd` and `/etc/group`.
 
 Raw command trail:
@@ -53,7 +53,9 @@ sudo:x:27:analyst,debian,svc-ops
 
 ## Severity rationale
 
-**High.** A newly created account with a known password was granted membership of the
+**High**
+
+A newly created account with a known password was granted membership of the
 `sudo` group, which is effectively root capability. It is not Critical because no
 privileged command was executed by the account before it was removed, and the actor was
 an authenticated administrator account rather than an external attacker.
@@ -77,7 +79,7 @@ an authenticated administrator account rather than an external attacker.
 
 ## Detection gap this exposed
 
-Stock rule 5902 reports a new account at **level 8**, in a window that also produced
+Stock rule 5902 reports a new account at level 8, in a window that also produced
 237 alerts, most of them audit command events and FIM changes. Nothing in the stock set
 says "this account was given root capability." The custom rule 100121 supplies exactly
 that context:
@@ -110,18 +112,18 @@ diffs or a hard-coded username.
 
 ## Evidence
 
-- `docs/evidence/INC-002-alerts.json` — 237 alerts in the window
-- `docs/evidence/INC-002-account.log` — journal excerpt with sudo/audit lines
-- `docs/evidence/INC-002-account-commands.txt` — decoded command trail
-- `docs/evidence/INC-002-membership.txt` — `sudo` group and account record
+- `docs/evidence/INC-002-alerts.json`, 237 alerts in the window
+- `docs/evidence/INC-002-account.log`, journal excerpt with sudo/audit lines
+- `docs/evidence/INC-002-account-commands.txt`, decoded command trail
+- `docs/evidence/INC-002-membership.txt`, `sudo` group and account record
 
 ## Lessons
 
-- A new account is not the finding; **the privilege assignment is**. 5902 alone is easy
+- A new account is not the finding. the privilege assignment is. 5902 alone is easy
   to scroll past.
 - Service-account conventions must include "never in sudo." `svc-ops` looked plausible
   and was still wrong.
-- File integrity monitoring told us *that* `/etc/group` changed; the audit argument told
+- File integrity monitoring told us *that* `/etc/group` changed. The audit argument told
   us *who* and *to which group*. Correlate them.
-- Change-control integration is the real control. Detection caught it in seconds; only a
+- Change-control integration is the real control. Detection caught it in seconds. Only a
   ticket lookup can say whether it was allowed.

@@ -6,7 +6,7 @@ sudo required to run the VM.
 ## Why a VM and not a container
 
 `auditd` is a kernel subsystem. A container shares the host kernel and cannot
-produce per-container `execve` telemetry, which removes the process tree — the
+produce per-container `execve` telemetry, which removes the process tree, the
 richest part of an endpoint alert. A 1.5 GB VM keeps that evidence.
 
 ## Provisioning outline
@@ -54,7 +54,7 @@ Take the baseline *after* the agent is enrolled and before the first attack.
 
 ## Resource budget
 
-1.5 GB RAM, 2 vCPU, 20 GB thin disk. Host has 12 cores and 7.5 GB total; the VM
+1.5 GB RAM, 2 vCPU, 20 GB thin disk. Host has 12 cores and 7.5 GB total. The VM
 must not be started while the host is swapping.
 
 ## Optional: routable bridge (scenario 5 upgrade)
@@ -96,12 +96,12 @@ Caveats:
 
 - `--network host` makes the source address the host (`192.168.122.1`), which looks
   odd in a ticket.
-- macvlan on a bridge parent is supported but has quirks; verify the container can
+- macvlan on a bridge parent is supported but has quirks. Verify the container can
   reach `192.168.122.50` before building a scenario around it.
 - The interfaces disappear on reboot. Wrap the block above in a script if this
   becomes the permanent setup.
 - Change Suricata's `HOME_NET` to `192.168.122.0/24` afterwards.
 
-Do this only after the core build is finished. It re-shoots scenario 5; keep the
+Do this only after the core build is finished. It re-shoots scenario 5. Keep the
 outbound and inbound versions in separate tickets.
 

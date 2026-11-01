@@ -1,4 +1,4 @@
-# CHG-2026-1101-01 — Nightly log maintenance
+# CHG-2026-1101-01: Nightly log maintenance
 
 | Field | Value |
 |---|---|
@@ -6,7 +6,7 @@
 | Requester | analyst |
 | Approver | lab-change-manager |
 | Window | 2026-11-01 06:30 UTC |
-| Purpose | Remove rotated logs older than 7 days; add a logrotate health check |
+| Purpose | Remove rotated logs older than 7 days. Add a logrotate health check |
 | Risk | Low |
 
 ## Files

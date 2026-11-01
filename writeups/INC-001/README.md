@@ -24,10 +24,14 @@ The ticket is [../../tickets/INC-001-ssh-brute-force.md](../../tickets/INC-001-s
 
 ## Reading order
 
-- **Hiring manager / interviewer:** document 1, then the narrative.
-- **Analyst:** document 3, then document 1 §6–7.
-- **Rebuilding it:** document 2, then 4.
-- **Detection engineering:** document 3 §2–3, plus `../../rules/tuning-notes.md`.
+- **Hiring manager / interviewer**  
+  Document 1, then the narrative.
+- **Analyst**  
+  Document 3, then document 1 §6–7.
+- **Rebuilding it**  
+  Document 2, then 4.
+- **Detection engineering**  
+  Document 3 §2–3, plus `../../rules/tuning-notes.md`.
 
 ---
 
@@ -42,9 +46,9 @@ The ticket is [../../tickets/INC-001-ssh-brute-force.md](../../tickets/INC-001-s
 | Persistence | `authorized_keys` added at 15:22:22 |
 | Privilege escalation | Attempted, failed (`sudo` required a password) |
 | Severity | High |
-| Detection | 5763 → 40112 → 100120 |
+| Detection | 5763 to 40112 to 100120 |
 | Noise | 400 alerts in 150 s, 292 of them audit execve |
-| Custom rule | 100120 — FIM on `authorized_keys` |
+| Custom rule | 100120, FIM on `authorized_keys` |
 | Key file SHA-256 | `61954205be034570c75bdd6db67b3fbd3410ac1d4bebb08b65d117667965c5e8` |
 
 ---

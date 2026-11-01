@@ -33,7 +33,7 @@ The rules paper is [../../rules/inc-005-rules.md](../../rules/inc-005-rules.md).
 | Rule | Suricata sid 1000001, `LAB SCAN outbound SYN sweep` |
 | Threshold | 50 SYNs / 5 s, track by source |
 | Alerts | 144 scan events, Wazuh 86601 |
-| Severity | Medium — reconnaissance, no follow-on |
+| Severity | Medium, reconnaissance, no follow-on |
 
 ---
 
@@ -43,9 +43,9 @@ The rules paper is [../../rules/inc-005-rules.md](../../rules/inc-005-rules.md).
 |---|---|
 | Normal `apt` + `curl` | 0 |
 | 40 requests in a burst | 0 |
-| 60 requests in a burst | **10** (false positive) |
+| 60 requests in a burst | 10 (false positive) |
 
-The 50/5 s threshold is the boundary. A load test or busy health checker can cross it;
+The 50/5 s threshold is the boundary. A load test or busy health checker can cross it.
 the detection guide covers tuning and correlation.
 
 ---

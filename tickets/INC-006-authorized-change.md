@@ -1,8 +1,8 @@
-# INC-006 — Authorized change (cron/systemd)
+# INC-006: Authorized change (cron/systemd)
 
 | Field | Value |
 |---|---|
-| Decision | **Closed — authorized change, no incident** |
+| Decision | Closed, authorized change, no incident |
 | Classification | Benign true positive |
 | Change | CHG-2026-1101-01 (approved) |
 | Host | soc-victim (Debian 12) |
@@ -57,7 +57,7 @@ Hashes:
 ## Why this is not a false positive
 
 The files really did change, and the rules correctly reported it. The activity was
-authorized. The correct label is **benign true positive / authorized change**.
+authorized. The correct label is benign true positive / authorized change.
 
 A false positive would mean the detection was wrong. It was not. Closing this as a false
 positive would create pressure to suppress 100129/100130 and hide the next unauthorized
@@ -68,8 +68,8 @@ cron file.
 | Condition | Outcome |
 |---|---|
 | No change record | Escalate as unapproved persistence |
-| Hash mismatch | Escalate; deployed file is not the approved one |
-| Outside the window | Escalate; ask the approver |
+| Hash mismatch | Escalate. Deployed file is not the approved one |
+| Outside the window | Escalate. Ask the approver |
 | Unexpected content | Escalate |
 | Follow-on anomaly | Escalate as possible compromise |
 
@@ -92,7 +92,7 @@ cron file.
 
 ## Evidence
 
-- `docs/evidence/INC-006-alerts.json` — 162 alerts in the triage window
-- `docs/evidence/INC-006-change-record.md` — approved change with hashes
-- `docs/evidence/INC-006-triage.txt` — unit contents, hashes, timer state, auth check
-- `writeups/INC-006/` — four-document package
+- `docs/evidence/INC-006-alerts.json`, 162 alerts in the triage window
+- `docs/evidence/INC-006-change-record.md`, approved change with hashes
+- `docs/evidence/INC-006-triage.txt`, unit contents, hashes, timer state, auth check
+- `writeups/INC-006/`, four-document package

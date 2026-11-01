@@ -1,13 +1,13 @@
-# INC-004 — Cron and systemd persistence
+# INC-004: Cron and systemd persistence
 
 | Field | Value |
 |---|---|
 | Severity | Critical |
-| Status | Closed — escalated |
+| Status | Closed, escalated |
 | Source | 100129 (cron), 100130 (systemd), audit 80792, sudo 5402 |
 | Host | soc-victim (Debian 12) |
-| Cron | `/etc/cron.d/updates` — every minute as root |
-| systemd | `updates.service` + `updates.timer` — root oneshot |
+| Cron | `/etc/cron.d/updates`, every minute as root |
+| systemd | `updates.service` + `updates.timer`, root oneshot |
 | Execution | `uid=0(root)` for both |
 | Detected (UTC) | 2026-10-31 23:17:25 |
 | Contained (UTC) | 2026-10-31 23:19 |
@@ -15,13 +15,13 @@
 
 ## What fired
 
-1. **100129** (level 12) — `/etc/cron.d/updates` added at 23:17:25.115.
-2. **100130** (level 10) — `/etc/systemd/system/updates.service` added at 23:17:28.122.
-3. **100130** — `/etc/systemd/system/updates.timer` added at 23:17:28.128.
-4. **100130** — `timers.target.wants/updates.timer` symlink at 23:17:31.309.
-5. **80792** — `tee` into each path, `systemctl daemon-reload`,
+1. 100129 (level 12), `/etc/cron.d/updates` added at 23:17:25.115.
+2. 100130 (level 10), `/etc/systemd/system/updates.service` added at 23:17:28.122.
+3. 100130, `/etc/systemd/system/updates.timer` added at 23:17:28.128.
+4. 100130, `timers.target.wants/updates.timer` symlink at 23:17:31.309.
+5. 80792, `tee` into each path, `systemctl daemon-reload`,
    `systemctl enable --now updates.timer`.
-6. **5402** — sudo command attributed to `analyst`.
+6. 5402, sudo command attributed to `analyst`.
 
 Proof files:
 
@@ -41,28 +41,30 @@ Run before the attack, on the same host:
 | `systemctl enable cron` | 100130 (enable symlink) |
 | `systemctl disable cron` | silent (553) |
 
-Baseline: **2× 100129, 1× 100130**. Both rules are change monitors; they need a
+Baseline: 2× 100129, 1× 100130. Both rules are change monitors. They need a
 change-ticket check before escalation.
 
 ## Timeline
 
 | Time (UTC) | Event |
 |---|---|
-| 23:16:58 | Legit `cron.service` enable symlink → 100130 |
-| 23:17:01 | Legit cron file added → 100129 |
-| 23:17:05 | Legit cron file modified → 100129 |
-| 23:17:25 | Malicious cron file added → 100129 |
+| 23:16:58 | Legit `cron.service` enable symlink to 100130 |
+| 23:17:01 | Legit cron file added to 100129 |
+| 23:17:05 | Legit cron file modified to 100129 |
+| 23:17:25 | Malicious cron file added to 100129 |
 | 23:17:25 | Audit `tee /etc/cron.d/updates` |
-| 23:17:28 | Service and timer added → 100130 ×2 |
-| 23:17:31 | Timer enabled → 100130 (symlink) |
+| 23:17:28 | Service and timer added to 100130 ×2 |
+| 23:17:31 | Timer enabled to 100130 (symlink) |
 | 23:17:31 | Audit `systemctl daemon-reload` / `enable --now` |
 | 23:18:01 | Cron and systemd execute as root |
 | 23:19 | Timer disabled, units and cron file removed |
 
 ## Severity rationale
 
-**Critical.** Both mechanisms execute as root and survive a reboot. The only mitigating
-fact is that the actor already had sudo; no privilege escalation was required. If this
+**Critical**
+
+Both mechanisms execute as root and survive a reboot. The only mitigating
+fact is that the actor already had sudo. No privilege escalation was required. If this
 were an unprivileged compromise, it would still be Critical because of the root
 persistence.
 
@@ -82,7 +84,7 @@ persistence.
 | `/var/spool/cron/crontabs` not monitored | User cron persistence is invisible |
 | Deletion (553) not covered | Removing persistence is silent |
 | 100130 fires on enable symlinks | High false-positive volume |
-| No write → enable → execute sequence | The analyst joins the dots manually |
+| No write to enable to execute sequence | The analyst joins the dots manually |
 | No allow-list of approved units | Legit and malicious units look identical |
 
 ## Recommendations
@@ -109,10 +111,10 @@ persistence.
 
 ## Evidence
 
-- `docs/evidence/INC-004-alerts.json` — 279 alerts in the window
-- `docs/evidence/INC-004-commands.txt` — decoded `tee`/`systemctl`/`id`
-- `docs/evidence/INC-004-hashes.txt` — three SHA-256 values
-- `docs/evidence/INC-004-proof.txt` — root execution proof
-- `docs/evidence/INC-004-files.txt` — unit and cron file contents
-- `writeups/INC-004/` — four-document package
-- `rules/inc-004-rules.md` — rule rationale and test matrix
+- `docs/evidence/INC-004-alerts.json`, 279 alerts in the window
+- `docs/evidence/INC-004-commands.txt`, decoded `tee`/`systemctl`/`id`
+- `docs/evidence/INC-004-hashes.txt`, three SHA-256 values
+- `docs/evidence/INC-004-proof.txt`, root execution proof
+- `docs/evidence/INC-004-files.txt`, unit and cron file contents
+- `writeups/INC-004/`, four-document package
+- `rules/inc-004-rules.md`, rule rationale and test matrix

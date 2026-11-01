@@ -7,25 +7,25 @@ systems, no client data, no real malware.
 
 ---
 
-## TL;DR
+## Summary
 
 At 15:21:47 UTC a password spray against a Debian endpoint began. Twenty guesses
 later, the `svc-backup` account was compromised. The attacker added an SSH key and
-ran discovery commands. Total time from first failure to persistence: **32 seconds**.
+ran discovery commands. Total time from first failure to persistence: 32 seconds.
 
-The detection was not the hard part. The hard part was that the SIEM produced **400
-alerts in 150 seconds**, and the stock "failures followed by a success" rule fired
+The detection was not the hard part. The hard part was that the SIEM produced 400
+alerts in 150 seconds, and the stock "failures followed by a success" rule fired
 on six alerts from routine analyst sessions as well as the attacker. This is the story of
 separating the two.
 
 | | |
 |---|---|
-| **Verdict** | True positive, confirmed compromise |
-| **Severity** | High |
-| **Entry** | SSH password authentication, weak service-account password |
-| **Persistence** | SSH `authorized_keys` added |
-| **Privilege escalation** | Attempted, failed (`sudo` required a password) |
-| **MITRE** | T1110.001, T1078, T1098.004, T1059.004, T1082, T1033 |
+| Verdict | True positive, confirmed compromise |
+| Severity | High |
+| Entry | SSH password authentication, weak service-account password |
+| Persistence | SSH `authorized_keys` added |
+| Privilege escalation | Attempted, failed (`sudo` required a password) |
+| MITRE | T1110.001, T1078, T1098.004, T1059.004, T1082, T1033 |
 
 ---
 
@@ -41,7 +41,7 @@ separating the two.
 | Time | All timestamps UTC |
 
 One lab artefact matters for the analysis: QEMU user networking makes the attacker
-and every legitimate session appear as **10.0.2.2**, the virtual gateway. In a real
+and every legitimate session appear as 10.0.2.2, the virtual gateway. In a real
 estate the attacker's source address would be distinct. That limitation is exactly
 what produced the false positives below.
 
@@ -67,7 +67,7 @@ Counts for the incident window (15:21:00–15:23:30):
 | 40112 | Multiple auth failures followed by a success | 8 |
 | 5715 | sshd authentication success | 6 |
 | 5763 | sshd brute force | 1 |
-| **100120** | **FIM: authorized_keys added or modified** | **1** |
+| 100120 | FIM: authorized_keys added or modified | 1 |
 
 Four hundred alerts. One of them is the compromise. Four of the eight `40112`
 alerts are benign.
@@ -80,12 +80,12 @@ alerts are benign.
 |---|---|
 | 15:21:47 | Legitimate login by `svc-backup` from 10.0.2.2 (baseline activity) |
 | 15:21:50 | First failed password for `svc-backup` |
-| 15:22:01 | Rule **5763** — sshd brute force |
-| 15:22:03 | Rule **40112** fires on an **analyst** login (false positive) |
-| 15:22:05 | Rule **40112** fires on another analyst login (false positive) |
-| 15:22:21 | `Accepted password for svc-backup` — the successful guess |
-| 15:22:21 | Rule **40112** on `svc-backup` |
-| 15:22:22 | Rule **100120** — `/home/svc-backup/.ssh/authorized_keys` added |
+| 15:22:01 | Rule 5763, sshd brute force |
+| 15:22:03 | Rule 40112 fires on an analyst login (false positive) |
+| 15:22:05 | Rule 40112 fires on another analyst login (false positive) |
+| 15:22:21 | `Accepted password for svc-backup`, the successful guess |
+| 15:22:21 | Rule 40112 on `svc-backup` |
+| 15:22:22 | Rule 100120, `/home/svc-backup/.ssh/authorized_keys` added |
 | 15:22:23 | `id`, `whoami`, `uname -a`, `head`, `sudo -n -l` (failed), `mkdir ~/.ssh`, key write, `curl` |
 | 15:22:23 | Two in-flight guesses still arriving (another 5760, another 40112) |
 | 15:22:35 onward | Two more `40112` on analyst logins |
@@ -109,7 +109,7 @@ Oct 30 15:21:50 soc-victim sshd[10779]: Failed password for svc-backup from 10.0
 Oct 30 15:22:21 soc-victim sshd[10847]: Accepted password for svc-backup from 10.0.2.2 port 52318 ssh2
 ```
 
-**True positive.**
+**True positive**
 
 ### 2. What did the successful session do?
 
@@ -128,7 +128,7 @@ Oct 30 15:22:21 soc-victim sshd[10847]: Accepted password for svc-backup from 10
 
 The `bash -c` argument decoded to the full script: discovery, a `sudo` check, the
 key append, and an outbound request. The `sudo` attempt failed with "a password is
-required", which is a useful fact: **no privilege escalation occurred.**
+required", which is a useful fact: no privilege escalation occurred.
 
 ### 3. Persistence
 
@@ -163,37 +163,39 @@ Four `40112` alerts were legitimate analyst sessions:
 | 15:22:35 | analyst | same |
 | 15:23:05 | analyst | same |
 
-They matched because `40112` correlates **any** authentication failure with **any**
+They matched because `40112` correlates any authentication failure with any
 success from the same source, and in this lab every session shares the gateway
 address. The separation came from three details, not from the rule:
 
-1. **Username** — the failures and the success were both for `svc-backup`.
-2. **Authentication method** — the analyst used a key; the attacker used a password.
-3. **Timing and volume** — 20 failures in 31 seconds immediately before the success.
+1. Username, the failures and the success were both for `svc-backup`.
+2. Authentication method, the analyst used a key. The attacker used a password.
+3. Timing and volume, 20 failures in 31 seconds immediately before the success.
 
 This is exactly the kind of judgement an L1 analyst is paid for. The rule gives you a
-candidate; the ticket has to prove it.
+candidate. The ticket has to prove it.
 
 ---
 
 ## Severity and response
 
-**High.** A valid account was compromised and persistence was established. It is not
+**High**
+
+A valid account was compromised and persistence was established. It is not
 Critical because the account was unprivileged, `sudo` failed, and no lateral
 movement was observed. It is not Medium because an attacker with a working key can
 return after the password is reset.
 
 Containment, in order:
 
-1. **Isolate the host** (in this lab, snapshot and disconnect; in production, EDR
+1. Isolate the host (in this lab, snapshot and disconnect. In production, EDR
    network containment).
-2. **Disable `svc-backup`** and expire its password.
-3. **Remove the unauthorised key** and compare the file against the last known-good
+2. Disable `svc-backup` and expire its password.
+3. Remove the unauthorised key and compare the file against the last known-good
    hash.
-4. **Preserve evidence** before changing anything: the FIM record, `auditd` records,
+4. Preserve evidence before changing anything: the FIM record, `auditd` records,
    the `authorized_keys` file and its SHA-256.
-5. **Check for reuse** of the same key or account on other hosts.
-6. **Review the authentication policy** that allowed this: password auth on a service
+5. Check for reuse of the same key or account on other hosts.
+6. Review the authentication policy that allowed this: password auth on a service
    account, no lockout, a password that appeared in a 20-entry list.
 
 Escalation note to L2:
@@ -225,7 +227,7 @@ Escalation note to L2:
 
 Why FIM and not command matching: I first tried to alert on the `auditd` execve
 record. Wazuh's audit decoder exposed `a0` and `a1` for the `bash -c` event but
-**dropped `a2`**, which is where the command string lives. The raw audit log had it;
+dropped `a2`, which is where the command string lives. The raw audit log had it.
 the decoded alert did not. FIM gave a stable, high-fidelity signal instead: a path, an
 event type, a user, and hashes.
 
@@ -248,7 +250,7 @@ I also tried `<same_user />` to tie the failure and the success to the same acco
 Wazuh compares `srcuser` on the failure (5710/5760) with `dstuser` on the success
 (5715), so the fields do not line up.
 
-The honest conclusion: **do not duplicate `40112`; tune it.** Narrow it to sshd
+The honest conclusion: do not duplicate `40112`. Tune it. Narrow it to sshd
 authentication groups, raise the failure threshold, and make the account part of the
 condition if the field model allows. A duplicate rule that never fires is worse than
 no rule at all, because it creates false confidence.
@@ -302,7 +304,7 @@ hydra -l svc-backup -P passwords.txt -s 2222 -t 2 -V 127.0.0.1 ssh
 ## Caveats
 
 - The attack came from the virtual gateway because of QEMU user networking. That is
-  why source-IP correlation produced false positives; a real network would not have
+  why source-IP correlation produced false positives. A real network would not have
   this exact problem.
 - `svc-backup` was created for the exercise, with password authentication
   deliberately enabled. That is the misconfiguration being demonstrated.

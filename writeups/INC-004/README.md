@@ -24,10 +24,14 @@ The rules paper is [../../rules/inc-004-rules.md](../../rules/inc-004-rules.md).
 
 ## Reading order
 
-- **Hiring manager / interviewer:** document 1.
-- **Analyst:** document 3, then document 1 §7–9.
-- **Rebuilding it:** document 2, then 4.
-- **Detection engineering:** document 3 §2–3, plus the rules paper.
+- **Hiring manager / interviewer**  
+  Document 1.
+- **Analyst**  
+  Document 3, then document 1 §7–9.
+- **Rebuilding it**  
+  Document 2, then 4.
+- **Detection engineering**  
+  Document 3 §2–3, plus the rules paper.
 
 ---
 
@@ -37,11 +41,11 @@ The rules paper is [../../rules/inc-004-rules.md](../../rules/inc-004-rules.md).
 |---|---|
 | Date | 2026-10-31, 23:17 UTC |
 | Host | Debian 12 VM `soc-victim`, 10.0.2.15 |
-| Cron | `/etc/cron.d/updates` — every minute as root |
-| systemd | `updates.service` + `updates.timer` — root oneshot |
+| Cron | `/etc/cron.d/updates`, every minute as root |
+| systemd | `updates.service` + `updates.timer`, root oneshot |
 | Execution | `uid=0(root)` for both |
-| Detection | **100129** (cron), **100130** (systemd), 80792, 5402 |
-| Severity | Critical — root persistence |
+| Detection | 100129 (cron), 100130 (systemd), 80792, 5402 |
+| Severity | Critical, root persistence |
 
 ### File hashes
 
@@ -64,8 +68,8 @@ Run before the attack, on the same host:
 | `systemctl enable cron` | 100130 (enable symlink) |
 | `systemctl disable cron` | silent (deletion is 553) |
 
-The baseline is **2× 100129 and 1× 100130**. Both rules report change, not intent.
-Route them to a change-aware queue; do not suppress them.
+The baseline is 2× 100129 and 1× 100130. Both rules report change, not intent.
+Route them to a change-aware queue. Do not suppress them.
 
 ---
 
@@ -99,5 +103,5 @@ Requirements: Python 3, `markdown`, `pygments`, and Chrome at
 ## Scope and disclaimer
 
 Independent portfolio lab. Not affiliated with any employer or client. The payload is
-`/usr/bin/id` writing to `/tmp`; no external C2. The host, hashes, and unit names are
+`/usr/bin/id` writing to `/tmp`. No external C2. The host, hashes, and unit names are
 synthetic. The action was performed on an isolated VM by the lab administrator.

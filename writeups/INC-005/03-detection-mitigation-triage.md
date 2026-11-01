@@ -1,16 +1,16 @@
-# Detection, Mitigation, and Triage Guide — INC-005
+# Detection, Mitigation, and Triage Guide: INC-005
 
 <!-- subtitle: A scan is a question, not a verdict -->
 <!--meta
 id: INC-005
-incident: INC-005 — Outbound port scan
+incident: INC-005, Outbound port scan
 severity: Medium
 -->
 
 Audience: an L1 analyst who receives the alert, and an L2 or detection engineer who owns
 the network rule.
 
-This guide uses INC-005 as the worked example. Wazuh rule 86601 is stock; the Suricata
+This guide uses INC-005 as the worked example. Wazuh rule 86601 is stock. The Suricata
 rule is local.
 
 ---
@@ -25,7 +25,7 @@ A port scan is a network event, but the decision needs three layers.
 | Host | auditd / FIM | Did the host do anything else? | none |
 | Identity | sshd / sudo | Did someone log in or elevate? | none |
 
-If only the network layer fires, the finding is **reconnaissance**. The other layers
+If only the network layer fires, the finding is reconnaissance. The other layers
 decide whether it is a compromised host or an approved scanner.
 
 ### 1.1 Signal hierarchy
@@ -59,12 +59,13 @@ alert tcp $HOME_NET any -> $EXTERNAL_NET any (
 )
 ```
 
-- **Direction:** `$HOME_NET -> $EXTERNAL_NET`. This is an **outbound** scan. ET Open's
+- **Direction**  
+  `$HOME_NET -> $EXTERNAL_NET`. This is an **outbound** scan. ET Open's
   scan signatures are largely inbound (`$EXTERNAL_NET -> $HOME_NET`), so they missed the
   lab's outbound case.
-- **`flags:S`:** counts SYN packets only, not established data.
-- **`detection_filter`:** 50 SYNs from the same source in 5 seconds.
-- **classtype:** `attempted-recon` (severity 2).
+- `flags:S`: counts SYN packets only, not established data.
+- `detection_filter`: 50 SYNs from the same source in 5 seconds.
+- classtype: `attempted-recon` (severity 2).
 
 ### 2.2 Why not rely on ET SCAN
 
@@ -83,9 +84,9 @@ should use both: ET SCAN for inbound/known tools, a local rule for outbound disc
 The rule counts packets, not unique destinations. A busy client or load test crosses the
 threshold. Tuning options:
 
-- raise the count (e.g., 100/5 s) and accept slower detection;
-- baseline known scanners and load generators;
-- correlate with authentication failures or process activity;
+- raise the count (e.g., 100/5 s) and accept slower detection.
+- baseline known scanners and load generators.
+- correlate with authentication failures or process activity.
 - use a flow-based detector for unique-destination counting.
 
 ### 2.4 Gaps
@@ -93,7 +94,7 @@ threshold. Tuning options:
 | Gap | Consequence |
 |---|---|
 | Outbound-only | An inbound scan of the VM is not covered |
-| Packet-count threshold | Legit bursts false-positive; slow scans evade |
+| Packet-count threshold | Legit bursts false-positive. Slow scans evade |
 | One destination | A subnet sweep is not represented |
 | No follow-on correlation | Scan + exploit are separate alerts |
 
@@ -103,11 +104,11 @@ threshold. Tuning options:
 
 ### 3.1 Five questions
 
-1. **Who is the source?** Internal host, scanner, jump host, or unknown?
-2. **What was scanned?** One host, a subnet, specific ports?
-3. **Is it approved?** Scanner schedule, change ticket, asset inventory.
-4. **What followed?** Auth failures, exploit attempts, new sessions, egress.
-5. **Is the source healthy?** Process/file anomalies, unusual logins, malware alerts.
+1. Who is the source? Internal host, scanner, jump host, or unknown?
+2. What was scanned? One host, a subnet, specific ports?
+3. Is it approved? Scanner schedule, change ticket, asset inventory.
+4. What followed? Auth failures, exploit attempts, new sessions, egress.
+5. Is the source healthy? Process/file anomalies, unusual logins, malware alerts.
 
 ### 3.2 Decision tree
 
@@ -115,16 +116,16 @@ threshold. Tuning options:
 Port scan alert
 │
 ├─ Source is a known scanner and the window is scheduled
-│   └─ Close; verify scope and rate
+│   └─ Close. Verify scope and rate
 │
 ├─ Source is an internal host, no approval
-│   ├─ No follow-on activity → Medium; contact the owner
-│   ├─ Auth failures / exploit attempts → High; isolate
-│   └─ Session / payload / lateral movement → Critical
+│   ├─ No follow-on activity: Medium. Contact the owner
+│   ├─ Auth failures / exploit attempts: High. Isolate
+│   └─ Session / payload / lateral movement: Critical
 │
 └─ Source is external
-    ├─ Blocked by edge → informational
-    └─ Reached an internal host → High; check exposure
+    ├─ Blocked by edge: informational
+    └─ Reached an internal host: High. Check exposure
 ```
 
 ### 3.3 Step by step
@@ -136,7 +137,7 @@ Port scan alert
 5. Pivot to authentication logs for the destination.
 6. Check for egress or a second stage.
 7. Assign severity with §4.
-8. Contain only if there is evidence of compromise; a scan alone does not justify
+8. Contain only if there is evidence of compromise. A scan alone does not justify
    isolating a production scanner.
 
 ---
@@ -153,7 +154,7 @@ Port scan alert
 | External scan blocked at the edge | Low |
 | External scan reaching an internal service | High |
 
-INC-005: internal host, no approval, no follow-on → **Medium**.
+INC-005: internal host, no approval, no follow-on to Medium.
 
 ---
 
@@ -174,7 +175,7 @@ INC-005: internal host, no approval, no follow-on → **Medium**.
 - Maintain a scanner inventory with source addresses and schedules.
 - Segment management/scanner traffic from user traffic.
 - Restrict egress from the web tier.
-- Alert on scan → auth-failure sequences.
+- Alert on scan to auth-failure sequences.
 - Add the inbound rule if the sensor sees inbound traffic.
 - Keep the IDS feed and rule thresholds reviewed.
 
@@ -193,7 +194,7 @@ INC-005: internal host, no approval, no follow-on → **Medium**.
 ## 6. Escalation template
 
 ```text
-INC-005 — Outbound port scan
+INC-005: Outbound port scan
 
 What:  10.0.2.15 scanned 200 TCP ports on 10.0.2.2 at 23:26:35 UTC. 144 Suricata
        alerts, signature LAB SCAN outbound SYN sweep (sid 1000001).
@@ -224,7 +225,7 @@ Ask:   (1) Was a scan scheduled for this host? (2) If not, review host telemetry
 | Closing because "it is just recon" | Misses a compromised host doing discovery |
 | Relying only on ET SCAN | Outbound scans are missed |
 | Ignoring the destination | The open port may be the real issue |
-| Raising the threshold without a baseline | Slow scans evade; load tests still fire |
+| Raising the threshold without a baseline | Slow scans evade. Load tests still fire |
 | Blocking an internal scanner | Breaks security operations |
 
 ---

@@ -1,6 +1,8 @@
 # Windows ↔ Linux telemetry parity
 
-**This is a mapping, not executed evidence.** The lab runs on Linux. Windows event
+**This is a mapping, not executed evidence**
+
+The lab runs on Linux. Windows event
 IDs are listed so the same triage reasoning can be applied to the Windows estate
 used in this role.
 
@@ -21,7 +23,7 @@ used in this role.
 
 ## How this is used
 
-In an interview or a ticket, the answer is: "I ran this on Linux; on Windows the
+In an interview or a ticket, the answer is: "I ran this on Linux. On Windows the
 equivalent evidence is 4624/4625 for logon, Sysmon 1 for process creation, and
 Sysmon 11 for file writes. The triage questions are identical."
 

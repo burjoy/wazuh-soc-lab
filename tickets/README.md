@@ -1,19 +1,19 @@
 # Ticket template
 
-Copy this file for each incident. Keep the shape identical every time — consistency
+Copy this file for each incident. Keep the shape identical every time, consistency
 is part of what this repository is demonstrating.
 
 ```markdown
-# INC-00N — <one-line summary>
+# INC-00N: <one-line summary>
 
 | Field | Value |
 |---|---|
 | Severity | Critical / High / Medium / Low |
 | Status | Closed / Escalated |
-| Source | Wazuh rule <id> — <description> |
+| Source | Wazuh rule <id>: <description> |
 | Host | soc-victim |
 | User | <account> |
-| MITRE | T####.### — <technique> |
+| MITRE | T####.###: <technique> |
 | Detected (UTC) | YYYY-MM-DD HH:MM:SS |
 | Triaged (UTC) | YYYY-MM-DD HH:MM:SS |
 | Time to triage | N minutes |

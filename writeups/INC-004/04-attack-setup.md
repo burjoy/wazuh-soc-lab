@@ -1,13 +1,13 @@
-# Attack Setup Guide — INC-004
+# Attack Setup Guide: INC-004
 
 <!-- subtitle: Two root persistence paths, and the legitimate work that looks the same -->
 <!--meta
 id: INC-004
-incident: INC-004 — Cron and systemd persistence
+incident: INC-004, Cron and systemd persistence
 severity: Critical
 -->
 
-A step-by-step script for reproducing INC-004 **inside the lab**. It is for testing
+A step-by-step script for reproducing INC-004 inside the lab. It is for testing
 detection and response, not for use against systems you do not own.
 
 ---
@@ -16,12 +16,12 @@ detection and response, not for use against systems you do not own.
 
 | Rule | Detail |
 |---|---|
-| **Scope** | Only the `soc-victim` VM on `10.0.2.0/24` |
-| **Never** | Touch any other host or network |
-| **Never** | Use real credentials, malware, or employer data |
-| **Authorization** | You own the host and the VM |
-| **Reversibility** | Snapshot, then remove every file and disable every timer |
-| **Payload** | `/usr/bin/id` writing to `/tmp`; no external C2 |
+| Scope | Only the `soc-victim` VM on `10.0.2.0/24` |
+| Never | Touch any other host or network |
+| Never | Use real credentials, malware, or employer data |
+| Authorization | You own the host and the VM |
+| Reversibility | Snapshot, then remove every file and disable every timer |
+| Payload | `/usr/bin/id` writing to `/tmp`. No external C2 |
 
 The scenario models an insider or a compromised administrator session. It is
 deliberately an authorized admin action, because that is what makes change control the
@@ -61,7 +61,7 @@ export VMPORT=2222
 
 ---
 
-## 3. Phase 0 — Clean state
+## 3. Phase 0: Clean state
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -70,7 +70,7 @@ ls -1 /etc/cron.d
 systemctl list-timers --all | grep -i updates || echo "no updates timer"'
 ```
 
-Expected: cron active; no `updates` files.
+Expected: cron active. No `updates` files.
 
 Snapshot:
 
@@ -81,7 +81,7 @@ cd "$LAB/lab/vm"
 
 ---
 
-## 4. Phase 1 — Legitimate baseline (required)
+## 4. Phase 1: Legitimate baseline (required)
 
 Run this before the attack so the false positives are known.
 
@@ -98,8 +98,8 @@ sudo systemctl enable cron >/dev/null'
 
 Expected:
 
-- **100129** twice: the legitimate cron file added and modified.
-- **100130** once: the legitimate `cron.service` enable symlink.
+- 100129 twice: the legitimate cron file added and modified.
+- 100130 once: the legitimate `cron.service` enable symlink.
 
 Remove the test cron file:
 
@@ -107,11 +107,11 @@ Remove the test cron file:
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" 'sudo rm -f /etc/cron.d/apt-maintenance'
 ```
 
-Record the counts. These are not failures; they are the change-monitoring baseline.
+Record the counts. These are not failures. They are the change-monitoring baseline.
 
 ---
 
-## 5. Phase 2 — Cron persistence
+## 5. Phase 2: Cron persistence
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -128,15 +128,15 @@ Expected hash:
 
 Expected detections:
 
-- **100129** on `/etc/cron.d/updates`;
-- **80792** `tee /etc/cron.d/updates`;
-- **5402** the sudo command.
+- 100129 on `/etc/cron.d/updates`.
+- 80792 `tee /etc/cron.d/updates`.
+- 5402 the sudo command.
 
 The job runs at the next minute boundary.
 
 ---
 
-## 6. Phase 3 — systemd persistence
+## 6. Phase 3: systemd persistence
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -175,13 +175,13 @@ b58a06d878ddb229f8bfed5eaebf1d32341ee345d0897b765868f7d16c6f0129  updates.timer
 
 Expected detections:
 
-- **100130** on `updates.service`;
-- **100130** on `updates.timer`;
-- **80792** `tee` for both.
+- 100130 on `updates.service`.
+- 100130 on `updates.timer`.
+- 80792 `tee` for both.
 
 ---
 
-## 7. Phase 4 — Enable and execute
+## 7. Phase 4: Enable and execute
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -192,8 +192,8 @@ systemctl is-active updates.timer'
 
 Expected:
 
-- **100130** on `timers.target.wants/updates.timer`;
-- **80792** `systemctl daemon-reload` and `systemctl enable --now updates.timer`;
+- 100130 on `timers.target.wants/updates.timer`.
+- 80792 `systemctl daemon-reload` and `systemctl enable --now updates.timer`.
 - timer active.
 
 Wait at least 75 seconds:
@@ -218,7 +218,7 @@ The proof is the difference between a suspicious file and an executed root paylo
 
 ---
 
-## 8. Phase 5 — Evidence capture
+## 8. Phase 5: Evidence capture
 
 ```bash
 date -u +%FT%TZ > /tmp/inc004_end
@@ -251,7 +251,7 @@ sudo cat /tmp/cron-proof /tmp/systemd-proof' \
 
 ---
 
-## 9. Phase 6 — Cleanup
+## 9. Phase 6: Cleanup
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -300,13 +300,13 @@ cd "$LAB/lab/vm"
 crontab -e    # or: (crontab -l; echo "* * * * * /usr/bin/id") | crontab -
 ```
 
-This writes to `/var/spool/cron/crontabs/<user>`, which is **not** covered by 100129.
+This writes to `/var/spool/cron/crontabs/<user>`, which is not covered by 100129.
 Add FIM/audit coverage to detect it. This is the most important gap to test.
 
 ### 11.2 Service without a timer
 
 A `.service` with `WantedBy=multi-user.target` runs at boot. It produces the same
-100130 file event; the difference is the enable target and the execution trigger.
+100130 file event. The difference is the enable target and the execution trigger.
 
 ### 11.3 Direct symlink creation
 
@@ -321,30 +321,35 @@ primary signal and the command as context.
 sudo rm /etc/cron.d/updates
 ```
 
-The deletion is **553**, which 100129/100130 do not match. Add a deletion rule if you
+The deletion is 553, which 100129/100130 do not match. Add a deletion rule if you
 want visibility into cleanup.
 
 ### 11.5 Package-installed cron
 
 Installing a package can add `/etc/cron.d/<name>` (the image already has `php` and
-`e2scrub_all`). This is a legitimate 100129 hit; match it to the package transaction.
+`e2scrub_all`). This is a legitimate 100129 hit. Match it to the package transaction.
 
 ---
 
 ## 12. Why this is realistic
 
-- **Two mechanisms, one actor.** Real persistence often uses more than one path.
-- **Root execution is trivial.** cron and systemd both run as root by design.
-- **The file writes look like administration.** `tee`, `systemctl`, `daemon-reload`.
-- **The rules cannot tell intent.** A legitimate cron job and a malicious one produce
+- **Two mechanisms, one actor**  
+  Real persistence often uses more than one path.
+- **Root execution is trivial**  
+  Cron and systemd both run as root by design.
+- **The file writes look like administration**  
+  `tee`, `systemctl`, `daemon-reload`.
+- **The rules cannot tell intent**  
+  A legitimate cron job and a malicious one produce
   the same alert.
-- **Cleanup is invisible.** Deletion is not covered by the rules.
+- **Cleanup is invisible**  
+  Deletion is not covered by the rules.
 
 ---
 
 ## 13. Legal and ethical notes
 
 - Run this only on the VM you created.
-- The payload is `id` to a local file; no real C2 or malware.
+- The payload is `id` to a local file. No real C2 or malware.
 - Do not publish real unit names or hashes from production.
 - For a real engagement, use written authorization and a scope document.

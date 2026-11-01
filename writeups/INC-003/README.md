@@ -24,10 +24,14 @@ The ticket is [../../tickets/INC-003-web-shell.md](../../tickets/INC-003-web-she
 
 ## Reading order
 
-- **Hiring manager / interviewer:** document 1, then the narrative.
-- **Analyst:** document 3, then document 1 §6–8.
-- **Rebuilding it:** document 2, then 4.
-- **Detection engineering:** document 3 §2–3, plus [the rules paper](../../rules/inc-003-rules.md) · [PDF](../../rules/inc-003-rules.pdf).
+- **Hiring manager / interviewer**  
+  Document 1, then the narrative.
+- **Analyst**  
+  Document 3, then document 1 §6–8.
+- **Rebuilding it**  
+  Document 2, then 4.
+- **Detection engineering**  
+  Document 3 §2–3, plus [the rules paper](../../rules/inc-003-rules.md) · [PDF](../../rules/inc-003-rules.pdf).
 
 ---
 
@@ -40,7 +44,7 @@ The ticket is [../../tickets/INC-003-web-shell.md](../../tickets/INC-003-web-she
 | Shell | `/var/www/html/updates2.php` |
 | SHA-256 | `50e626c8e31a460af48991b83dfd98c0b24f3a9d9e6eb906e961e77a2aecf15d` |
 | Execution | `www-data` (uid 33) via PHP-FPM |
-| Detection | **100128** (FIM), **100127** (web), 80790/80792, 5402 |
+| Detection | 100128 (FIM), 100127 (web), 80790/80792, 5402 |
 | Clean-window alerts | 67 |
 | Missing stock signal | successful `200` on `.php?cmd=` |
 
@@ -52,11 +56,11 @@ Legitimate PHP deployment and parameter usage were tested on 2026-10-31 at 23:01
 
 | Behaviour | Result |
 |---|---|
-| Legit `index.php` deploy/update | 100128 fires (expected; needs a change ticket) |
+| Legit `index.php` deploy/update | 100128 fires (expected. Needs a change ticket) |
 | `GET /index.php?page=1` | silent |
-| `GET /index.php?cmd=status` | **100127 fires** (false positive) |
-| `GET /index.php?foo=1&cmd=id` | **no 100127** (parameter-order gap) |
-| `app.phtml` | **no 100128** (extension gap) |
+| `GET /index.php?cmd=status` | 100127 fires (false positive) |
+| `GET /index.php?foo=1&cmd=id` | no 100127 (parameter-order gap) |
+| `app.phtml` | no 100128 (extension gap) |
 | `legacy.php5` | 100128 fires (`.php` substring) |
 | `/home/analyst/notes/app.php` | 100128 fires (outside webroot) |
 | `style.css` | silent |

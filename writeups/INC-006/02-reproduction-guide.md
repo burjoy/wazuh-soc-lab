@@ -1,17 +1,21 @@
-# Reproduction Guide — INC-006 Lab
+# Reproduction Guide: INC-006 Lab
 
 <!-- subtitle: Creating an approved change, tripping the rules, and closing the case with evidence -->
 <!--meta
 id: INC-006
-incident: INC-006 — Authorized change triage
+incident: INC-006, Authorized change triage
 severity: None (authorized change)
 -->
 
 This guide reproduces the authorized-change triage on the existing lab. It assumes the
 Wazuh stack, the Debian endpoint, and rules 100129/100130 from INC-004 are running.
 
-**Time:** 15–20 minutes.
-**Result:** four persistence alerts, a matching change record, a written closure, and a
+**Time**
+
+15–20 minutes.
+**Result**
+
+Four persistence alerts, a matching change record, a written closure, and a
 rollback path.
 
 ---
@@ -35,9 +39,9 @@ export VMPORT=2222
 
 ---
 
-## 2. Part A — Build the change package
+## 2. Part A: Build the change package
 
-Create the files locally, compute hashes, and write the change record **before**
+Create the files locally, compute hashes, and write the change record before
 deploying.
 
 ```bash
@@ -79,7 +83,7 @@ A template is in `04-change-setup.md`.
 
 ---
 
-## 3. Part B — Deploy
+## 3. Part B: Deploy
 
 ```bash
 scp -q -i "$VMKEY" -P "$VMPORT" \
@@ -106,13 +110,13 @@ sudo sha256sum /etc/cron.d/log-maintenance \
 
 Expected:
 
-- timer `active`;
-- three hashes matching the change record;
+- timer `active`.
+- three hashes matching the change record.
 - an enable symlink under `/etc/systemd/system/timers.target.wants/`.
 
 ---
 
-## 4. Part C — Collect the alerts
+## 4. Part C: Collect the alerts
 
 ```bash
 sleep 8
@@ -130,11 +134,11 @@ Expected:
 100130  /etc/systemd/system/timers.target.wants/logrotate-check.timer
 ```
 
-There may be duplicate or batched events; the four paths above are the signal.
+There may be duplicate or batched events. The four paths above are the signal.
 
 ---
 
-## 5. Part D — Triage
+## 5. Part D: Triage
 
 ### 5.1 Authorization
 
@@ -144,10 +148,10 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" 'cat ~/changes/CHG-2026-1101-01.md'
 
 Check:
 
-- status is Approved;
-- the requester and approver are named;
-- the window includes the deployment time;
-- the file list matches what appeared;
+- status is Approved.
+- the requester and approver are named.
+- the window includes the deployment time.
+- the file list matches what appeared.
 - the hashes match.
 
 ### 5.2 Integrity
@@ -188,23 +192,23 @@ Also check FIM/audit for unexpected files or processes in the same window.
 
 ---
 
-## 6. Part E — Close
+## 6. Part E: Close
 
 Write the ticket with:
 
-- the change ID and approver;
-- the four alert paths;
-- the hash comparison result;
-- the file contents summary;
-- the absence of follow-on activity;
-- the decision: **authorized change, no incident**;
-- the note that this is **not** a false positive.
+- the change ID and approver.
+- the four alert paths.
+- the hash comparison result.
+- the file contents summary.
+- the absence of follow-on activity.
+- the decision: authorized change, no incident.
+- the note that this is not a false positive.
 
 No containment. No rule change. Keep the detection enabled.
 
 ---
 
-## 7. Part F — Rollback (optional)
+## 7. Part F: Rollback (optional)
 
 The change is a lab artifact. To remove it:
 
@@ -226,13 +230,13 @@ If you roll back, record the rollback in the change record. Do not remove it sil
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| No 100129 | `/etc` not FIM realtime | Verify syscheck; restart agent |
+| No 100129 | `/etc` not FIM realtime | Verify syscheck. Restart agent |
 | No 100130 | Unit written outside `/etc/systemd/system` | Use the recorded path |
-| Hash mismatch | File changed after the record | Stop; escalate; do not close |
+| Hash mismatch | File changed after the record | Stop. Escalate. Do not close |
 | Timer inactive | `enable --now` not run | `systemctl enable --now logrotate-check.timer` |
-| Timer runs immediately | `OnCalendar=daily` semantics | Check `systemctl list-timers`; adjust if needed |
+| Timer runs immediately | `OnCalendar=daily` semantics | Check `systemctl list-timers`. Adjust if needed |
 | Alert missing in Wazuh | Manager queue/filter | Check agent and manager logs |
-| Legit change looks like an incident | No change record or no hashes | Escalate; the evidence is missing |
+| Legit change looks like an incident | No change record or no hashes | Escalate. The evidence is missing |
 
 ---
 

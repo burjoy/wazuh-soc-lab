@@ -1,9 +1,9 @@
-# Reproduction Guide — INC-002 Lab
+# Reproduction Guide: INC-002 Lab
 
 <!-- subtitle: Rebuilding the rogue-account scenario and its detection -->
 <!--meta
 id: INC-002
-incident: INC-002 — Rogue local account added to sudo
+incident: INC-002, Rogue local account added to sudo
 severity: High
 -->
 
@@ -11,8 +11,12 @@ This guide reproduces INC-002 on the existing lab. It assumes the Wazuh stack an
 Debian endpoint from INC-001 are running. If you are starting from a bare host, build
 those first with `writeups/INC-001/02-reproduction-guide.md`, then return here.
 
-**Time:** 20–30 minutes if the base lab is up.
-**Result:** a rogue local account added to `sudo`, the custom rule firing during the
+**Time**
+
+20–30 minutes if the base lab is up.
+**Result**
+
+A rogue local account added to `sudo`, the custom rule firing during the
 action, and a complete evidence set.
 
 ---
@@ -39,7 +43,7 @@ export VMPORT=2222
 
 ---
 
-## 2. Part A — Verify the base
+## 2. Part A: Verify the base
 
 ```bash
 docker ps --format '{{.Names}}\t{{.Status}}'
@@ -68,10 +72,10 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" \
 
 ---
 
-## 3. Part B — Deploy the INC-002 rules
+## 3. Part B: Deploy the INC-002 rules
 
-The manager mounts the repository's `rules/` directory. Mount the **directory**, not a
-single file; a single-file bind mount follows the inode and stops seeing edits when the
+The manager mounts the repository's `rules/` directory. Mount the directory, not a
+single file. A single-file bind mount follows the inode and stops seeing edits when the
 file is replaced.
 
 ```yaml
@@ -92,12 +96,12 @@ for id in 100121 100122 100123 100124 100125 100126; do
 done
 ```
 
-Expected: `1` for each. The deployed file is `rules/local_rules.xml`; the rationale and
+Expected: `1` for each. The deployed file is `rules/local_rules.xml`. The rationale and
 test matrix are in `rules/inc-002-rules.md`.
 
 ---
 
-## 4. Part C — Validate the rule before the incident
+## 4. Part C: Validate the rule before the incident
 
 Use a throwaway account so the real run starts clean.
 
@@ -138,7 +142,7 @@ never fired is not a control.
 
 ---
 
-## 5. Part D — Start legitimate noise
+## 5. Part D: Start legitimate noise
 
 The scenario is more realistic if routine admin activity is present. This loop logs in
 every 30 seconds, runs `uptime`, and performs a `sudo systemctl` call.
@@ -165,7 +169,7 @@ setsid /tmp/noise.sh "$END" >/dev/null 2>&1 &
 
 ---
 
-## 6. Part E — Clean state
+## 6. Part E: Clean state
 
 Before the run, confirm the incident account does not exist and note the expected `sudo`
 members:
@@ -192,7 +196,7 @@ cd "$LAB/lab/vm"
 
 ---
 
-## 7. Part F — Run the incident
+## 7. Part F: Run the incident
 
 Follow `04-attack-setup.md`. In short:
 
@@ -208,7 +212,7 @@ Record the start and action times in UTC. Wait 60–90 seconds for the alert pip
 
 ---
 
-## 8. Part G — Verify and export
+## 8. Part G: Verify and export
 
 ### 8.1 Expected detections
 
@@ -272,7 +276,7 @@ Decode the command trail with the audit helper in
 
 ---
 
-## 9. Part H — Cleanup
+## 9. Part H: Cleanup
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -302,16 +306,16 @@ cd "$LAB/lab/vm"
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| 100121 never fires | Rule not loaded | Check `grep 100121` in the container; recreate the manager |
+| 100121 never fires | Rule not loaded | Check `grep 100121` in the container. Recreate the manager |
 | 100121 loaded but silent | auditd key missing | Ensure `-a always,exit -F arch=b64 -S execve -k audit-wazuh-c` is loaded |
 | 100121 silent for a custom group | Rule hard-codes `sudo` | Add the group name or a CDB list |
-| 100121 silent after `/etc/group` edit | Rule matches `usermod`, not file edits | Use FIM 550 plus a membership baseline; the rule is not designed for this |
+| 100121 silent after `/etc/group` edit | Rule matches `usermod`, not file edits | Use FIM 550 plus a membership baseline. The rule is not designed for this |
 | Only 5901/5902 fire | Custom rule missing or stale | Check the mount, restart the manager, re-run the validation |
 | Rule edits appear not to apply | Single-file bind mount and inode replacement | Mount the `rules/` directory and recreate the container |
 | `userdel -r` fails | The account still has a session | `pkill -KILL -u svc-ops`, then delete |
 | `sudo -l -U` fails | It wants a TTY | Use `sudo -l -U svc-ops` in an interactive shell, or skip it |
-| FIM alerts appear before audit alerts | FIM events are batched; audit events are grouped | Use the journal for action times, alerts for detection times |
-| 5902 is "only" level 8 | Stock severity | That is the gap 100121 fills; do not lower it, add context |
+| FIM alerts appear before audit alerts | FIM events are batched. Audit events are grouped | Use the journal for action times, alerts for detection times |
+| 5902 is "only" level 8 | Stock severity | That is the gap 100121 fills. Do not lower it, add context |
 
 ---
 

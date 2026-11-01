@@ -3,7 +3,7 @@
 <!-- subtitle: Seven rules, six execution paths, and the gaps they leave -->
 <!--meta
 id: INC-002
-incident: INC-002 — Privilege-assignment detection rules
+incident: INC-002, Privilege-assignment detection rules
 severity: High
 -->
 
@@ -18,13 +18,13 @@ detection logic can be reviewed without the repository.
 
 ## 1. Design principle
 
-Stock Wazuh tells you **that** a user exists (5902, level 8). It does not tell you
-**that the user was given root capability**. The rules below close that gap by naming
+Stock Wazuh tells you that a user exists (5902, level 8). It does not tell you
+that the user was given root capability. The rules below close that gap by naming
 the privilege assignment:
 
-- anchor on the audit command that performs the change;
-- match the binary and the group argument, not a file diff;
-- raise the level to 12 so the alert is not queued behind inventory noise;
+- anchor on the audit command that performs the change.
+- match the binary and the group argument, not a file diff.
+- raise the level to 12 so the alert is not queued behind inventory noise.
 - put the affected user and group in the description.
 
 They are intentionally local rules in the `100100`–`100199` range.
@@ -35,14 +35,14 @@ They are intentionally local rules in the `100100`–`100199` range.
 
 | ID | Trigger | Level | MITRE |
 |---|---|---|---|
-| **100120** | FIM: `authorized_keys` added or modified | 12 | T1098.004, T1078 |
-| **100121** | `usermod` with group argument `sudo`/`wheel`/`admin` | 12 | T1098, T1548.003 |
-| **100122** | SSH login by an account named `svc-*` | 10 | T1078 |
-| **100131** | Service-account login after the 40112 brute-force correlation | 12 | T1078, T1110 |
-| **100123** | `gpasswd -a` to `sudo`/`wheel`/`admin` | 12 | T1098, T1548.003 |
-| **100124** | Debian `adduser <user> <group>` to a privileged group | 12 | T1098, T1548.003 |
-| **100125** | `useradd -G <privileged-group> <user>` | 12 | T1136.001, T1098 |
-| **100126** | `usermod -a -G <privileged-group> <user>` | 12 | T1098, T1548.003 |
+| 100120 | FIM: `authorized_keys` added or modified | 12 | T1098.004, T1078 |
+| 100121 | `usermod` with group argument `sudo`/`wheel`/`admin` | 12 | T1098, T1548.003 |
+| 100122 | SSH login by an account named `svc-*` | 10 | T1078 |
+| 100131 | Service-account login after the 40112 brute-force correlation | 12 | T1078, T1110 |
+| 100123 | `gpasswd -a` to `sudo`/`wheel`/`admin` | 12 | T1098, T1548.003 |
+| 100124 | Debian `adduser <user> <group>` to a privileged group | 12 | T1098, T1548.003 |
+| 100125 | `useradd -G <privileged-group> <user>` | 12 | T1136.001, T1098 |
+| 100126 | `usermod -a -G <privileged-group> <user>` | 12 | T1098, T1548.003 |
 
 ---
 
@@ -163,107 +163,143 @@ They are intentionally local rules in the `100100`–`100199` range.
 
 ## 4. Rule-by-rule
 
-### 100121 — `usermod -aG` / `-G`
+### 100121: `usermod -aG` / `-G`
 
-- **Matches:** `/usr/sbin/usermod`, with the group in `a2`.
-- **Covers:** `usermod -aG sudo alice` and `usermod -G sudo alice`.
-- **Tested:** 05:01:28.682, `usermod -aG sudo svc-test`.
-- **False positives:** legitimate onboarding and configuration management.
-- **Limit:** options before the group shift the index; the `-a -G` form is handled by
+- **Matches**  
+  `/usr/sbin/usermod`, with the group in `a2`.
+- **Covers**  
+  `usermod -aG sudo alice` and `usermod -G sudo alice`.
+- **Tested**  
+  05:01:28.682, `usermod -aG sudo svc-test`.
+- **False positives**  
+  Legitimate onboarding and configuration management.
+- **Limit**  
+  Options before the group shift the index. The `-a -G` form is handled by
   100126.
 
-### 100126 — `usermod -a -G`
+### 100126: `usermod -a -G`
 
-- **Matches:** `a1=-a`, `a2=-G`, `a3=<privileged group>`.
-- **Covers:** `usermod -a -G sudo alice`, which is what Debian `adduser` calls
+- **Matches**  
+  `a1=-a`, `a2=-G`, `a3=<privileged group>`.
+- **Covers**  
+  `usermod -a -G sudo alice`, which is what Debian `adduser` calls
   internally.
-- **Tested:** 05:03:40.524 (manual) and 05:03:46.527 (inside `adduser`).
-- **False positives:** same as 100121.
-- **Limit:** a duplicate alert is expected when `adduser` is used: 100124 catches the
+- **Tested**  
+  05:03:40.524 (manual) and 05:03:46.527 (inside `adduser`).
+- **False positives**  
+  Same as 100121.
+- **Limit**  
+  A duplicate alert is expected when `adduser` is used: 100124 catches the
   wrapper and 100126 catches the internal `usermod`. Keep both, or suppress one with
   `ignore` if the duplication is noisy.
 
-### 100123 — `gpasswd -a`
+### 100123: `gpasswd -a`
 
-- **Matches:** `/usr/bin/gpasswd`, `a1=-a`, `a3=<privileged group>`.
-- **Covers:** `gpasswd -a alice sudo`.
-- **Tested:** 05:03:36.524.
-- **Important:** the `a1=-a` condition excludes `gpasswd -d`, which removes a user and
+- **Matches**  
+  `/usr/bin/gpasswd`, `a1=-a`, `a3=<privileged group>`.
+- **Covers**  
+  `gpasswd -a alice sudo`.
+- **Tested**  
+  05:03:36.524.
+- **Important**  
+  The `a1=-a` condition excludes `gpasswd -d`, which removes a user and
   would otherwise produce a false privilege-assignment alert. This was caught during
   testing.
-- **Limit:** `gpasswd -M` (set the member list) is not covered.
+- **Limit**  
+  `gpasswd -M` (set the member list) is not covered.
 
-### 100124 — Debian `adduser`
+### 100124: Debian `adduser`
 
-- **Matches:** `/usr/bin/perl`, `a1=/usr/sbin/adduser`, `a3=<privileged group>`.
-- **Covers:** `adduser alice sudo`.
-- **Tested:** 05:03:46.525, execve vector
+- **Matches**  
+  `/usr/bin/perl`, `a1=/usr/sbin/adduser`, `a3=<privileged group>`.
+- **Covers**  
+  `adduser alice sudo`.
+- **Tested**  
+  05:03:46.525, execve vector
   `perl /usr/sbin/adduser svc-test2 sudo`.
-- **Why `perl`:** Debian's `adduser` is a Perl script, so the audit `exe` is
+- **Why `perl`**  
+  Debian's `adduser` is a Perl script, so the audit `exe` is
   `/usr/bin/perl`, not `/usr/sbin/adduser`. A rule matching the script path alone will
   never fire.
-- **Limit:** another Perl wrapper invoking `adduser` would match; require the exact
+- **Limit**  
+  Another Perl wrapper invoking `adduser` would match. Require the exact
   `a1` path to keep it narrow.
 
-### 100125 — `useradd -G`
+### 100125: `useradd -G`
 
-- **Matches:** `/usr/sbin/useradd`, `a1=-G`, `a2=<privileged group>`.
-- **Covers:** `useradd -G sudo alice`, the canonical ordering.
-- **Tested:** 05:03:50.525.
-- **Limit:** `useradd -m -s /bin/bash -G sudo alice` shifts the group to `a5`. The rule
-  intentionally covers the short form; the FIM + group-baseline control covers the
+- **Matches**  
+  `/usr/sbin/useradd`, `a1=-G`, `a2=<privileged group>`.
+- **Covers**  
+  `useradd -G sudo alice`, the canonical ordering.
+- **Tested**  
+  05:03:50.525.
+- **Limit**  
+  `useradd -m -s /bin/bash -G sudo alice` shifts the group to `a5`. The rule
+  intentionally covers the short form. The FIM + group-baseline control covers the
   rest. Add a second rule for the longer ordering if that is the standard in your
   estate.
 
-### 100122 — service-account SSH login
+### 100122: service-account SSH login
 
-- **Matches:** rule 5715 (SSH authentication success) whose log contains `for svc-`.
-- **Tested:** 05:03:54.736, `Accepted password for svc-test`.
-- **Why not `<field name="dstuser">`:** Wazuh rejects `<field>` for `dstuser` with
+- **Matches**  
+  Rule 5715 (SSH authentication success) whose log contains `for svc-`.
+- **Tested**  
+  05:03:54.736, `Accepted password for svc-test`.
+- **Why not `<field name="dstuser">`**  
+  Wazuh rejects `<field>` for `dstuser` with
   "Field 'dstuser' is static." Static decoder fields are matched with `<match>` or
   `<regex>` instead.
-- **Covers:** the `svc-*` naming convention. An account called `backup` or `deploy`
+- **Covers**  
+  The `svc-*` naming convention. An account called `backup` or `deploy`
   needs the pattern extended.
-- **False positives:** a service that legitimately uses SSH. Allow-list it explicitly
+- **False positives**  
+  A service that legitimately uses SSH. Allow-list it explicitly
   rather than removing the rule.
 
-### 100131 — precedence fix for 100122
+### 100131: precedence fix for 100122
 
-- **Problem:** stock 40112 matches the successful login after a brute-force burst and
+- **Problem**  
+  Stock 40112 matches the successful login after a brute-force burst and
   wins rule evaluation, so the sibling 100122 never fires. The service-account login is
   hidden behind the brute-force alert.
-- **Fix:** 100131 is a child of 40112 with the same `for svc-` match. It fires when the
+- **Fix**  
+  100131 is a child of 40112 with the same `for svc-` match. It fires when the
   success follows failures, and names the account.
-- **Tested:** 8 failures + `Accepted password for svc-test` → **100131**; a normal
-  `svc-test` login → **100122**.
-- **Limitation:** two rules express one intent. This is preferable to suppressing 40112
+- **Tested**  
+  8 failures + `Accepted password for svc-test` to **100131**. A normal
+  `svc-test` login to 100122.
+- **Limitation**  
+  Two rules express one intent. This is preferable to suppressing 40112
   or accepting a blind spot.
 
-### 100120 — persistence context
+### 100120: persistence context
 
-- **Matches:** FIM 550/554 with `authorized_keys` in the log.
-- **Tested:** INC-001, 2026-10-30 15:22:22, path and SHA-256 in the alert.
-- **Why here:** the strongest combination for INC-002 is a new privileged account *plus*
+- **Matches**  
+  FIM 550/554 with `authorized_keys` in the log.
+- **Tested**  
+  INC-001, 2026-10-30 15:22:22, path and SHA-256 in the alert.
+- **Why here**  
+  The strongest combination for INC-002 is a new privileged account *plus*
   a key file. 100120 supplies the second half.
 
 ---
 
 ## 5. Test matrix
 
-Run these on a disposable account. Each line is a separate action; allow two seconds
+Run these on a disposable account. Each line is a separate action. Allow two seconds
 between them so the alerts are easy to attribute.
 
 | Action | Expected |
 |---|---|
 | `useradd -m -s /bin/bash svc-test` | 5902, 5901, FIM 554 |
-| `usermod -aG sudo svc-test` | **100121** |
-| `usermod -a -G sudo svc-test` | **100126** |
-| `gpasswd -a svc-test sudo` | **100123** |
+| `usermod -aG sudo svc-test` | 100121 |
+| `usermod -a -G sudo svc-test` | 100126 |
+| `gpasswd -a svc-test sudo` | 100123 |
 | `gpasswd -d svc-test sudo` | none from 100123 (by design) |
-| `adduser svc-test sudo` | **100124** + **100126** |
-| `useradd -G sudo svc-test2` | **100125** |
-| SSH login as `svc-test` | **100122** |
-| Write `~/.ssh/authorized_keys` | **100120** |
+| `adduser svc-test sudo` | 100124 + 100126 |
+| `useradd -G sudo svc-test2` | 100125 |
+| SSH login as `svc-test` | 100122 |
+| Write `~/.ssh/authorized_keys` | 100120 |
 
 Example:
 
@@ -289,7 +325,7 @@ sudo userdel -r svc-test2
 ```
 
 Expected counts in the test window: one each of 100121, 100123, 100124, 100125,
-100122; two of 100126 (manual plus the `adduser` internal call); 100120 when the key
+100122. Two of 100126 (manual plus the `adduser` internal call). 100120 when the key
 is written.
 
 ### 5.1 False-positive validation
@@ -302,9 +338,9 @@ produced privilege-assignment alerts.
 | Test group | Unanchored `sudo|wheel|admin` | Anchored PCRE2 |
 |---|---|---|
 | `appusers` (non-privileged) | silent | silent |
-| `sudo-audit` | **100121 fired** | silent |
-| `admin-tools` | **100121, 100124, 100126 fired** | silent |
-| `wheelhouse` | **100121 fired** | silent |
+| `sudo-audit` | 100121 fired | silent |
+| `admin-tools` | 100121, 100124, 100126 fired | silent |
+| `wheelhouse` | 100121 fired | silent |
 | `sudo` (exact) | 100121 fired | 100121 fired |
 
 The same trap affected each path: `gpasswd -a testuser sudo-audit` fired 100123,
@@ -332,26 +368,26 @@ Tested on 2026-10-31 with legitimate activity on the endpoint:
 | Action | Result |
 |---|---|
 | `ssh-keygen`, `.bashrc` edit | silent |
-| `/home/analyst/notes/authorized_keys.txt` | **100120 fired** (false positive) |
-| `/home/analyst/.ssh/authorized_keys.bak` | **100120 fired** (false positive) |
+| `/home/analyst/notes/authorized_keys.txt` | 100120 fired (false positive) |
+| `/home/analyst/.ssh/authorized_keys.bak` | 100120 fired (false positive) |
 | Real `~/.ssh/authorized_keys` rotation | fired (expected) |
 | Restore of the original file | fired (expected) |
 
 The rule matches the substring `authorized_keys`, so a lookalike filename triggers it.
 Exact-path attempts all failed:
 
-- `<match>authorized_keys'</match>` — the match engine normalizes punctuation, so the
+- `<match>authorized_keys'</match>`, the match engine normalizes punctuation, so the
   quote is never seen.
 - `<regex>authorized_keys'</regex>`, `<regex>authorized_keys[^.]</regex>`, and
-  `<regex>authorized_keys. modified</regex>` — no match against the FIM log.
-- `<field name="syscheck.path" type="pcre2">` — accepted by the parser but never
-  evaluated; the FIM path is not a rule field.
+  `<regex>authorized_keys. modified</regex>`, no match against the FIM log.
+- `<field name="syscheck.path" type="pcre2">`, accepted by the parser but never
+  evaluated. The FIM path is not a rule field.
 
 Keeping the broad match is the honest choice: it catches the real file. The cost is
 lookalike names and legitimate key rotation. Mitigations:
 
-- do not name backups `authorized_keys.*` inside FIM-monitored paths;
-- keep a key-fingerprint baseline and allow-list expected keys;
+- do not name backups `authorized_keys.*` inside FIM-monitored paths.
+- keep a key-fingerprint baseline and allow-list expected keys.
 - match legitimate rotations to a change ticket.
 
 A custom decoder that extracts the path into a dynamic field is the next step if the
@@ -369,11 +405,11 @@ lookalike noise becomes material.
 | `gpasswd -a` | 100123 | Additions only |
 | `adduser` | 100124 (+100126) | Perl wrapper |
 | `useradd -G` | 100125 | Short form only |
-| Direct `/etc/group` edit | **not covered** | FIM 550 + membership baseline |
-| `vigr` or editor | **not covered** | FIM 550 + baseline |
-| `gpasswd -M` | **not covered** | Add a rule for `a1=-M` if used |
-| Long options (`--groups`) | **not covered** | Argument index changes |
-| LDAP/SSSD group changes | **not covered** | Different telemetry |
+| Direct `/etc/group` edit | not covered | FIM 550 + membership baseline |
+| `vigr` or editor | not covered | FIM 550 + baseline |
+| `gpasswd -M` | not covered | Add a rule for `a1=-M` if used |
+| Long options (`--groups`) | not covered | Argument index changes |
+| LDAP/SSSD group changes | not covered | Different telemetry |
 | Custom privileged group | update alternation/list | `sudo|wheel|admin` here |
 
 The baseline is the backstop:
@@ -431,8 +467,8 @@ and 100126 a child, and verify the suppression does not swallow a real manual
 
 Do not try to make these rules cover every possible write to `/etc/group`. Use:
 
-- FIM 550 on `/etc/group` with `report_changes="yes"`;
-- a nightly membership baseline;
+- FIM 550 on `/etc/group` with `report_changes="yes"`.
+- a nightly membership baseline.
 - a drift alert on any difference.
 
 That is the only path that catches `vigr`, an editor, or a direct rewrite.
@@ -490,7 +526,7 @@ delete it.
 ## 10. Caveats
 
 - Tested on Debian 12 with auditd 3.0.9 and Wazuh 4.14.7. Binaries live in `/usr/sbin`
-  and `/usr/bin`; a distribution with different paths needs the `audit.exe` values
+  and `/usr/bin`. A distribution with different paths needs the `audit.exe` values
   adjusted.
 - The rules depend on `audit-wazuh-c` execve rules being loaded. Without auditd there
   is no evidence to match.

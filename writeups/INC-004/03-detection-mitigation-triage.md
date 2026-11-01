@@ -1,9 +1,9 @@
-# Detection, Mitigation, and Triage Guide — INC-004
+# Detection, Mitigation, and Triage Guide: INC-004
 
 <!-- subtitle: Persistence is a change-management problem with a file path -->
 <!--meta
 id: INC-004
-incident: INC-004 — Cron and systemd persistence
+incident: INC-004, Cron and systemd persistence
 severity: Critical
 -->
 
@@ -26,7 +26,7 @@ Root persistence produces four signals:
 | Process | auditd execve | What wrote it, and what ran? | 80792 `tee`, `systemctl`, `id` |
 | Identity | sudo | Who had root? | 5402 |
 
-The file event proves the object; the command trail proves the actor; the proof file
+The file event proves the object. The command trail proves the actor. The proof file
 proves execution. None of them proves authorization.
 
 ### 1.1 Signal hierarchy
@@ -51,7 +51,7 @@ Critical root execution from the new job/unit
 
 ## 2. Rule-by-rule
 
-### 2.1 Rule 100129 — cron file added or modified
+### 2.1 Rule 100129: cron file added or modified
 
 ```xml
 <rule id="100129" level="12">
@@ -63,14 +63,19 @@ Critical root execution from the new job/unit
 </rule>
 ```
 
-- **Parents:** 550 (modified) and 554 (added).
-- **Match:** the `/etc/cron.d/` path substring in the FIM log.
-- **Tested:** 23:17:25.115 on `/etc/cron.d/updates`.
-- **False positives:** any legitimate cron job. The baseline run produced two hits for
+- **Parents**  
+  550 (modified) and 554 (added).
+- **Match**  
+  The `/etc/cron.d/` path substring in the FIM log.
+- **Tested**  
+  23:17:25.115 on `/etc/cron.d/updates`.
+- **False positives**  
+  Any legitimate cron job. The baseline run produced two hits for
   one legitimate file (add + modify).
-- **Gap:** user crontabs in `/var/spool/cron/crontabs` are not covered.
+- **Gap**  
+  User crontabs in `/var/spool/cron/crontabs` are not covered.
 
-### 2.2 Rule 100130 — systemd unit or enable-link changed
+### 2.2 Rule 100130: systemd unit or enable-link changed
 
 ```xml
 <rule id="100130" level="10">
@@ -82,13 +87,18 @@ Critical root execution from the new job/unit
 </rule>
 ```
 
-- **Parents:** 550 and 554.
-- **Match:** the `/etc/systemd/system/` path substring.
-- **Tested:** 23:17:28.122 (`updates.service`), 23:17:28.128 (`updates.timer`), and
+- **Parents**  
+  550 and 554.
+- **Match**  
+  The `/etc/systemd/system/` path substring.
+- **Tested**  
+  23:17:28.122 (`updates.service`), 23:17:28.128 (`updates.timer`), and
   23:17:31.309 (`timers.target.wants/updates.timer`).
-- **False positive:** every `systemctl enable`, because it creates a symlink under
+- **False positive**  
+  Every `systemctl enable`, because it creates a symlink under
   `*.wants/`. The baseline produced one hit for enabling cron.
-- **Why level 10:** enable events are frequent; level 12 would flood the queue. The new
+- **Why level 10**  
+  Enable events are frequent. Level 12 would flood the queue. The new
   `.service`/`.timer` body is the higher-signal part, but the rule cannot distinguish a
   symlink from a file with one `<match>`.
 
@@ -100,7 +110,7 @@ Critical root execution from the new job/unit
 | 80790 | Audit created a file |
 | 80792 | `tee`, `systemctl`, `id` command trail |
 | 5402 | Who ran the sudo command |
-| 553 | Deletion — not covered by 100129/100130 |
+| 553 | Deletion, not covered by 100129/100130 |
 
 ---
 
@@ -108,7 +118,7 @@ Critical root execution from the new job/unit
 
 ### 3.1 Route to change control
 
-Both rules report **change**. The first triage question is "was this approved?", not
+Both rules report change. The first triage question is "was this approved?", not
 "is this malicious?". Without a change-ticket lookup, every legitimate cron job and every
 `systemctl enable` becomes an incident.
 
@@ -116,11 +126,11 @@ Both rules report **change**. The first triage question is "was this approved?",
 
 Options:
 
-- allow-list approved unit names and known enable symlinks;
-- split the rule: `.service`/`.timer` files at level 12, `*.wants/` links at level 5;
+- allow-list approved unit names and known enable symlinks.
+- split the rule: `.service`/`.timer` files at level 12, `*.wants/` links at level 5.
 - monitor `systemctl enable` from audit and correlate it with the unit write.
 
-A split is preferable to suppression. The enable link alone is weak; the unit body plus
+A split is preferable to suppression. The enable link alone is weak. The unit body plus
 the enable plus execution is strong.
 
 ### 3.3 Cover user crontabs
@@ -133,13 +143,13 @@ A user-level cron job is a persistence path that `/etc/cron.d` does not see.
 100129/100130 use 550/554. A deletion is 553. If an attacker removes a unit or cron file,
 neither rule fires. Add deletion rules for the same paths, at least at level 8.
 
-### 3.5 Correlate write → enable → execute
+### 3.5 Correlate write to enable to execute
 
 A sequence rule or a small enrichment can connect:
 
-1. a new unit body (100130);
-2. `systemctl enable` (80792);
-3. the service process (80792, `id`/payload);
+1. a new unit body (100130).
+2. `systemctl enable` (80792).
+3. the service process (80792, `id`/payload).
 4. an outbound connection.
 
 The four together are a confirmed persistence event. Individually they are noise.
@@ -150,11 +160,11 @@ The four together are a confirmed persistence event. Individually they are noise
 
 ### 4.1 Five questions
 
-1. **What changed?** Cron file, unit file, or enable symlink?
-2. **Who wrote it?** `auid`, `uid`, sudo command, source.
-3. **Was it approved?** Change ticket, config-management run, package install.
-4. **Did it run?** Proof file, journal, service status, process trail.
-5. **What else is there?** Other units, timers, cron files, user crontabs.
+1. What changed? Cron file, unit file, or enable symlink?
+2. Who wrote it? `auid`, `uid`, sudo command, source.
+3. Was it approved? Change ticket, config-management run, package install.
+4. Did it run? Proof file, journal, service status, process trail.
+5. What else is there? Other units, timers, cron files, user crontabs.
 
 ### 4.2 Decision tree
 
@@ -162,25 +172,30 @@ The four together are a confirmed persistence event. Individually they are noise
 Cron/systemd change
 │
 ├─ Package install or approved config-management run
-│   └─ Close with the change ID; verify the file hash
+│   └─ Close with the change ID. Verify the file hash
 │
 └─ No approval
-    ├─ New cron file or unit body            → High; contain
-    ├─ Unit enabled and service executed     → Critical; contain
-    ├─ Root execution, outbound connection   → Critical; scope the host
-    └─ Deletion only                         → check for anti-forensics
+    ├─ New cron file or unit body:  High. Contain
+    ├─ Unit enabled and service executed:  Critical. Contain
+    ├─ Root execution, outbound connection:  Critical. Scope the host
+    └─ Deletion only:  check for anti-forensics
 ```
 
 ### 4.3 Step by step
 
-1. **Read the FIM path and event.** Added or modified?
-2. **Pull the file contents and hash** before deleting.
-3. **Check the command trail:** `tee`, `cp`, `systemctl`, `crontab`.
-4. **Check whether it ran:** proof file, journal, `systemctl status`, process list.
-5. **Check for siblings:** other units, timers, cron files, user crontabs.
-6. **Assign severity** with §5.
-7. **Contain:** disable the timer, remove the unit/cron file, `daemon-reload`.
-8. **Escalate** with the template in §7.
+1. **Read the FIM path and event**  
+  Added or modified?
+2. Pull the file contents and hash before deleting.
+3. **Check the command trail**  
+  `tee`, `cp`, `systemctl`, `crontab`.
+4. **Check whether it ran**  
+  Proof file, journal, `systemctl status`, process list.
+5. **Check for siblings**  
+  Other units, timers, cron files, user crontabs.
+6. Assign severity with §5.
+7. **Contain**  
+  Disable the timer, remove the unit/cron file, `daemon-reload`.
+8. Escalate with the template in §7.
 
 ---
 
@@ -188,13 +203,13 @@ Cron/systemd change
 
 | Situation | No execution | Executed as user | Executed as root |
 |---|---|---|---|
-| Cron file added | Medium | High | **Critical** |
+| Cron file added | Medium | High | Critical |
 | Unit body added, not enabled | High | High | High |
-| Unit enabled and running | High | High | **Critical** |
-| Enable symlink only | Low | — | — |
-| Approved change | Close | — | — |
+| Unit enabled and running | High | High | Critical |
+| Enable symlink only | Low |, |, |
+| Approved change | Close |, |, |
 
-INC-004: cron and systemd both executed as root → **Critical**.
+INC-004: cron and systemd both executed as root to Critical.
 
 ---
 
@@ -215,9 +230,9 @@ INC-004: cron and systemd both executed as root → **Critical**.
 
 ### 6.2 Hardening
 
-- Configuration management owns `/etc/systemd/system` and `/etc/cron.d`; manual writes
+- Configuration management owns `/etc/systemd/system` and `/etc/cron.d`. Manual writes
   are reverted and alerted.
-- Least-privilege sudo; time-bound elevation for admin work.
+- Least-privilege sudo. Time-bound elevation for admin work.
 - Allow-list of approved units, timers, and cron jobs.
 - Monitor deletions as well as additions.
 - Restrict who can run `systemctl enable` and write to `/etc`.
@@ -239,7 +254,7 @@ INC-004: cron and systemd both executed as root → **Critical**.
 ## 7. Escalation template
 
 ```text
-INC-004 — Cron and systemd persistence
+INC-004: Cron and systemd persistence
 
 What:  At 23:17:24 UTC, analyst wrote /etc/cron.d/updates and
        /etc/systemd/system/updates.{service,timer}, then enabled the timer.
@@ -258,8 +273,8 @@ Ask:   (1) Was any change approved? (2) Review sudo access for analyst.
 - Add the three hashes to a blocklist/watch.
 - Add deletion rules for the same paths.
 - Add `/var/spool/cron/crontabs` coverage.
-- Allow-list approved units; split 100130 into body vs enable-link severity.
-- Test the full chain (write → enable → execute) in detection CI.
+- Allow-list approved units. Split 100130 into body vs enable-link severity.
+- Test the full chain (write to enable to execute) in detection CI.
 - Review sudo policy for the actor.
 
 ---
@@ -282,11 +297,11 @@ Ask:   (1) Was any change approved? (2) Review sudo access for analyst.
 
 | Technique | ID | Covered by | Gap |
 |---|---|---|---|
-| Cron | T1053.003 | 100129 | User crontab; deletion |
-| systemd service | T1543.002 | 100130 | `/lib/systemd/system`; symlink noise |
+| Cron | T1053.003 | 100129 | User crontab. Deletion |
+| systemd service | T1543.002 | 100130 | `/lib/systemd/system`. Symlink noise |
 | Sudo | T1548.003 | 5402 | Authorized admin use |
-| Root execution | — | 80792 + proof | No automatic sequence rule |
-| Persistence removal | — | 553 only | Not covered by 100129/100130 |
+| Root execution |, | 80792 + proof | No automatic sequence rule |
+| Persistence removal |, | 553 only | Not covered by 100129/100130 |
 
 ---
 
@@ -294,9 +309,9 @@ Ask:   (1) Was any change approved? (2) Review sudo access for analyst.
 
 | Metric | INC-004 |
 |---|---|
-| File write → 100129 | <1 s |
-| Unit write → 100130 | <1 s |
-| Enable → 100130 symlink | <1 s |
+| File write to 100129 | <1 s |
+| Unit write to 100130 | <1 s |
+| Enable to 100130 symlink | <1 s |
 | Legit baseline | 2× 100129, 1× 100130 |
 | Attack alerts | 1× 100129, 3× 100130 |
 | Execution | root (uid 0) |

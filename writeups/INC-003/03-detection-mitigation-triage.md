@@ -1,9 +1,9 @@
-# Detection, Mitigation, and Triage Guide — INC-003
+# Detection, Mitigation, and Triage Guide: INC-003
 
 <!-- subtitle: Catching the request, not just the file that landed -->
 <!--meta
 id: INC-003
-incident: INC-003 — Web shell dropped and executed
+incident: INC-003, Web shell dropped and executed
 severity: High
 -->
 
@@ -50,15 +50,15 @@ High    100127 .php?cmd= request
 
 ## 2. Rule-by-rule
 
-### 2.1 Rule 31100 / 31101 — stock web rules
+### 2.1 Rule 31100 / 31101: stock web rules
 
-- **31100** is the level-0 grouping rule for access logs. It is the parent for custom
+- 31100 is the level-0 grouping rule for access logs. It is the parent for custom
   rules.
-- **31101** alerts on 4xx/5xx responses. A successful web shell request is **200**, so
+- 31101 alerts on 4xx/5xx responses. A successful web shell request is 200, so
   it does not fire.
 - INC-003 produced 31101 only for the unrelated `/does-not-exist` 404.
 
-### 2.2 Rule 100127 — `.php?cmd=` request
+### 2.2 Rule 100127: `.php?cmd=` request
 
 ```xml
 <rule id="100127" level="12">
@@ -70,19 +70,24 @@ High    100127 .php?cmd= request
 </rule>
 ```
 
-- **Parent:** 31100, so the web decoder has already parsed the line.
-- **Match:** a literal `.php?cmd=`.
-- **Tested:** 22:12:25 on `GET /updates2.php?cmd=id`; 22:12:28 on the same request with
+- **Parent**  
+  31100, so the web decoder has already parsed the line.
+- **Match**  
+  A literal `.php?cmd=`.
+- **Tested**  
+  22:12:25 on `GET /updates2.php?cmd=id`. 22:12:28 on the same request with
   a sqlmap user-agent.
-- **False positive:** `GET /index.php?cmd=status` on a legitimate application fires it.
+- **False positive**  
+  `GET /index.php?cmd=status` on a legitimate application fires it.
   This was confirmed in the §5 test.
-- **Gap:** `?foo=1&cmd=id` does not match. POST bodies are not in the access log.
+- **Gap**  
+  `?foo=1&cmd=id` does not match. POST bodies are not in the access log.
 
-Why literal: Wazuh uses **one `<match>` per rule**. Two `<match>` tags do not AND.
+Why literal: Wazuh uses one `<match>` per rule. Two `<match>` tags do not AND.
 OS_Regex variants (`\.php.*cmd=`, negated classes) did not match the access log in this
 version. The literal is the reliable form.
 
-### 2.3 Rule 100128 — PHP file added or modified
+### 2.3 Rule 100128: PHP file added or modified
 
 ```xml
 <rule id="100128" level="12">
@@ -94,20 +99,25 @@ version. The literal is the reliable form.
 </rule>
 ```
 
-- **Parents:** 550 (modified) and 554 (added).
-- **Match:** `.php` in the FIM log.
-- **Tested:** 22:12:20.956 (`updates2.php` added) and 22:14:11.305 (`test.php`
+- **Parents**  
+  550 (modified) and 554 (added).
+- **Match**  
+  `.php` in the FIM log.
+- **Tested**  
+  22:12:20.956 (`updates2.php` added) and 22:14:11.305 (`test.php`
   modified).
-- **False positive:** every legitimate PHP deployment or update. Also any `.php` file
+- **False positive**  
+  Every legitimate PHP deployment or update. Also any `.php` file
   under `/home` or `/etc`, because the match is not restricted to the webroot.
-- **Gap:** `.phtml` does not contain `.php` and is missed. `.php5` does contain `.php`
+- **Gap**  
+  `.phtml` does not contain `.php` and is missed. `.php5` does contain `.php`
   and is caught.
 
 ### 2.4 Supporting stock rules
 
 | Rule | Use |
 |---|---|
-| 80790 | Audit created the file; confirms the path |
+| 80790 | Audit created the file. Confirms the path |
 | 80792 | The `cp`, `id`, `uname`, `curl` command trail |
 | 5402 | Who copied the shell into the webroot |
 | 86601 | Suricata signature, useful when the tool is known |
@@ -119,10 +129,10 @@ version. The literal is the reliable form.
 ### 3.1 Route 100128 to deployment-aware triage
 
 100128 is a deployment monitor first. A release pipeline that writes PHP will always
-fire it. Do not suppress it; instead:
+fire it. Do not suppress it. Instead:
 
-- attach the change ticket or deployment ID to the alert;
-- send it to a queue that expects release events;
+- attach the change ticket or deployment ID to the alert.
+- send it to a queue that expects release events.
 - keep it at level 12 because an unexpected PHP write is high risk.
 
 A rule that is always suppressed is a rule that cannot catch the one write that matters.
@@ -133,7 +143,7 @@ If an application legitimately uses `cmd` as the first query parameter, allow-li
 path. Do not remove the rule. Example:
 
 ```xml
-<!-- Example only: verify the path and parameter before deploying -->
+<!-- Example only: verify the path and parameter before deploying - to 
 <rule id="100129" level="0">
   <if_sid>100127</if_sid>
   <match>/known-app/index.php?cmd=</match>
@@ -145,9 +155,9 @@ path. Do not remove the rule. Example:
 
 Wazuh will not AND multiple `<match>` tags. Add separate rules for:
 
-- `.php?exec=`, `.php?command=`, `.php?shell=`;
-- `.phtml?cmd=`;
-- POST-body parameters (needs an application log or WAF, not the access log);
+- `.php?exec=`, `.php?command=`, `.php?shell=`.
+- `.phtml?cmd=`.
+- POST-body parameters (needs an application log or WAF, not the access log).
 - parameter order (`?foo=1&cmd=`), which the literal cannot cover.
 
 ### 3.4 Use the right log source for the question
@@ -155,8 +165,8 @@ Wazuh will not AND multiple `<match>` tags. Add separate rules for:
 The nginx access log contains the request line, not the body. A POST-only web shell is
 invisible here. Add:
 
-- application request logging for the parameters the app accepts;
-- a WAF or reverse proxy that inspects the body;
+- application request logging for the parameters the app accepts.
+- a WAF or reverse proxy that inspects the body.
 - PHP-FPM access logs if configured.
 
 ---
@@ -165,12 +175,12 @@ invisible here. Add:
 
 ### 4.1 Five questions
 
-1. **What is the file?** Path, hash, owner, size, deployment status.
-2. **Did it run?** Audit commands under the web user, and HTTP 200 responses.
-3. **As whom?** `www-data` is not root; check `uid`, `sudo`, and outbound connections.
-4. **Is there persistence or a second file?** Check the webroot, cron, systemd, and
+1. What is the file? Path, hash, owner, size, deployment status.
+2. Did it run? Audit commands under the web user, and HTTP 200 responses.
+3. As whom? `www-data` is not root. Check `uid`, `sudo`, and outbound connections.
+4. Is there persistence or a second file? Check the webroot, cron, systemd, and
    writable directories.
-5. **Was it deployed?** Match the file hash to the pipeline or change ticket.
+5. Was it deployed? Match the file hash to the pipeline or change ticket.
 
 ### 4.2 Decision tree
 
@@ -178,34 +188,35 @@ invisible here. Add:
 PHP file added / web request
 │
 ├─ Matches an approved deployment
-│   └─ Close with the change ID; verify the hash
+│   └─ Close with the change ID. Verify the hash
 │
 └─ Not approved
-    ├─ .php?cmd= request or www-data process activity → High; contain
-    ├─ Only the file, no use                        → High; investigate the writer
-    ├─ Privilege escalation or second file          → Critical
-    └─ Outbound connection from www-data            → Critical; scope egress
+    ├─ .php?cmd= request or www-data process activity: High. Contain
+    ├─ Only the file, no use:  High. Investigate the writer
+    ├─ Privilege escalation or second file:  Critical
+    └─ Outbound connection from www-data:  Critical. Scope egress
 ```
 
 ### 4.3 Step by step
 
-1. **Read the FIM event and the raw access line.**
-2. **Hash the file before deleting it.**
-3. **Check the process trail** for the web user (`uid=33`).
-4. **Check the webroot** for other unexpected files.
-5. **Check persistence** before deleting: cron, systemd, `.user.ini`, `.htaccess`,
+1. **Read the FIM event and the raw access line**
+2. **Hash the file before deleting it**
+3. Check the process trail for the web user (`uid=33`).
+4. Check the webroot for other unexpected files.
+5. Check persistence before deleting: cron, systemd, `.user.ini`, `.htaccess`,
    writable upload directories.
-6. **Assign severity** with §5.
-7. **Contain:** remove the shell, block the source if appropriate, preserve evidence.
-8. **Escalate** with the template in §7.
+6. Assign severity with §5.
+7. **Contain**  
+  Remove the shell, block the source if appropriate, preserve evidence.
+8. Escalate with the template in §7.
 
 ### 4.4 What a good ticket contains
 
-- path, SHA-256, owner, and deployment status;
-- the exact HTTP request and response code;
-- the commands run and the user context;
-- whether the file was approved;
-- other files in the webroot;
+- path, SHA-256, owner, and deployment status.
+- the exact HTTP request and response code.
+- the commands run and the user context.
+- whether the file was approved.
+- other files in the webroot.
 - containment actions and times.
 
 ---
@@ -217,9 +228,9 @@ PHP file added / web request
 | New PHP file, no request | Medium | High | Critical |
 | `.php?cmd=` request, 200 | High | High | Critical |
 | Web shell plus outbound connection | High | Critical | Critical |
-| Legitimate deploy, hash matches | Low | — | — |
+| Legitimate deploy, hash matches | Low |, |, |
 
-INC-003: new file, execution as `www-data`, no root, no persistence → **High**.
+INC-003: new file, execution as `www-data`, no root, no persistence to High.
 
 Raise to Critical if the web user can `sudo`, if the host holds credentials, or if a
 second payload or persistence is found.
@@ -272,7 +283,7 @@ second payload or persistence is found.
 ## 7. Escalation template
 
 ```text
-INC-003 — Web shell dropped and executed
+INC-003: Web shell dropped and executed
 
 What:  /var/www/html/updates2.php (SHA-256 50e626...) was copied into the webroot at
        22:12:20 UTC and executed as www-data. GET /updates2.php?cmd=id returned
@@ -316,7 +327,7 @@ Ask:   (1) Was any PHP deploy approved at that time? (2) Check other hosts for t
 | Technique | ID | Covered by | Gap |
 |---|---|---|---|
 | Web shell | T1505.003 | 100127, 100128 | `.phtml`, POST, parameter order |
-| Unix shell | T1059.004 | 80792 | Noise; needs session filtering |
+| Unix shell | T1059.004 | 80792 | Noise. Needs session filtering |
 | Discovery | T1082, T1033 | 80792 `uname`, `id` | No sequence rule |
 | Ingress tool transfer | T1105 | not covered | Add egress/proxy logs |
 | Valid accounts | T1078 | 5715, 5402 | Admin vs attacker by IP |
@@ -327,8 +338,8 @@ Ask:   (1) Was any PHP deploy approved at that time? (2) Check other hosts for t
 
 | Metric | INC-003 |
 |---|---|
-| File added → 100128 | <1 s |
-| Request → 100127 | <1 s |
+| File added to 100128 | <1 s |
+| Request to 100127 | <1 s |
 | Clean-window alerts | 67 |
 | Broad session alerts | ~3,900 (PHP-FPM install noise) |
 | Execution context | `www-data` |

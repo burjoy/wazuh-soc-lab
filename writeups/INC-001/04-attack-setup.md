@@ -1,8 +1,8 @@
-# Attack Setup Guide — INC-001
+# Attack Setup Guide: INC-001
 
 <!-- subtitle: Staging the incident phase by phase, inside an isolated lab -->
 
-A step-by-step script for reproducing the attack **inside the lab**. This document is
+A step-by-step script for reproducing the attack inside the lab. This document is
 for a defensive portfolio and for testing detections. It is not a guide to attacking
 systems you do not own.
 
@@ -14,13 +14,13 @@ Read this before running anything.
 
 | Rule | Detail |
 |---|---|
-| **Scope** | Only the `soc-victim` VM on the QEMU host-only/user network (`10.0.2.0/24`). |
-| **Never** | Scan, connect to, or authenticate against any address outside that range. |
-| **Never** | Use real credentials, real key material, or employer systems. |
-| **Authorization** | You own the host and the VM. If you did not create the environment, stop. |
-| **Reversibility** | Snapshot before the run; revert after evidence capture. |
-| **Data** | No production data, no personal data, no real malware. |
-| **Publishing** | Keep the source address, account names, and passwords clearly labelled as lab artefacts. |
+| Scope | Only the `soc-victim` VM on the QEMU host-only/user network (`10.0.2.0/24`). |
+| Never | Scan, connect to, or authenticate against any address outside that range. |
+| Never | Use real credentials, real key material, or employer systems. |
+| Authorization | You own the host and the VM. If you did not create the environment, stop. |
+| Reversibility | Snapshot before the run. Revert after evidence capture. |
+| Data | No production data, no personal data, no real malware. |
+| Publishing | Keep the source address, account names, and passwords clearly labelled as lab artefacts. |
 
 The lab is deliberately isolated. There is no route from the VM to your LAN.
 
@@ -34,8 +34,8 @@ Host 10.0.2.2
   ├── hydra, ssh client, curl
   └── QEMU user network
         └── soc-victim 10.0.2.15
-              sshd :22  ← forwarded from 127.0.0.1:2222
-              nginx :80 ← forwarded from 127.0.0.1:8080
+              sshd :22  from forwarded from 127.0.0.1:2222
+              nginx :80 from forwarded from 127.0.0.1:8080
               wazuh-agent, auditd, FIM
 ```
 
@@ -106,7 +106,7 @@ and the cloud image ships:
 /etc/ssh/sshd_config.d/50-cloud-init.conf: PasswordAuthentication no
 ```
 
-OpenSSH uses the **first** value it reads. A drop-in named `50-lab-password.conf` loses
+OpenSSH uses the first value it reads. A drop-in named `50-lab-password.conf` loses
 to `50-cloud-init.conf` because of alphabetical order. Use `00-`:
 
 ```bash
@@ -151,7 +151,7 @@ If this fails, fix it here. Do not debug the attack and the target at the same t
 
 ### 4.1 Password list
 
-Twenty entries, correct password last. The list is intentionally weak; it represents a
+Twenty entries, correct password last. The list is intentionally weak. It represents a
 low-effort spray, not a serious cracking rig.
 
 ```bash
@@ -191,7 +191,7 @@ hydra -I -l svc-backup -P /tmp/pw.txt -s 2222 -t 2 -V 127.0.0.1 ssh
 | `-l` | Single login name |
 | `-P` | Password list |
 | `-s` | Target port (the host forward) |
-| `-t 2` | Two parallel tasks; enough to be fast, low enough to read the output |
+| `-t 2` | Two parallel tasks. Enough to be fast, low enough to read the output |
 | `-V` | Show each attempt |
 
 Expected final line:
@@ -229,10 +229,10 @@ chmod +x /tmp/noise.sh
 
 What this produces:
 
-- 5715 successes for `analyst` (key auth);
-- 5501/5502 PAM session events;
-- 5402/5407 sudo events;
-- 80792 audit command events;
+- 5715 successes for `analyst` (key auth).
+- 5501/5502 PAM session events.
+- 5402/5407 sudo events.
+- 80792 audit command events.
 - nginx access logs.
 
 It is also what makes 40112 produce false positives: all of it arrives from `10.0.2.2`.
@@ -246,7 +246,7 @@ setsid /tmp/noise.sh "$END" >/dev/null 2>&1 &
 
 ---
 
-## 6. Phase 0 — Baseline
+## 6. Phase 0: Baseline
 
 Let the noise run for 45 seconds, then create a legitimate session for the same account.
 This gives the account a normal login before the attack, which makes the later failure
@@ -270,7 +270,7 @@ date -u +%FT%TZ > /tmp/attack_start
 
 ---
 
-## 7. Phase 1 — Brute force
+## 7. Phase 1: Brute force
 
 ```bash
 hydra -I -l svc-backup -P /tmp/pw.txt -s 2222 -t 2 -V 127.0.0.1 ssh \
@@ -282,13 +282,13 @@ Expected duration: 30–40 seconds for 20 attempts with two workers.
 
 What the endpoint sees:
 
-- one `Failed password` per attempt (rule 5760);
-- 5763 after the eighth failure within 120 seconds;
+- one `Failed password` per attempt (rule 5760).
+- 5763 after the eighth failure within 120 seconds.
 - two or three in-flight attempts continuing after the successful one.
 
 ---
 
-## 8. Phase 2 — Successful login
+## 8. Phase 2: Successful login
 
 Use the credential found by hydra. This session is the "attacker shell".
 
@@ -304,7 +304,7 @@ Expected: the account is unprivileged (`uid=1002`), the host is `soc-victim`.
 
 ---
 
-## 9. Phase 3 — Discovery
+## 9. Phase 3: Discovery
 
 Keep it benign and observable. These commands exist to create process telemetry, not to
 collect data.
@@ -322,7 +322,7 @@ attempted and failed.
 
 ---
 
-## 10. Phase 4 — Persistence
+## 10. Phase 4: Persistence
 
 Append a fake public key. Use a clearly labelled test key, never a real one.
 
@@ -338,7 +338,7 @@ SSH_PASS='Summer2026!' SSH_ASKPASS=/tmp/askpass.sh SSH_ASKPASS_REQUIRE=force \
 ```
 
 Expected: the file appears under `/home/svc-backup/.ssh/authorized_keys`, and rule
-**100120** fires within a second.
+100120 fires within a second.
 
 If you want the cron variant, install `cron` first. The Debian genericcloud image does not
 ship `crontab`, so the attempt fails with `command not found`:
@@ -349,7 +349,7 @@ sudo apt-get install -y cron    # inside the VM, if you want this variation
 
 ---
 
-## 11. Phase 5 — Egress check
+## 11. Phase 5: Egress check
 
 A single outbound request is enough to create a network event without exfiltrating
 anything.
@@ -366,7 +366,7 @@ Expected: `outbound_http=200`. The request goes to the lab's nginx, not the inte
 
 ---
 
-## 12. Phase 6 — Stop and settle
+## 12. Phase 6: Stop and settle
 
 ```bash
 date -u +%FT%TZ > /tmp/attack_end
@@ -385,9 +385,9 @@ The one-minute wait lets the manager index the last events and lets FIM batch se
 |---|---|---|
 | Baseline login | 5715 | `svc-backup`, success |
 | Each failed guess | 5760 | 20 alerts |
-| Eighth failure | **5763** | brute force, level 10 |
-| Successful guess | **40112** | success after failures, `svc-backup` |
-| Key append | **100120** | FIM add, path + SHA-256 |
+| Eighth failure | 5763 | brute force, level 10 |
+| Successful guess | 40112 | success after failures, `svc-backup` |
+| Key append | 100120 | FIM add, path + SHA-256 |
 | Discovery | 80792 | `id`, `whoami`, `uname`, `head`, `sudo` |
 | Egress | 80792 / nginx log | `curl`, HTTP 200 |
 | Noise | 5715 / 5402 / 80792 | analyst, `sudo`, web |
@@ -446,8 +446,8 @@ agent state in one step.
 
 ### 16.1 Invalid-user brute force
 
-Target a non-existent account. sshd produces rule **5710** instead of 5760, and stock
-rule **5712** (8 invalid users / 120 s) becomes the brute-force anchor.
+Target a non-existent account. sshd produces rule 5710 instead of 5760, and stock
+rule 5712 (8 invalid users / 120 s) becomes the brute-force anchor.
 
 ```bash
 hydra -I -l doesnotexist -P /tmp/pw.txt -s 2222 -t 2 127.0.0.1 ssh
@@ -483,13 +483,19 @@ and correlate FIM, nginx access logs, and Suricata web rules. This exercises det
 
 ## 17. Why this is realistic
 
-- **A baseline login by the same account.** The attack is not the account's only
+- **A baseline login by the same account**  
+  The attack is not the account's only
   appearance.
-- **Noise.** 400 alerts in 150 seconds, including 292 audit events.
-- **In-flight attempts after success.** Parallel tools do not stop instantly.
-- **A failed escalation.** Not every intrusion gets root; the report should say so.
-- **Persistence.** The key is the part that survives the obvious response.
-- **A false-positive rate.** Four 40112s on legitimate logins force a judgement call.
+- **Noise**  
+  400 alerts in 150 seconds, including 292 audit events.
+- **In-flight attempts after success**  
+  Parallel tools do not stop instantly.
+- **A failed escalation**  
+  Not every intrusion gets root. The report should say so.
+- **Persistence**  
+  The key is the part that survives the obvious response.
+- **A false-positive rate**  
+  Four 40112s on legitimate logins force a judgement call.
 
 ---
 

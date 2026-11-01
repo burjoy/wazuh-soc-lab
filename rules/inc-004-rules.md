@@ -3,7 +3,7 @@
 <!-- subtitle: Two rules for root persistence, and the legitimate admin work they also catch -->
 <!--meta
 id: INC-004
-incident: INC-004 — Cron and systemd persistence rules
+incident: INC-004, Cron and systemd persistence rules
 severity: Critical
 -->
 
@@ -19,8 +19,8 @@ The deployed file is `rules/local_rules.xml`.
 
 | ID | Trigger | Level | MITRE |
 |---|---|---|---|
-| **100129** | FIM: file added/modified under `/etc/cron.d/` | 12 | T1053.003 |
-| **100130** | FIM: file added/modified under `/etc/systemd/system/` | 10 | T1543.002 |
+| 100129 | FIM: file added/modified under `/etc/cron.d/` | 12 | T1053.003 |
+| 100130 | FIM: file added/modified under `/etc/systemd/system/` | 10 | T1543.002 |
 
 ---
 
@@ -56,24 +56,34 @@ The deployed file is `rules/local_rules.xml`.
 
 ## 3. Rule-by-rule
 
-### 100129 — cron file added or modified
+### 100129: cron file added or modified
 
-- **Parents:** 550 (modified) and 554 (added).
-- **Match:** the `/etc/cron.d/` path substring.
-- **Tested:** 23:17:25.115 on `/etc/cron.d/updates`.
-- **False positives:** every legitimate cron job. The baseline produced two hits for
+- **Parents**  
+  550 (modified) and 554 (added).
+- **Match**  
+  The `/etc/cron.d/` path substring.
+- **Tested**  
+  23:17:25.115 on `/etc/cron.d/updates`.
+- **False positives**  
+  Every legitimate cron job. The baseline produced two hits for
   one legitimate file (add and modify).
-- **Gap:** user crontabs in `/var/spool/cron/crontabs` are not covered.
+- **Gap**  
+  User crontabs in `/var/spool/cron/crontabs` are not covered.
 
-### 100130 — systemd unit or enable-link changed
+### 100130: systemd unit or enable-link changed
 
-- **Parents:** 550 and 554.
-- **Match:** the `/etc/systemd/system/` path substring.
-- **Tested:** 23:17:28.122 (`updates.service`), 23:17:28.128 (`updates.timer`),
+- **Parents**  
+  550 and 554.
+- **Match**  
+  The `/etc/systemd/system/` path substring.
+- **Tested**  
+  23:17:28.122 (`updates.service`), 23:17:28.128 (`updates.timer`),
   23:17:31.309 (`timers.target.wants/updates.timer`).
-- **False positive:** every `systemctl enable`, because it creates a symlink under
+- **False positive**  
+  Every `systemctl enable`, because it creates a symlink under
   `*.wants/`. The baseline produced one hit for enabling cron.
-- **Why level 10:** enable events are frequent. The rule cannot distinguish a symlink
+- **Why level 10**  
+  Enable events are frequent. The rule cannot distinguish a symlink
   from a new unit body with one `<match>`, so a lower level is the safer default.
 
 ---
@@ -82,34 +92,40 @@ The deployed file is `rules/local_rules.xml`.
 
 | Action | Expected |
 |---|---|
-| Legit `/etc/cron.d/apt-maintenance` added | **100129** |
-| Same file modified | **100129** |
+| Legit `/etc/cron.d/apt-maintenance` added | 100129 |
+| Same file modified | 100129 |
 | `systemctl disable cron` | silent (553) |
-| `systemctl enable cron` | **100130** on the enable symlink |
-| Attack `/etc/cron.d/updates` | **100129** |
-| `updates.service` written | **100130** |
-| `updates.timer` written | **100130** |
-| `systemctl enable --now updates.timer` | **100130** on the enable symlink |
+| `systemctl enable cron` | 100130 on the enable symlink |
+| Attack `/etc/cron.d/updates` | 100129 |
+| `updates.service` written | 100130 |
+| `updates.timer` written | 100130 |
+| `systemctl enable --now updates.timer` | 100130 on the enable symlink |
 | `tee`, `systemctl`, `id` | 80792 command trail |
 | `sudo` writes | 5402 |
 
-Baseline counts: **2× 100129, 1× 100130**. Attack counts: **1× 100129, 3× 100130**.
+Baseline counts: 2× 100129, 1× 100130. Attack counts: 1× 100129, 3× 100130.
 
 ---
 
 ## 5. Coverage gaps
 
-- **User crontabs.** `/var/spool/cron/crontabs` is not monitored. A user-level job is
+- **User crontabs**  
+  `/var/spool/cron/crontabs` is not monitored. A user-level job is
   invisible to 100129.
-- **Package units.** Units in `/lib/systemd/system` are outside the FIM path; only the
+- **Package units**  
+  Units in `/lib/systemd/system` are outside the FIM path. Only the
   `/etc` overrides and enable links are covered.
-- **Deletion.** 100129/100130 use 550/554. A deletion is 553, so removing persistence
+- **Deletion**  
+  100129/100130 use 550/554. A deletion is 553, so removing persistence
   is silent.
-- **Symlink vs body.** 100130 cannot distinguish a legit `enable` link from a new unit
+- **Symlink vs body**  
+  100130 cannot distinguish a legit `enable` link from a new unit
   file. Both are level 10.
-- **Intent.** Neither rule knows whether a change was approved. Change control is the
+- **Intent**  
+  Neither rule knows whether a change was approved. Change control is the
   only discriminator.
-- **Execution.** Neither rule proves the job or service ran. Audit and the proof file do.
+- **Execution**  
+  Neither rule proves the job or service ran. Audit and the proof file do.
 
 ---
 
@@ -119,8 +135,8 @@ Baseline counts: **2× 100129, 1× 100130**. Attack counts: **1× 100129, 3× 10
 
 Best next step:
 
-- level 12 for a new `.service`/`.timer` **body**;
-- level 5 for a `*.wants/` enable link;
+- level 12 for a new `.service`/`.timer` body.
+- level 5 for a `*.wants/` enable link.
 - correlate the body + enable + execution for a Critical sequence.
 
 This requires two rules with different matches (one on `.service`, one on `.timer`, or
@@ -135,12 +151,12 @@ level 12 for changes, with a change-ticket check.
 ### 6.3 Deletion rules
 
 Add `if_sid 553` rules for the same paths. Removing a unit or cron file is
-anti-forensics; it should not be silent.
+anti-forensics. It should not be silent.
 
 ### 6.4 Change-control integration
 
 Match every hit to an approved change, a package transaction, or a configuration
-management run. Do not suppress the rule; suppress the *known* deployment ID.
+management run. Do not suppress the rule. Suppress the *known* deployment ID.
 
 ---
 

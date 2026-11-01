@@ -1,4 +1,4 @@
-# Reproduction Guide — INC-001 Lab
+# Reproduction Guide: INC-001 Lab
 
 <!-- subtitle: Rebuilding the lab from a bare host to a working detection pipeline -->
 
@@ -6,9 +6,13 @@ This document rebuilds the environment from a bare host and reproduces the detec
 pipeline. It is written to be followed in order. Commands assume a Debian/Arch-family
 Linux host with Docker, QEMU, and `hydra`.
 
-**Time:** 60–90 minutes on a first run, ~25 minutes if the base image is cached.
+**Time**
 
-**Result:** a Wazuh stack, one Debian 12 endpoint with agent, auditd, FIM and Suricata,
+60–90 minutes on a first run, ~25 minutes if the base image is cached.
+
+**Result**
+
+A Wazuh stack, one Debian 12 endpoint with agent, auditd, FIM and Suricata,
 a custom persistence rule, and a repeatable attack that produces the INC-001 evidence.
 
 ---
@@ -25,7 +29,7 @@ a custom persistence rule, and a repeatable attack that produces the INC-001 evi
 | Virtualisation | KVM enabled | `/dev/kvm` present |
 
 The VM runs with 1.5 GB. The Wazuh stack uses ~3 GB. Do not run the full ET Open
-ruleset in the VM; it needs ~1.1 GB and will be OOM-killed (see §11).
+ruleset in the VM. It needs ~1.1 GB and will be OOM-killed (see §11).
 
 ### 0.2 Software
 
@@ -43,7 +47,7 @@ jq --version
 
 - Internet access for image download, apt, and the Wazuh packages.
 - No inbound exposure. All published Docker ports bind to `127.0.0.1`/`::1`.
-- The VM uses QEMU user networking; it has no route to your LAN.
+- The VM uses QEMU user networking. It has no route to your LAN.
 
 ### 0.4 Layout
 
@@ -64,7 +68,7 @@ soc-l1-lab/
 
 ---
 
-## 1. Part A — Wazuh stack
+## 1. Part A: Wazuh stack
 
 ### 1.1 Docker access
 
@@ -94,9 +98,9 @@ ls -ld "$HOME/wazuh-docker/single-node/config/wazuh_indexer_ssl_certs"
 
 The container UIDs are 1000 (indexer) and 999 (manager). If the files are already owned
 by those UIDs, leave them alone. If the directory itself blocks traversal, run the
-generator again or fix ownership **as root** before starting.
+generator again or fix ownership as root before starting.
 
-Do not blanket `chown` the certificate files; it breaks the container's expected UIDs.
+Do not blanket `chown` the certificate files. It breaks the container's expected UIDs.
 
 ### 1.3 Start
 
@@ -150,7 +154,7 @@ curl -ks -u 'wazuh-wui:MyS3cr37P450r.*-' \
 
 Dashboard: `https://localhost`, `admin` / `SecretPassword`. The certificate is
 self-signed and issued for `wazuh.dashboard`, so the browser shows a name mismatch.
-Advanced → Proceed once.
+Advanced to Proceed once.
 
 ### 1.5 Reduce startup noise (optional)
 
@@ -165,7 +169,7 @@ detection is out of scope for INC-001.
 
 ---
 
-## 2. Part B — Victim VM
+## 2. Part B: Victim VM
 
 ### 2.1 Download and first boot
 
@@ -181,7 +185,7 @@ What it does:
 3. Renders `seed/user-data` from the template and starts a seed HTTP server on
    `127.0.0.1:8000`.
 4. Creates a 20 GB qcow2 overlay.
-5. Boots QEMU with user networking, port forwards 2222→22 and 8080→80, and a monitor
+5. Boots QEMU with user networking, port forwards 2222 to 22 and 8080 to 80, and a monitor
    socket.
 
 Expected:
@@ -223,11 +227,11 @@ ssh -i keys/id_ed25519 -p 2222 -o StrictHostKeyChecking=no \
 
 The script:
 
-- installs `wazuh-agent` 4.14.7 with `WAZUH_MANAGER=10.0.2.2`;
-- loads audit rules using Wazuh's expected keys (`audit-wazuh-w`, `audit-wazuh-c`);
-- narrows Suricata to scan/web/DNS groups;
-- installs a `tail | jq` filter that writes `/var/log/suricata/wazuh.json`;
-- adds a `<localfile>` for that JSON file;
+- installs `wazuh-agent` 4.14.7 with `WAZUH_MANAGER=10.0.2.2`.
+- loads audit rules using Wazuh's expected keys (`audit-wazuh-w`, `audit-wazuh-c`).
+- narrows Suricata to scan/web/DNS groups.
+- installs a `tail | jq` filter that writes `/var/log/suricata/wazuh.json`.
+- adds a `<localfile>` for that JSON file.
 - restarts the agent.
 
 Verify on the manager:
@@ -258,7 +262,7 @@ This is what makes rule 100120 fire within a second of the key write.
 
 ---
 
-## 3. Part C — Custom rule
+## 3. Part C: Custom rule
 
 The manager mounts the repository's `rules/` directory:
 
@@ -267,7 +271,7 @@ volumes:
   - /home/luqman/Documents/Eterna/soc-l1-lab/rules:/var/ossec/etc/rules:ro
 ```
 
-Mount the **directory**, not a single file. A single-file bind mount follows the inode,
+Mount the directory, not a single file. A single-file bind mount follows the inode,
 and editors that replace the file (write-and-rename) leave the container reading the old
 copy. This cost an hour during development.
 
@@ -299,9 +303,9 @@ Expected: one JSON object with `syscheck.path` and `sha256_after`.
 
 ---
 
-## 4. Part D — Network sensor (optional for INC-001)
+## 4. Part D: Network sensor (optional for INC-001)
 
-INC-001 is an SSH incident; Suricata cannot see encrypted guesses. The sensor matters for
+INC-001 is an SSH incident. Suricata cannot see encrypted guesses. The sensor matters for
 scenario 5 (scan) and scenario 3 (web). If you want the full lab:
 
 ```bash
@@ -312,14 +316,14 @@ sudo suricata -T -c /etc/suricata/suricata.yaml
 sudo systemctl restart suricata'
 ```
 
-Rule narrowing is in `lab/suricata/README.md`. Keep it around 8,000 rules; the full
+Rule narrowing is in `lab/suricata/README.md`. Keep it around 8,000 rules. The full
 53k set will exhaust the VM.
 
 ---
 
-## 5. Part E — Baseline snapshot
+## 5. Part E: Baseline snapshot
 
-Take the snapshot **after** the agent is enrolled and **before** the attack:
+Take the snapshot after the agent is enrolled and before the attack:
 
 ```bash
 cd "$LAB/lab/vm"
@@ -347,7 +351,7 @@ Revert before each repeat:
 
 ---
 
-## 6. Part F — Run the incident
+## 6. Part F: Run the incident
 
 Follow `04-attack-setup.md`. It creates the account, starts background noise, runs the
 brute force, and performs the post-exploitation.
@@ -356,7 +360,7 @@ Return here when the attack is complete.
 
 ---
 
-## 7. Part G — Verify and extract
+## 7. Part G: Verify and extract
 
 ### 7.1 Confirm the agent is still active
 
@@ -451,7 +455,7 @@ PY
 
 ---
 
-## 8. Part H — Clean reset
+## 8. Part H: Clean reset
 
 Between runs:
 
@@ -466,7 +470,7 @@ ssh -i keys/id_ed25519 -p 2222 analyst@127.0.0.1 \
 # keep the alerts; they are the evidence
 ```
 
-Do **not** delete the Wazuh volumes if you want the evidence history. If you do, the
+Do not delete the Wazuh volumes if you want the evidence history. If you do, the
 dashboard starts empty.
 
 ---
@@ -478,13 +482,13 @@ dashboard starts empty.
 | `permission denied` on Docker socket | User not in `docker` group | `sudo usermod -aG docker $USER`, re-login, or use a socket ACL |
 | `newgrp: failed to read password` | User is not a member yet | Run the `usermod` first |
 | Cloud-init exit 100 | `suricata` is in `bookworm-backports` and apt will not cross suites | `apt-get install -t bookworm-backports suricata suricata-update` |
-| Suricata OOM-kills the agent | Full ET Open (53k rules) in a 1.5 GB VM | Narrow by group; see `lab/suricata/README.md` |
+| Suricata OOM-kills the agent | Full ET Open (53k rules) in a 1.5 GB VM | Narrow by group. See `lab/suricata/README.md` |
 | Suricata loads 0 rules | ET renamed the web rule files | `tar tzf` the cache and use the current names |
 | No audit alerts | Audit keys do not match Wazuh's CDB list | Use `audit-wazuh-w` and `audit-wazuh-c` |
 | Rule edit does not take effect | Single-file bind mount follows the old inode | Mount the `rules/` directory and recreate the manager |
-| `<same_user />` never matches | Failures use `srcuser`, successes use `dstuser` | Do not rely on it; tune 40112 instead |
+| `<same_user />` never matches | Failures use `srcuser`, successes use `dstuser` | Do not rely on it. Tune 40112 instead |
 | `localhost` refused in Chrome | Resolves to `::1`, dashboard bound to IPv4 only | Add `[::1]:443:5601` |
-| Certificate warning | Self-signed cert, SAN `wazuh.dashboard` only | Advanced → Proceed (or serve HTTP locally) |
+| Certificate warning | Self-signed cert, SAN `wazuh.dashboard` only | Advanced to Proceed (or serve HTTP locally) |
 | Dashboard 000 immediately after recreate | It takes ~30 s to boot | Wait and retry |
 | VM `eth0` missing | Debian cloud images use predictable names | Use `ens3` |
 

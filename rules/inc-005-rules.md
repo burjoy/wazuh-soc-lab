@@ -3,7 +3,7 @@
 <!-- subtitle: One Suricata rule for outbound SYN sweeps, and the threshold that defines it -->
 <!--meta
 id: INC-005
-incident: INC-005 — Outbound port scan rule
+incident: INC-005, Outbound port scan rule
 severity: Medium
 -->
 
@@ -30,13 +30,13 @@ alert tcp $HOME_NET any -> $EXTERNAL_NET any (
 
 | Field | Meaning |
 |---|---|
-| `$HOME_NET -> $EXTERNAL_NET` | Outbound direction; the lab's ET SCAN rules are mostly inbound |
+| `$HOME_NET -> $EXTERNAL_NET` | Outbound direction. The lab's ET SCAN rules are mostly inbound |
 | `flags:S` | TCP SYN packets only |
 | `detection_filter` | 50 SYNs from one source in 5 seconds |
 | `classtype:attempted-recon` | Reconnaissance, severity 2 |
 | `sid:1000001` | Local range |
 
-`HOME_NET` is `10.0.2.15/32`; `EXTERNAL_NET` is `!$HOME_NET`.
+`HOME_NET` is `10.0.2.15/32`. `EXTERNAL_NET` is `!$HOME_NET`.
 
 ---
 
@@ -46,11 +46,11 @@ alert tcp $HOME_NET any -> $EXTERNAL_NET any (
 |---|---|
 | Normal `apt-get update` + two `curl` requests | 0 |
 | 40 HTTP requests in a tight loop | 0 |
-| 60 HTTP requests in a tight loop | **10** |
-| `nmap -sS --top-ports 200 --min-rate 500` | **144** (first run) |
+| 60 HTTP requests in a tight loop | 10 |
+| `nmap -sS --top-ports 200 --min-rate 500` | 144 (first run) |
 
 The 60-request burst is the false-positive boundary. The scan and the burst produce the
-same signature; the difference is volume and intent, not shape.
+same signature. The difference is volume and intent, not shape.
 
 ---
 
@@ -74,9 +74,9 @@ Suricata even though the packets are on the wire.
 
 Options:
 
-- raise to 100/5 s to reduce load-test noise, at the cost of missing slower scans;
-- baseline known scanners and load generators;
-- correlate with authentication failures or exploit signatures;
+- raise to 100/5 s to reduce load-test noise, at the cost of missing slower scans.
+- baseline known scanners and load generators.
+- correlate with authentication failures or exploit signatures.
 - use a flow-based detector that counts unique destinations, not packets.
 
 ### 4.2 Direction
@@ -97,7 +97,7 @@ network tap that sees the segment, not just one host.
 | Gap | Consequence |
 |---|---|
 | Outbound-only | Inbound scans of the VM are not covered by this rule |
-| Packet-count threshold | Legit bursts false-positive; slow scans evade |
+| Packet-count threshold | Legit bursts false-positive. Slow scans evade |
 | One source, one destination in the lab | A subnet sweep is not represented |
 | No follow-on correlation | Scan and exploit are separate alerts |
 | No unique-destination count | The rule cannot distinguish wide recon from a busy client |
@@ -150,5 +150,5 @@ stock rule 86601 fires.
 - The threshold is a lab choice, not a production recommendation. Tune against the
   estate's scanner and load-test baseline.
 - The rule detects a scan, not a compromised host. Host telemetry decides that.
-- QEMU user networking limits the lab to outbound scans; the bridge upgrade is the path
+- QEMU user networking limits the lab to outbound scans. The bridge upgrade is the path
   to an inbound version.

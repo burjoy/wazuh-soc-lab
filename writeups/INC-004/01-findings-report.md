@@ -1,22 +1,22 @@
-# INC-004 — Detailed Findings Report
+# INC-004: Detailed Findings Report
 
 <!-- subtitle: Two persistence paths, both running as root -->
 <!--meta
 id: INC-004
-incident: INC-004 — Cron and systemd persistence
+incident: INC-004, Cron and systemd persistence
 severity: Critical
 -->
 
 | | |
 |---|---|
-| **Incident** | INC-004 — Cron and systemd persistence |
-| **Classification** | Lab exercise, sanitized for publication |
-| **Activity date** | 2026-10-31 |
-| **Report date** | 2026-11-01 |
-| **Author** | SOC L1 portfolio lab |
-| **Status** | Closed — escalated |
-| **Severity** | Critical |
-| **Related** | `tickets/INC-004-cron-systemd.md`, `rules/inc-004-rules.md`, `docs/evidence/INC-004-*` |
+| Incident | INC-004, Cron and systemd persistence |
+| Classification | Lab exercise, sanitized for publication |
+| Activity date | 2026-10-31 |
+| Report date | 2026-11-01 |
+| Author | SOC L1 portfolio lab |
+| Status | Closed, escalated |
+| Severity | Critical |
+| Related | `tickets/INC-004-cron-systemd.md`, `rules/inc-004-rules.md`, `docs/evidence/INC-004-*` |
 
 ---
 
@@ -25,8 +25,8 @@ severity: Critical
 At 23:17:24 UTC, an administrator session wrote two persistence mechanisms to the
 endpoint:
 
-1. `/etc/cron.d/updates` — a cron job running every minute as root.
-2. `/etc/systemd/system/updates.service` + `updates.timer` — a systemd timer running a
+1. `/etc/cron.d/updates`, a cron job running every minute as root.
+2. `/etc/systemd/system/updates.service` + `updates.timer`, a systemd timer running a
    oneshot service as root, enabled at boot.
 
 Both executed. The proof files contained:
@@ -40,16 +40,16 @@ Detection was immediate at the file layer:
 
 | Time (UTC) | Rule | Path |
 |---|---|---|
-| 23:17:25.115 | **100129** (level 12) | `/etc/cron.d/updates` |
-| 23:17:28.122 | **100130** (level 10) | `/etc/systemd/system/updates.service` |
-| 23:17:28.128 | **100130** | `/etc/systemd/system/updates.timer` |
-| 23:17:31.309 | **100130** | `/etc/systemd/system/timers.target.wants/updates.timer` |
+| 23:17:25.115 | 100129 (level 12) | `/etc/cron.d/updates` |
+| 23:17:28.122 | 100130 (level 10) | `/etc/systemd/system/updates.service` |
+| 23:17:28.128 | 100130 | `/etc/systemd/system/updates.timer` |
+| 23:17:31.309 | 100130 | `/etc/systemd/system/timers.target.wants/updates.timer` |
 
 Audit supplied the command trail: `tee` into each path, `systemctl daemon-reload`, and
 `systemctl enable --now updates.timer`. Sudo recorded who ran them.
 
-A false-positive test ran first. A legitimate cron file fired 100129 twice; a legitimate
-`systemctl enable cron` fired 100130 once. Both rules are **change monitors**: they
+A false-positive test ran first. A legitimate cron file fired 100129 twice. A legitimate
+`systemctl enable cron` fired 100130 once. Both rules are change monitors: they
 cannot tell an approved unit from a malicious one without a change ticket. That is the
 central operational finding of this scenario.
 
@@ -79,8 +79,8 @@ central operational finding of this scenario.
 
 - The actor was the lab administrator with `sudo`. The scenario models an insider or a
   compromised admin session, not an unprivileged attacker.
-- One host; no configuration management or change-ticket integration.
-- The proof command is `id`; no real payload.
+- One host. No configuration management or change-ticket integration.
+- The proof command is `id`. No real payload.
 
 ---
 
@@ -99,7 +99,7 @@ central operational finding of this scenario.
 | Actor | `analyst` (uid 1000) via `sudo` |
 
 `/etc` is monitored as a whole, so both `/etc/cron.d` and `/etc/systemd/system` are in
-scope. cron was installed during the exercise; the image shipped cron files from
+scope. cron was installed during the exercise. The image shipped cron files from
 packages but no daemon.
 
 ---
@@ -111,18 +111,18 @@ Run before the attack, at 23:16:52.
 | Legitimate action | Result |
 |---|---|
 | `systemctl disable cron` | no 100130 (deletion is 553, not covered) |
-| `systemctl enable cron` | **100130** on `multi-user.target.wants/cron.service` |
-| Create `/etc/cron.d/apt-maintenance` | **100129** on the added file |
-| Modify the same cron file | **100129** on the modified file |
+| `systemctl enable cron` | 100130 on `multi-user.target.wants/cron.service` |
+| Create `/etc/cron.d/apt-maintenance` | 100129 on the added file |
+| Modify the same cron file | 100129 on the modified file |
 
 Three legitimate alerts, no unexpected ones. The rules behave exactly as designed:
-they report **change**, not intent.
+they report change, not intent.
 
 Operational consequence:
 
-- **100129** must be matched to a change ticket before escalation. A legitimate
+- 100129 must be matched to a change ticket before escalation. A legitimate
   maintenance job looks identical to a malicious one.
-- **100130** fires on every `systemctl enable` because it creates a symlink under
+- 100130 fires on every `systemctl enable` because it creates a symlink under
   `/etc/systemd/system/*.wants/`. This is a high-volume false-positive source in a real
   estate.
 - Deletions are not covered. Removing a unit or cron file produces 553, which these
@@ -195,17 +195,17 @@ The timer executed the service as root. `systemctl enable` also created
 | Time (UTC) | Source | Event |
 |---|---|---|
 | 23:16:52 | test | False-positive run starts |
-| 23:16:58.176 | **100130** | Legit `cron.service` enable symlink |
-| 23:17:01.096 | **100129** | Legit `/etc/cron.d/apt-maintenance` added |
-| 23:17:05.104 | **100129** | Legit cron file modified |
+| 23:16:58.176 | 100130 | Legit `cron.service` enable symlink |
+| 23:17:01.096 | 100129 | Legit `/etc/cron.d/apt-maintenance` added |
+| 23:17:05.104 | 100129 | Legit cron file modified |
 | 23:17:24 | attack | Persistence run starts |
-| 23:17:25.115 | **100129** | `/etc/cron.d/updates` added |
+| 23:17:25.115 | 100129 | `/etc/cron.d/updates` added |
 | 23:17:25.887 | audit 80792 | `tee /etc/cron.d/updates` |
-| 23:17:28.122 | **100130** | `updates.service` added |
-| 23:17:28.128 | **100130** | `updates.timer` added |
+| 23:17:28.122 | 100130 | `updates.service` added |
+| 23:17:28.128 | 100130 | `updates.timer` added |
 | 23:17:28.552 | audit 80792 | `tee updates.service` |
 | 23:17:28.568 | audit 80792 | `tee updates.timer` |
-| 23:17:31.309 | **100130** | `timers.target.wants/updates.timer` symlink |
+| 23:17:31.309 | 100130 | `timers.target.wants/updates.timer` symlink |
 | 23:17:31.812 | audit 80792 | `systemctl daemon-reload` |
 | 23:17:31.950 | audit 80792 | `systemctl enable --now updates.timer` |
 | 23:18:01 | proof | cron and systemd both run `id` as root |
@@ -266,7 +266,7 @@ noise. The four persistence alerts are the signal.
 - Whether the cron file was installed by a package or written by a person.
 - Whether the service actually ran, or what it ran as.
 
-The audit trail answers the first and last of those; change control answers the rest.
+The audit trail answers the first and last of those. Change control answers the rest.
 
 ### 8.3 Gaps
 
@@ -275,7 +275,7 @@ The audit trail answers the first and last of those; change control answers the 
 | User crontabs in `/var/spool/cron/crontabs` are not watched | A user-level cron job is invisible |
 | Deletions (553) are not covered | Removing persistence does not alert |
 | 100130 fires on enable symlinks | High false-positive volume |
-| No sequence rule for unit write → enable → execute | The analyst joins them manually |
+| No sequence rule for unit write to enable to execute | The analyst joins them manually |
 | No allow-list of approved units | Every legitimate unit looks the same |
 
 ---
@@ -299,12 +299,12 @@ change request. Both mechanisms execute as root and survive a reboot.
 
 ### 9.3 Five whys
 
-1. **Why did the persistence run?** A cron file and a systemd timer were written and
+1. Why did the persistence run? A cron file and a systemd timer were written and
    enabled.
-2. **Why were they allowed?** The actor had root via sudo and no approval gate.
-3. **Why did they look normal?** Unit files and cron jobs are ordinary administration.
-4. **Why was the signal noisy?** 100130 also catches every legitimate `systemctl enable`.
-5. **Why was the response slow?** The rules report changes, not authorization.
+2. Why were they allowed? The actor had root via sudo and no approval gate.
+3. Why did they look normal? Unit files and cron jobs are ordinary administration.
+4. Why was the signal noisy? 100130 also catches every legitimate `systemctl enable`.
+5. Why was the response slow? The rules report changes, not authorization.
 
 ---
 
@@ -312,14 +312,14 @@ change request. Both mechanisms execute as root and survive a reboot.
 
 | Dimension | Assessment |
 |---|---|
-| **Confidentiality** | Root execution; the host is fully exposed |
-| **Integrity** | Persistence written; boot-time execution |
-| **Availability** | None observed |
-| **Blast radius** | One host; root persistence can pivot |
-| **Persistence** | High: cron and systemd both survive reboot |
+| Confidentiality | Root execution. The host is fully exposed |
+| Integrity | Persistence written. Boot-time execution |
+| Availability | None observed |
+| Blast radius | One host. Root persistence can pivot |
+| Persistence | High: cron and systemd both survive reboot |
 
-**Critical** because the payload runs as root and persists. The only mitigating fact is
-that the actor already had sudo; no privilege escalation was required.
+Critical because the payload runs as root and persists. The only mitigating fact is
+that the actor already had sudo. No privilege escalation was required.
 
 ---
 
@@ -340,7 +340,7 @@ that the actor already had sudo; no privilege escalation was required.
 
 | # | Action |
 |---|---|
-| 1 | Remove the units and cron file; disable the timer |
+| 1 | Remove the units and cron file. Disable the timer |
 | 2 | Hash the files before deletion |
 | 3 | Check for other units, timers, and cron entries |
 | 4 | Review sudo access for the actor |
@@ -350,7 +350,7 @@ that the actor already had sudo; no privilege escalation was required.
 
 | # | Action |
 |---|---|
-| 6 | Deploy 100129/100130; route both to change-aware triage |
+| 6 | Deploy 100129/100130. Route both to change-aware triage |
 | 7 | Add `/var/spool/cron/crontabs` to FIM/audit coverage |
 | 8 | Add deletion (553) rules for persistence paths |
 | 9 | Allow-list approved unit names and cron jobs |
@@ -360,7 +360,7 @@ that the actor already had sudo; no privilege escalation was required.
 
 | # | Action |
 |---|---|
-| 11 | Configuration management for units and cron; no manual writes |
+| 11 | Configuration management for units and cron. No manual writes |
 | 12 | Least-privilege sudo, time-bound elevation |
 | 13 | Detection-as-code tests for unit/cron writes |
 | 14 | Tabletop a root-persistence incident |
@@ -370,18 +370,23 @@ that the actor already had sudo; no privilege escalation was required.
 
 ## 13. Lessons learned
 
-- **Change, not intent.** FIM can prove a file appeared; only change control can say
+- **Change, not intent**  
+  FIM can prove a file appeared. Only change control can say
   whether it should have.
-- **Enable symlinks are noise.** 100130 needs routing/allow-listing, not suppression.
-- **Deletion is part of the story.** Removal of persistence should also alert.
-- **Root persistence is Critical.** A cron job or timer that runs as root is a durable
+- **Enable symlinks are noise**  
+  100130 needs routing/allow-listing, not suppression.
+- **Deletion is part of the story**  
+  Removal of persistence should also alert.
+- **Root persistence is Critical**  
+  A cron job or timer that runs as root is a durable
   compromise, even if the initial action was "just sudo".
-- **The proof matters.** `uid=0` in the proof file is the difference between a
+- **The proof matters**  
+  `uid=0` in the proof file is the difference between a
   suspicious file and an executed root payload.
 
 ---
 
-## Appendix A — Rules
+## Appendix A: Rules
 
 ```xml
 <rule id="100129" level="12">
@@ -401,7 +406,7 @@ that the actor already had sudo; no privilege escalation was required.
 </rule>
 ```
 
-## Appendix B — MITRE ATT&CK
+## Appendix B: MITRE ATT&CK
 
 | Technique | ID | Evidence |
 |---|---|---|
@@ -410,7 +415,7 @@ that the actor already had sudo; no privilege escalation was required.
 | Abuse elevation control: sudo | T1548.003 | `sudo tee`, `sudo systemctl` |
 | Valid accounts | T1078 | Actor `analyst` |
 
-## Appendix C — Evidence index
+## Appendix C: Evidence index
 
 | File | Contents |
 |---|---|
@@ -420,11 +425,11 @@ that the actor already had sudo; no privilege escalation was required.
 | `docs/evidence/INC-004-proof.txt` | Root execution proof |
 | `docs/evidence/INC-004-files.txt` | Unit and cron file contents |
 
-## Appendix D — Glossary
+## Appendix D: Glossary
 
 | Term | Meaning |
 |---|---|
-| `cron.d` | System-wide cron drop-in directory; files run as specified |
+| `cron.d` | System-wide cron drop-in directory. Files run as specified |
 | systemd timer | Scheduled unit that triggers a service |
 | `enable` symlink | `/etc/systemd/system/*.wants/` link created by `systemctl enable` |
 | FIM | File integrity monitoring |

@@ -1,13 +1,13 @@
-# Attack Setup Guide — INC-005
+# Attack Setup Guide: INC-005
 
 <!-- subtitle: An outbound SYN sweep, its threshold, and the legitimate burst that crosses it -->
 <!--meta
 id: INC-005
-incident: INC-005 — Outbound port scan
+incident: INC-005, Outbound port scan
 severity: Medium
 -->
 
-A step-by-step script for reproducing INC-005 **inside the lab**. It is for testing
+A step-by-step script for reproducing INC-005 inside the lab. It is for testing
 detection and triage, not for use against systems you do not own.
 
 ---
@@ -16,12 +16,12 @@ detection and triage, not for use against systems you do not own.
 
 | Rule | Detail |
 |---|---|
-| **Scope** | Only the `soc-victim` VM and its QEMU gateway `10.0.2.2` |
-| **Never** | Scan a LAN, an internet host, or an employer's network |
-| **Never** | Use the lab rule as authorization for real scanning |
-| **Authorization** | You own the host and the VM |
-| **Reversibility** | No files are created; remove the local rule if desired |
-| **Rate** | Keep scans local and short |
+| Scope | Only the `soc-victim` VM and its QEMU gateway `10.0.2.2` |
+| Never | Scan a LAN, an internet host, or an employer's network |
+| Never | Use the lab rule as authorization for real scanning |
+| Authorization | You own the host and the VM |
+| Reversibility | No files are created. Remove the local rule if desired |
+| Rate | Keep scans local and short |
 
 The scenario models an internal host performing discovery. It does not exploit anything.
 
@@ -57,7 +57,7 @@ export VMPORT=2222
 
 ---
 
-## 3. Phase 0 — Verify the rule
+## 3. Phase 0: Verify the rule
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
@@ -72,7 +72,7 @@ If missing, follow the reproduction guide §2.
 
 ---
 
-## 4. Phase 1 — False-positive baseline (required)
+## 4. Phase 1: False-positive baseline (required)
 
 ### Normal traffic
 
@@ -110,18 +110,18 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" \
   'sudo grep -c "LAB SCAN" /var/log/suricata/wazuh.json 2>/dev/null || echo 0'
 ```
 
-Expected: **10**. This is the false-positive boundary, not a bug. Record it.
+Expected: 10. This is the false-positive boundary, not a bug. Record it.
 
 ---
 
-## 5. Phase 2 — The scan
+## 5. Phase 2: The scan
 
 ```bash
 ssh -i "$VMKEY" -p "$VMPORT" "$VM" '
 sudo nmap -sS --top-ports 200 --min-rate 500 10.0.2.2 -oN /tmp/nmap-inc005.txt'
 ```
 
-Expected: the gateway is mostly closed; port 8080 is open; the scan finishes in under a
+Expected: the gateway is mostly closed. Port 8080 is open. The scan finishes in under a
 second.
 
 Check the sensor:
@@ -141,11 +141,11 @@ docker exec single-node-wazuh.manager-1 sh -c \
   | jq -r '[.timestamp,.rule.id,.rule.description] | @tsv'
 ```
 
-Expected: rule **86601**.
+Expected: rule 86601.
 
 ---
 
-## 6. Phase 3 — Evidence capture
+## 6. Phase 3: Evidence capture
 
 ```bash
 docker exec single-node-wazuh.manager-1 cat /var/ossec/logs/alerts/alerts.json \
@@ -172,7 +172,7 @@ ssh -i "$VMKEY" -p "$VMPORT" "$VM" 'sudo cat /tmp/nmap-inc005.txt' \
 
 ---
 
-## 7. Phase 4 — Cleanup
+## 7. Phase 4: Cleanup
 
 The scan leaves no files. The local Suricata rule can stay as part of the lab.
 
@@ -211,7 +211,7 @@ sudo nmap -sT --top-ports 200 10.0.2.2
 ```
 
 `-sT` completes the handshake and may not match `flags:S` the same way. Test whether the
-rule fires; it is a different scan shape.
+rule fires. It is a different scan shape.
 
 ### 9.2 Slow scan
 
@@ -240,10 +240,14 @@ better version of this scenario, and it requires privileged host setup.
 
 ## 10. Why this is realistic
 
-- **Scans are cheap and common.** A compromised host often performs discovery first.
-- **Direction changes detection.** An inbound-only ruleset misses outbound discovery.
-- **Thresholds are trade-offs.** A load test looks like a scan at 50 SYNs/5 s.
-- **Recon is not a breach.** The ticket must say what did not happen.
+- **Scans are cheap and common**  
+  A compromised host often performs discovery first.
+- **Direction changes detection**  
+  An inbound-only ruleset misses outbound discovery.
+- **Thresholds are trade-offs**  
+  A load test looks like a scan at 50 SYNs/5 s.
+- **Recon is not a breach**  
+  The ticket must say what did not happen.
 
 ---
 
@@ -251,5 +255,5 @@ better version of this scenario, and it requires privileged host setup.
 
 - Scan only the VM and its QEMU gateway.
 - Do not reuse the rule or the commands against any other network.
-- A scan can be an offence without authorization; the lab is the authorization boundary.
-- Publishing the rule is fine; publishing a real target list is not.
+- A scan can be an offence without authorization. The lab is the authorization boundary.
+- Publishing the rule is fine. Publishing a real target list is not.

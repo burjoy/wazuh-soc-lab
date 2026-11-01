@@ -3,7 +3,7 @@
 Four documents covering the authorized-change triage: what happened, how to rebuild the
 change, how to verify and close it, and how the change was staged.
 
-The scenario is deliberately benign. The skill being demonstrated is the **closure**,
+The scenario is deliberately benign. The skill being demonstrated is the closure,
 not an attack.
 
 ---
@@ -27,12 +27,12 @@ The ticket is [../../tickets/INC-006-authorized-change.md](../../tickets/INC-006
 |---|---|
 | Date | 2026-10-31, 23:35 UTC |
 | Change | CHG-2026-1101-01, approved |
-| Files | cron log cleanup; systemd no-op health check |
+| Files | cron log cleanup. Systemd no-op health check |
 | Alerts | 1× 100129, 3× 100130 |
 | Hash match | 3/3 |
 | Follow-on activity | none |
-| Decision | **Closed — authorized change, no incident** |
-| Term | Benign true positive, **not** a false positive |
+| Decision | Closed, authorized change, no incident |
+| Term | Benign true positive, not a false positive |
 
 ---
 
@@ -45,7 +45,7 @@ The ticket is [../../tickets/INC-006-authorized-change.md](../../tickets/INC-006
 | True positive | right | malicious | incident response |
 
 Calling this a false positive would put pressure on 100129/100130 to be suppressed. The
-alerts were correct; the change record made them benign.
+alerts were correct. The change record made them benign.
 
 ---
 
@@ -77,4 +77,4 @@ Requirements: Python 3, `markdown`, `pygments`, and Chrome at
 ## Scope and disclaimer
 
 Independent portfolio lab. The change, approver, hashes, and host are synthetic. The
-files only clean old compressed logs and run `/usr/bin/true`; there is no attack payload.
+files only clean old compressed logs and run `/usr/bin/true`. There is no attack payload.

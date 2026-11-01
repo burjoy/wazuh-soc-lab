@@ -303,9 +303,9 @@ def convert(md_path: pathlib.Path, pdf_path: pathlib.Path) -> None:
 
     meta = {
         "id": "INC-001",
-        "incident": "INC-001 &mdash; SSH brute force to persistence",
+        "incident": "INC-001, SSH brute force to persistence",
         "severity": "High",
-        "classification": "Lab exercise &mdash; sanitized for publication",
+        "classification": "Lab exercise, sanitized for publication",
         "environment": "Wazuh 4.14.7 &middot; Debian 12 &middot; QEMU/KVM",
     }
     meta_match = META_RE.search(text)
