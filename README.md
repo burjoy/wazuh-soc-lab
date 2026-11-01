@@ -37,9 +37,9 @@ Three links, in the order a reviewer should read them.
 
 ## By the numbers
 
-| 6 | 12 | 1 | 1 |
+| Investigations | Wazuh rules | Suricata rule | Regressions |
 |---|---|---|---|
-| investigations | Wazuh rules | Suricata rule | full regression |
+| 6 | 12 | 1 | 1 |
 
 ---
 
